@@ -15,3 +15,5 @@ warehouse/target/
 
 # Notebook checkpoints
 .ipynb_checkpoints
+
+tmp/
