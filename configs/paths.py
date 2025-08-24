@@ -7,7 +7,7 @@ from pathlib import Path
 class CensusPlaceProjectPaths:
     root: Path
     
-    def crosswalk_ipums_full_count_hist_id_to_hist_census_place(self, year: int) -> Path:
+    def crosswalk_hist_id_to_hist_census_place(self, year: int) -> Path:
         return self.root / f"histid_place_crosswalk_{year}.csv"
     
     def hist_census_place_geom(self) -> Path:
@@ -102,7 +102,7 @@ class WorldPaths:
 
 @dataclass(frozen=True)
 class DataPaths:
-    us: USAPaths
+    usa: USAPaths
     world: WorldPaths
 
     @classmethod
