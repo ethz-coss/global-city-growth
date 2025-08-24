@@ -1,7 +1,7 @@
 FROM postgres:16-bullseye
 
-ENV PG_MAJOR 16
-ENV POSTGIS_MAJOR 3
+ENV PG_MAJOR=16
+ENV POSTGIS_MAJOR=3
 
 RUN apt-get update
 RUN apt-get install -y postgis postgresql-$PG_MAJOR-postgis-$POSTGIS_MAJOR

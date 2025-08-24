@@ -2,11 +2,15 @@ FROM python:3.13-slim
 
 WORKDIR /app
 
-RUN pip install --upgrade pip && pip install "poetry==2.1.0"
+RUN apt-get update && apt-get install -y git
 
-COPY pyproject.toml ./
+RUN pip install --upgrade pip && pip install poetry
+
+COPY pyproject.toml poetry.lock ./
 
 # Install project dependencies (avoid creating a virtual environment and installing development dependencies)
 RUN poetry config virtualenvs.create false && poetry install --no-root
 
 COPY . .
+
+EXPOSE 3000

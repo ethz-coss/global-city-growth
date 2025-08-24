@@ -25,6 +25,7 @@ services:
       - .:/app 
     depends_on:
       - database 
+    command: ["tail", "-f", "/dev/null"] # TODO: remove this and add dagster commands
 
 volumes:
   postgres_data: 
