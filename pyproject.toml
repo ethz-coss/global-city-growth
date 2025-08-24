@@ -6,9 +6,11 @@ authors = [
     {name = "andreamusso96",email = "andreamusso96@gmail.com"}
 ]
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.12, <3.14"
 dependencies = [
-    "dbt-core (>=1.10.9,<2.0.0)",
+    "dagster (>=1.11.7,<2.0.0)",
+    "dagster-webserver (>=1.11.7,<2.0.0)",
+    "dagster-dbt (>=0.27.7,<0.28.0)",
     "dbt-postgres (>=1.9.0,<2.0.0)"
 ]
 
@@ -16,3 +18,13 @@ dependencies = [
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+
+[tool.dg]
+directory_type = "project"
+
+[tool.dg.project]
+root_module = "global_city_growth"
+registry_modules = [
+    "global_city_growth.defs.*",
+]
