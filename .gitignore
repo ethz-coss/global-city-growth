@@ -17,3 +17,4 @@ warehouse/target/
 .ipynb_checkpoints
 
 tmp/
+data/
