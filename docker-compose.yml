@@ -4,21 +4,20 @@ services:
       context: . 
       dockerfile: Dockerfile.database 
     container_name: global-city-growth-database
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_HOST=${POSTGRES_HOST}
+    env_file:
+      - path: ./.env
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "${POSTGRES_PORT}:5432" 
+      - "5451:5432" 
 
   orchestrator:
     build:
       context: . 
       dockerfile: Dockerfile.orchestrator 
     container_name: global-city-growth-orchestrator
+    env_file:
+      - path: ./.env
     ports:
       - "3000:3000" 
     volumes:
