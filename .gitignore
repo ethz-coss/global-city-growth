@@ -1,0 +1,17 @@
+# Environment variables
+.env
+
+# Python cache and virtual environments
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Project-specific outputs (we only want to track code, not generated artifacts)
+artifacts/
+warehouse/dbt_packages/
+warehouse/logs/
+warehouse/target/
+
+# Notebook checkpoints
+.ipynb_checkpoints
