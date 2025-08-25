@@ -49,7 +49,6 @@ class USAPaths:
     @classmethod
     def from_root(cls, root: Path) -> "USAPaths":
         return cls(
-            root=root,
             census_place_project=CensusPlaceProjectPaths(root / "census_place_project"),
             nhgis=NhgisPaths(root / "nhgis"),
             ipums_full_count=IpumsFullCountPaths(root / "ipums_full_count"),
@@ -68,6 +67,7 @@ class GHSLPaths:
         return self.root / "smod" / f"GHS_SMOD_E{year}_GLOBE_R2023A_54009_1000_V1_0.tif"
 
 
+@dataclass(frozen=True)
 class CShapesBorderPaths:
     root: Path
 
@@ -78,6 +78,7 @@ class CShapesBorderPaths:
         return self.root / "c_shapes_to_world_bank_codes.csv"
     
 
+@dataclass(frozen=True)
 class OWIDPaths:
     root: Path
 
@@ -108,7 +109,7 @@ class DataPaths:
     @classmethod
     def from_root(cls, root: Path) -> "DataPaths":
         return cls(
-            us=USAPaths.from_root(root / "usa"),
+            usa=USAPaths.from_root(root / "usa"),
             world=WorldPaths.from_root(root / "world")
         )
     

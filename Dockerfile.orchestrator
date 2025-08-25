@@ -13,4 +13,8 @@ RUN poetry config virtualenvs.create false && poetry install --no-root
 
 COPY . .
 
+ENV DAGSTER_HOME=/app/.dagster_instance
+
 EXPOSE 3000
+
+CMD ["bash","-lc","ln -sf ../dagster.yaml $DAGSTER_HOME/dagster.yaml && dagster instance migrate && dagster instance concurrency set duckdb_write 1 && exec poetry run dg dev --host 0.0.0.0"]

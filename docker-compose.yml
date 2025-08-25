@@ -23,10 +23,7 @@ services:
     volumes:
       - .:/app 
     depends_on:
-      - database 
-    environment: 
-      - DAGSTER_HOME=/app
-    command: ["tail", "-f", "/dev/null"] # TODO: remove this and add dagster commands
+      - database
 
 volumes:
   postgres_data: 

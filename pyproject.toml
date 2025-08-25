@@ -14,7 +14,8 @@ dependencies = [
     "dbt-postgres (>=1.9.0,<2.0.0)",
     "psycopg2-binary (>=2.9.10,<3.0.0)",
     "dagster-postgres (>=0.27.7,<0.28.0)",
-    "dagster-duckdb (>=0.27.7,<0.28.0)"
+    "dagster-duckdb (>=0.27.7,<0.28.0)",
+    "dagster-dg-cli (>=1.11.7,<2.0.0)"
 ]
 
 
@@ -27,7 +28,7 @@ build-backend = "poetry.core.masonry.api"
 directory_type = "project"
 
 [tool.dg.project]
-root_module = "global_city_growth"
+root_module = "orchestration"
 registry_modules = [
-    "global_city_growth.defs.*",
+    "orchestration.defs.*",
 ]

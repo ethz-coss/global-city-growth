@@ -18,3 +18,5 @@ warehouse/target/
 
 tmp/
 data/
+
+.dagster_instance/
