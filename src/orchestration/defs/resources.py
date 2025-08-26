@@ -5,7 +5,7 @@ import dagster as dg
 import sqlalchemy
 import os
 
-from configs.paths import DataPaths
+from src.orchestration.defs.paths import DataPaths
 
 class StorageResource(ConfigurableResource):
     """A resource for accessing file system paths."""
