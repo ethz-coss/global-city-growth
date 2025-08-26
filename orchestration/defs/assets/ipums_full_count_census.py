@@ -4,8 +4,8 @@ from dataclasses import dataclass
 import jinja2
 import os
 
-from .resources import StorageResource
-from configs.constants import IPUMS_HISTORICAL_YEARS, IPUMS_NHGIS_POP_YEARS, GHSL_RASTER_YEARS
+from ..resources import StorageResource
+from configs.constants import IPUMS_HISTORICAL_YEARS
 
 ipums_historical_years_partitions = dg.StaticPartitionsDefinition([str(y) for y in IPUMS_HISTORICAL_YEARS])
 
