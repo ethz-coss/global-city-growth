@@ -1,8 +1,10 @@
 storage:
   postgres:
     postgres_db:
-      hostname: database
-      port: 5432
+      hostname:
+        env: POSTGRES_HOST
+      port:
+        env: POSTGRES_PORT
       db_name:
         env: POSTGRES_DB
       username:
