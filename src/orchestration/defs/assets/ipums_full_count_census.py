@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import jinja2
 import os
 
-from ..resources import StorageResource
+from ..resources.resources import StorageResource
 from src.orchestration.defs.assets.constants import IPUMS_HISTORICAL_YEARS
 
 ipums_historical_years_partitions = dg.StaticPartitionsDefinition([str(y) for y in IPUMS_HISTORICAL_YEARS])
