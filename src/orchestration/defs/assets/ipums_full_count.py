@@ -13,13 +13,13 @@ ipums_historical_years_partitions = dg.StaticPartitionsDefinition([str(y) for y 
 @dataclass(frozen=True)
 class TableNameManager:
     def ipums_full_count_table_raw(self, year: int) -> str:
-        return f"ipums_full_count_raw_{year}"
+        return f"ipums_full_count_raw_{year}" # TODO: change name to ipums_full_count_table_{year}_raw
     
     def ipums_full_count_table_clean(self, year: int) -> str:
         return f"ipums_full_count_clean_{year}"
     
     def crosswalk_hist_id_to_hist_census_place_table_raw(self, year: int) -> str:
-        return f"crosswalk_hist_id_to_hist_census_place_raw_{year}"
+        return f"crosswalk_hist_id_to_hist_census_place_raw_{year}" # TODO: change name to crosswalk_hist_id_to_hist_census_place_table_{year}_raw
     
     def crosswalk_hist_id_to_hist_census_place_table_clean(self, year: int) -> str:
         return f"crosswalk_hist_id_to_hist_census_place_clean_{year}"
