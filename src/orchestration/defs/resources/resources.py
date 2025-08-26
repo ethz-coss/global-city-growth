@@ -57,5 +57,5 @@ postgres_resource = PostgresResource(
     port=dg.EnvVar("POSTGRES_PORT"),
     user=dg.EnvVar("POSTGRES_USER"),
     password=dg.EnvVar("POSTGRES_PASSWORD"),
-    database=dg.EnvVar("POSTGRES_DB")
+    database=dg.EnvVar("POSTGRES_DB_MAIN")
 )

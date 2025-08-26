@@ -6,7 +6,7 @@ storage:
       port:
         env: POSTGRES_PORT
       db_name:
-        env: POSTGRES_DB
+        env: POSTGRES_DB_DAGSTER
       username:
         env: POSTGRES_USER
       password:
