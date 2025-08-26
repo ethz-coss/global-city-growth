@@ -4,8 +4,9 @@ from pathlib import Path
 import dagster as dg
 import sqlalchemy
 import os
+from pydantic import PrivateAttr
 
-from src.orchestration.defs.resources.paths import DataPaths
+from .paths import DataPaths
 
 class StorageResource(ConfigurableResource):
     """A resource for accessing file system paths."""
@@ -17,24 +18,29 @@ class StorageResource(ConfigurableResource):
 
 
 class PostgresResource(ConfigurableResource):
-    """A resource for accessing a postgres database."""
+    """Postgres access via SQLAlchemy."""
     host: str
-    port: int
+    port: str
     user: str
     password: str
     database: str
 
-    def __init__(self, host: str, port: int, user: str, password: str, database: str):
-        self.host = host
-        self.port = port
-        self.user = user
-        self.password = password
-        self.database = database
-        self.engine = sqlalchemy.create_engine(f"postgresql+psycopg2://{self.user}:{self.password}@{self.host}:{self.port}/{self.database}")
+    # Private, mutable state for the run:
+    _engine: sqlalchemy.engine.Engine | None = PrivateAttr(default=None)
 
     @property
-    def engine(self) -> sqlalchemy.engine.Engine:
-        return self.engine
+    def connection_string(self) -> str:
+        return f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.database}"
+
+    @property
+    def sqlalchemy_connection_string(self) -> str:
+        return f"postgresql+psycopg2://{self.user}:{self.password}@{self.host}:{self.port}/{self.database}"
+
+    def get_engine(self) -> sqlalchemy.engine.Engine:
+        # Lazy init if not set up yet
+        if self._engine is None:
+            self._engine = sqlalchemy.create_engine(self.sqlalchemy_connection_string)
+        return self._engine
     
 
 

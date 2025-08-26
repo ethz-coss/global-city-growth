@@ -37,7 +37,7 @@ class USMiscPaths:
     root: Path
 
     def usa_state_geom(self) -> Path:
-        return self.root / "misc" / "States_shapefile.shp"
+        return self.root / "States_shapefile.shp"
     
 
 @dataclass(frozen=True)
