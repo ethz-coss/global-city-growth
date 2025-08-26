@@ -1,4 +1,5 @@
 from dagster_duckdb import DuckDBResource
+from dagster_dbt import DbtProject, DbtCliResource
 from dagster import ConfigurableResource
 from pathlib import Path
 import dagster as dg
@@ -43,6 +44,15 @@ class PostgresResource(ConfigurableResource):
         return self._engine
     
 
+dbt_project = DbtProject(
+  project_dir='src/warehouse'
+)
+
+dbt_project.prepare_if_dev()
+
+dbt_resource = DbtCliResource(
+    project_dir=dbt_project,
+)
 
 duckdb_resource = DuckDBResource(
     database=dg.EnvVar("DUCKDB_PATH")

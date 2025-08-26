@@ -6,7 +6,7 @@ global_city_growth_profile:
       host: "{{ env_var('POSTGRES_HOST') }}"
       user: "{{ env_var('POSTGRES_USER') }}"
       password: "{{ env_var('POSTGRES_PASSWORD') }}"
-      port: "{{ env_var('POSTGRES_PORT') }}"
-      dbname: "{{ env_var('POSTGRES_DB') }}"
+      port: "{{ env_var('POSTGRES_PORT') | int }}"
+      dbname: "{{ env_var('POSTGRES_DB_MAIN') }}"
       schema: public
       threads: 4

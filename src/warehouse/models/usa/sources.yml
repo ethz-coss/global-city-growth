@@ -1,0 +1,18 @@
+sources:
+  - name: nhgis
+    schema: public
+    tables:
+      - name: usa_nhgis_census_place_population_1990_2020_raw
+      - name: usa_nhgis_census_place_geom_all_years_raw
+
+  - name: ipums_full_count
+    schema: public
+    tables:
+      - name: usa_hist_census_place_population
+      - name: usa_hist_census_place_migration
+      - name: usa_hist_census_place_geom_raw
+
+  - name: misc
+    schema: public
+    tables:
+      - name: usa_states_geom_raw
