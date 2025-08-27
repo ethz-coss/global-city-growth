@@ -1,4 +1,3 @@
-# src/dagster_and_dbt/defs/assets/dbt.py
 import dagster as dg
 from dagster_dbt import dbt_assets, DbtCliResource, DagsterDbtTranslator
 

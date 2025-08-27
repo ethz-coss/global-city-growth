@@ -34,3 +34,11 @@ models:
     # Config indicated by + and applies to all files under models/example/
     usa:
       +materialized: table
+
+
+vars:
+  constants:
+    IPUMS_HISTORICAL_YEARS: [1850, 1860, 1870, 1880, 1900, 1910, 1920, 1930, 1940]
+    NHGIS_POP_YEARS: [1990, 2000, 2010, 2020]
+    USA_YEARS: [1850, 1860, 1870, 1880, 1900, 1910, 1920, 1930, 1940, 1990, 2000, 2010, 2020]
+    GHSL_RASTER_YEARS: [1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015, 2020]

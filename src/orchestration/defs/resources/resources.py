@@ -6,8 +6,10 @@ import dagster as dg
 import sqlalchemy
 import os
 from pydantic import PrivateAttr
+import json
 
 from .paths import DataPaths
+from ..assets.constants import constants
 
 class StorageResource(ConfigurableResource):
     """A resource for accessing file system paths."""
@@ -43,7 +45,7 @@ class PostgresResource(ConfigurableResource):
             self._engine = sqlalchemy.create_engine(self.sqlalchemy_connection_string)
         return self._engine
     
-
+    
 dbt_project = DbtProject(
   project_dir='src/warehouse'
 )

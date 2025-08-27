@@ -1,7 +1,16 @@
-# --- IPUMS Project Constants ---
-IPUMS_HISTORICAL_YEARS: list[int] = [1850, 1860, 1870, 1880, 1900, 1910, 1920, 1930, 1940]
-IPUMS_NHGIS_POP_YEARS: list[int] = [1980, 1990, 2000, 2010, 2020]
-IPUMS_YEARS: list[int] = IPUMS_HISTORICAL_YEARS + IPUMS_NHGIS_POP_YEARS
+import yaml
+import os
+import dagster as dg
 
-# --- GHSL Project Constants ---
-GHSL_RASTER_YEARS: list[int] = [1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015, 2020]
+def load_constants():
+    # Constants are defined in the dbt_project.yml file because otherwise it is rather difficult to load them in the dbt project
+    with open(f"src/warehouse/dbt_project.yml", "r") as f:
+        constants = yaml.safe_load(f)
+        constants = constants["vars"]["constants"]
+    return constants
+
+constants = load_constants()
+
+
+if __name__ == "__main__":
+    print(constants)
