@@ -1,0 +1,5 @@
+sources:
+  - name: convolved_raster
+    schema: public
+    tables:
+      - name: usa_raster_census_place_convolved

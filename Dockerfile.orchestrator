@@ -4,7 +4,17 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y git
 
-RUN pip install --upgrade pip && pip install poetry
+# For some reason rasterio needs to be built from source, and hence we need to install its dependencies manually
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gdal-bin libgdal-dev libproj-dev proj-bin libgeos-dev \
+    build-essential pkg-config git && \
+    rm -rf /var/lib/apt/lists/*
+
+ENV GDAL_CONFIG=/usr/bin/gdal-config \
+    CPLUS_INCLUDE_PATH=/usr/include/gdal \
+    C_INCLUDE_PATH=/usr/include/gdal
+
+RUN pip install -U pip setuptools wheel && pip install poetry
 
 COPY pyproject.toml poetry.lock ./
 
