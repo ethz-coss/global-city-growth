@@ -1,0 +1,6 @@
+sources:
+  - name: matching
+    schema: public
+    tables:
+      # This crosswalk is created by extracting the connected components from the nhgis census place equivalence network
+      - name: usa_crosswalk_nhgis_census_place_to_connected_component

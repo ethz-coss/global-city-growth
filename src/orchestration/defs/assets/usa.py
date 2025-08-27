@@ -12,8 +12,8 @@ class TableNameManager:
     def usa_nhgis_census_place_equivalence_network(self) -> str:
         return "usa_nhgis_census_place_equivalence_network"
     
-    def usa_crosswalk_nhgis_census_place_to_stable_census_place(self) -> str:
-        return "usa_crosswalk_nhgis_census_place_to_stable_census_place"
+    def usa_crosswalk_nhgis_census_place_to_connected_component(self) -> str:
+        return "usa_crosswalk_nhgis_census_place_to_connected_component"
     
 
 def _extract_as_dataframe(connected_components: List[List[str]]) -> pd.DataFrame:
@@ -31,8 +31,8 @@ def _extract_as_dataframe(connected_components: List[List[str]]) -> pd.DataFrame
     kinds={'postgres'},
     group_name="usa_intermediate_normalize_hist_data"
 )
-def usa_match_equivalent_census_places(context: dg.AssetExecutionContext, postgres: PostgresResource):
-    context.log.info(f"Matching equivalent census places")
+def usa_crosswalk_nhgis_census_place_to_connected_component(context: dg.AssetExecutionContext, postgres: PostgresResource):
+    context.log.info(f"Creating crosswalk from NHGIS census place to connected component of equivalent census places")
 
     q = f"""
     SELECT left_census_place_id, right_census_place_id
@@ -47,7 +47,7 @@ def usa_match_equivalent_census_places(context: dg.AssetExecutionContext, postgr
     connected_components_df = _extract_as_dataframe(connected_components)
 
     connected_components_df.to_sql(
-        name=TableNameManager().usa_crosswalk_nhgis_census_place_to_stable_census_place(),
+        name=TableNameManager().usa_crosswalk_nhgis_census_place_to_connected_component(),
         con=postgres.get_engine(),
         if_exists="replace",
         index=False,
