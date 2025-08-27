@@ -15,16 +15,20 @@ disappearing_places_migration_continuation_candidates AS (
         SELECT  dp.disappearing_place_id, 
                 dp.last_appearance,
                 mp.census_place_destination AS continuation_candidate_id,
-                mp.migration_probability
+                mp.migration_probability,
+                nn.distance
         FROM disappearing_places dp
         INNER JOIN {{ ref('usa_nhgis_census_place_migration_probability') }} mp
         ON dp.disappearing_place_id = mp.census_place_origin AND dp.last_appearance = mp.year_origin
+        LEFT JOIN {{ ref('usa_nhgis_census_place_nearest_neighbors') }} nn 
+        ON dp.disappearing_place_id = nn.census_place_id AND mp.census_place_destination = nn.neighbor_census_place_id
     ),
     ranked_candidates AS (
         SELECT  disappearing_place_id, 
                 continuation_candidate_id, 
                 migration_probability,
-                ROW_NUMBER() OVER (PARTITION BY disappearing_place_id ORDER BY migration_probability DESC) AS rank
+                distance,
+                RANK() OVER (PARTITION BY disappearing_place_id ORDER BY migration_probability DESC, distance ASC) AS rank
         FROM candidates
     )
     SELECT  disappearing_place_id, 
@@ -73,7 +77,6 @@ migration_and_distance AS (
     FROM {{ ref('usa_nhgis_census_place_migration_probability') }} mp
     LEFT JOIN {{ ref('usa_nhgis_census_place_nearest_neighbors') }} nn
     ON mp.census_place_origin = nn.census_place_id AND mp.census_place_destination = nn.neighbor_census_place_id
-
 ),
 edges_migration_and_distance AS (
     SELECT  census_place_origin AS left_census_place_id, 

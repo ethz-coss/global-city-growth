@@ -15,6 +15,7 @@ census_place_stable_population_with_first_appearance AS (
     FROM census_place_stable_population
     JOIN census_place_stable_appearences
     USING (census_place_id)
+    WHERE last_appearance = 1940
 ),
 census_place_stable_growth AS(
     SELECT  census_place_id, 
