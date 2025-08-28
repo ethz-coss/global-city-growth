@@ -77,13 +77,21 @@ class USATransformations:
     def usa_crosswalk_component_id_to_cluster_id(self) -> str:
         return "usa_crosswalk_component_id_to_cluster_id"
     
+@dataclass(frozen=True)
+class USAFinal:
+    def usa_size_vs_growth(self) -> str:
+        return "usa_size_vs_growth"
+    
+    def usa_rank_vs_size(self) -> str:
+        return "usa_rank_vs_size"
+    
 
 @dataclass(frozen=True)
 class USA:
     ipums_full_count: IpumsFullCount = IpumsFullCount()
     sources: USASources = USASources()
     transformations: USATransformations = USATransformations()
-
+    final: USAFinal = USAFinal()
 
 
 @dataclass(frozen=True)

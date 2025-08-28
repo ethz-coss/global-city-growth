@@ -17,11 +17,12 @@ class CustomizedDagsterDbtTranslator(DagsterDbtTranslator):
 @dbt_assets(
     manifest=dbt_project.manifest_path,
     dagster_dbt_translator=CustomizedDagsterDbtTranslator(),
-    exclude="incremental_example_table usa_cluster_base_geom"
+    exclude="incremental_example_table"
 )
 def dbt_warehouse(context: dg.AssetExecutionContext, dbt: DbtCliResource):
     yield from dbt.cli(["run"], context=context).stream()
 
+"""
 @dbt_assets(
     manifest=dbt_project.manifest_path,
     partitions_def=dg.StaticPartitionsDefinition([str(s) for s in constants['USA_PIXEL_THRESHOLDS']]),
@@ -37,6 +38,7 @@ def usa_cluster_base_geom(context: dg.AssetExecutionContext, dbt: DbtCliResource
     }
     args = [ "run", "--vars", json.dumps(dbt_vars) ]
     yield from dbt.cli(args, context=context).stream()
+"""
 
 ## A DUMMY EXAMPLE OF AN INCREMENTAL TABLE TO BE REMOVED LATER
 # TODO: REMOVE THIS LATER

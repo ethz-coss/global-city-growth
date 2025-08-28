@@ -3,3 +3,8 @@ sources:
     schema: public
     tables:
       - name: usa_raster_census_place_convolved
+  
+  - name: matching
+    schema: public
+    tables:
+      - name: usa_crosswalk_component_id_to_cluster_id

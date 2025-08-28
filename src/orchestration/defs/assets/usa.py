@@ -159,7 +159,7 @@ def usa_crosswalk_component_id_to_cluster_id(context: dg.AssetExecutionContext, 
 
     ipums_years = constants["IPUMS_HISTORICAL_YEARS"]
     nhgis_years = constants["NHGIS_POP_YEARS"]
-    pixel_thresholds = constants["USA_CLUSTER_PIXEL_THRESHOLDS"]
+    pixel_thresholds = constants["USA_PIXEL_THRESHOLDS"]
 
     params = []
     all_year_pairs = _year_pairs(ipums_years) + _year_pairs(nhgis_years)
