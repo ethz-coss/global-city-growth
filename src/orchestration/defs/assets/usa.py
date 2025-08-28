@@ -106,7 +106,7 @@ def _dump_raster(con: sqlalchemy.Connection, data: xr.DataArray, table_name: str
     kinds={'postgres'},
     group_name="usa_intermediate_rasterize_census_places"
 )
-def usa_raster_convolved_census_place(context: dg.AssetExecutionContext, postgres: PostgresResource):
+def usa_raster_census_place_convolved(context: dg.AssetExecutionContext, postgres: PostgresResource):
     context.log.info(f"Convolving raster census place")
     convolution_kernel_size = constants["USA_CONVOLUTION_KERNEL_SIZE"]
     convolution_kernel_decay = constants["USA_CONVOLUTION_KERNEL_DECAY"]

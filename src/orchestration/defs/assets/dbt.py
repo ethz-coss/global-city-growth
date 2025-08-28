@@ -1,7 +1,8 @@
 import dagster as dg
 from dagster_dbt import dbt_assets, DbtCliResource, DagsterDbtTranslator
 
-from ..resources.resources import dbt_project
+from ..resources.resources import dbt_project, PostgresResource
+from .constants import constants
 
 class CustomizedDagsterDbtTranslator(DagsterDbtTranslator):
     def get_asset_key(self, dbt_resource_props):
@@ -15,8 +16,58 @@ class CustomizedDagsterDbtTranslator(DagsterDbtTranslator):
 
 @dbt_assets(
     manifest=dbt_project.manifest_path,
-    dagster_dbt_translator=CustomizedDagsterDbtTranslator()
+    dagster_dbt_translator=CustomizedDagsterDbtTranslator(),
+    exclude="incremental_example_table"
 )
 def dbt_warehouse(context: dg.AssetExecutionContext, dbt: DbtCliResource):
     yield from dbt.cli(["run"], context=context).stream()
 
+@dbt_assets(
+    manifest=dbt_project.manifest_path,
+    partitions_def=dg.StaticPartitionsDefinition([str(s) for s in constants['USA_PIXEL_THRESHOLDS']]),
+    select="cluster_base_geom",
+    dagster_dbt_translator=CustomizedDagsterDbtTranslator()
+)
+def cluster_base_geom(context: dg.AssetExecutionContext, dbt: DbtCliResource):
+    pixel_threshold = context.partition_key
+    context.log.info(f"pixel_threshold: {pixel_threshold}")
+    dbt_vars = {
+        "pixel_threshold": pixel_threshold
+    }
+    args = [ "run", "--vars", json.dumps(dbt_vars) ]
+    yield from dbt.cli(args, context=context).stream()
+
+## A DUMMY EXAMPLE OF AN INCREMENTAL TABLE TO BE REMOVED LATER
+# TODO: REMOVE THIS LATER
+import pandas as pd
+
+@dg.asset(
+    group_name="incremental_example",
+    kinds={"postgres"},
+)
+def my_example_asset(context: dg.AssetExecutionContext, postgres: PostgresResource):
+    my_table = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+    my_table = pd.DataFrame(my_table, columns=["a", "b", "c"])
+
+    engine = postgres.get_engine()
+    my_table.to_sql(name="my_example_asset", con=engine, if_exists="replace", index=False)
+
+my_vars = [1, 2, 3]
+partition_my_vars = dg.StaticPartitionsDefinition([str(s) for s in my_vars])
+import json
+
+@dbt_assets(
+    manifest=dbt_project.manifest_path,
+    partitions_def=partition_my_vars,
+    select="incremental_example_table",
+    dagster_dbt_translator=CustomizedDagsterDbtTranslator()
+)
+def incremental_example_table(context: dg.AssetExecutionContext, dbt: DbtCliResource):
+    my_var_value = context.partition_key
+    context.log.info(f"my_var_value: {my_var_value}")
+    dbt_vars = {
+        "my_var": my_var_value
+    }
+    args = [ "run", "--vars", json.dumps(dbt_vars) ]
+    yield from dbt.cli(args, context=context).stream()
+   

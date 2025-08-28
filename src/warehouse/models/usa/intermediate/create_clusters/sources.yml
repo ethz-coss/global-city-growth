@@ -3,3 +3,4 @@ sources:
     schema: public
     tables:
       - name: usa_raster_census_place_convolved
+      - name: my_example_asset
