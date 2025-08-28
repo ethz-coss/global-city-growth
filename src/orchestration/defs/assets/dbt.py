@@ -17,7 +17,7 @@ class CustomizedDagsterDbtTranslator(DagsterDbtTranslator):
 @dbt_assets(
     manifest=dbt_project.manifest_path,
     dagster_dbt_translator=CustomizedDagsterDbtTranslator(),
-    exclude="incremental_example_table"
+    exclude="incremental_example_table usa_cluster_base_geom"
 )
 def dbt_warehouse(context: dg.AssetExecutionContext, dbt: DbtCliResource):
     yield from dbt.cli(["run"], context=context).stream()
@@ -25,10 +25,10 @@ def dbt_warehouse(context: dg.AssetExecutionContext, dbt: DbtCliResource):
 @dbt_assets(
     manifest=dbt_project.manifest_path,
     partitions_def=dg.StaticPartitionsDefinition([str(s) for s in constants['USA_PIXEL_THRESHOLDS']]),
-    select="cluster_base_geom",
+    select="usa_cluster_base_geom",
     dagster_dbt_translator=CustomizedDagsterDbtTranslator()
 )
-def cluster_base_geom(context: dg.AssetExecutionContext, dbt: DbtCliResource):
+def usa_cluster_base_geom(context: dg.AssetExecutionContext, dbt: DbtCliResource):
     pixel_threshold = context.partition_key
     context.log.info(f"pixel_threshold: {pixel_threshold}")
     dbt_vars = {
@@ -42,12 +42,12 @@ def cluster_base_geom(context: dg.AssetExecutionContext, dbt: DbtCliResource):
 import pandas as pd
 
 @dg.asset(
-    group_name="incremental_example",
+    group_name="usa_intermediate_incremental_example",
     kinds={"postgres"},
 )
 def my_example_asset(context: dg.AssetExecutionContext, postgres: PostgresResource):
-    my_table = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
-    my_table = pd.DataFrame(my_table, columns=["a", "b", "c"])
+    my_table = [['id1', 1, 2, 3], ['id2', 4, 5, 6], ['id3', 7, 8, 9]]
+    my_table = pd.DataFrame(my_table, columns=["id", "a", "b", "c"])
 
     engine = postgres.get_engine()
     my_table.to_sql(name="my_example_asset", con=engine, if_exists="replace", index=False)
@@ -56,6 +56,7 @@ my_vars = [1, 2, 3]
 partition_my_vars = dg.StaticPartitionsDefinition([str(s) for s in my_vars])
 import json
 
+# TODO: REMOVE THIS LATER AND REMEBER TO REMOVE THE TABLE IN THE DBT PROJECT: src/warehouse/models/usa/intermediate/incremental_example/incremental_example_table.sql
 @dbt_assets(
     manifest=dbt_project.manifest_path,
     partitions_def=partition_my_vars,

@@ -28,6 +28,15 @@ class TableNameManager:
     
     def usa_raster_census_place_convolved(self) -> str:
         return f"usa_raster_census_place_convolved"
+    
+    def usa_cluster_base_geom(self) -> str:
+        return "usa_cluster_base_geom"
+    
+    def usa_cluster_base_matching(self) -> str:
+        return "usa_cluster_base_matching"
+    
+    def usa_crosswalk_component_id_to_cluster_id(self) -> str:
+        return "usa_crosswalk_component_id_to_cluster_id"
 
 def _extract_as_dataframe(connected_components: List[List[str]]) -> pd.DataFrame:
     data = []
@@ -158,3 +167,13 @@ def usa_raster_census_place_convolved(context: dg.AssetExecutionContext, postgre
         con.execute(text(sql_query))
         for year in usa_years:
             con.execute(text(f"DROP TABLE {temp_year_table_name}_{year}"))
+
+
+@dg.asset(
+    deps=[TableNameManager().usa_cluster_base_matching()],
+    kinds={'postgres'},
+    group_name="usa_intermediate_create_clusters"
+)
+def usa_crosswalk_component_id_to_cluster_id(context: dg.AssetExecutionContext, postgres: PostgresResource):
+    context.log.info(f"Creating cluster base matching")
+    pass
