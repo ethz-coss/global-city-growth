@@ -9,6 +9,7 @@ from pydantic import PrivateAttr
 import json
 
 from .paths import DataPaths
+from .tables import TableNames
 from ..assets.constants import constants
 
 class StorageResource(ConfigurableResource):
@@ -18,6 +19,13 @@ class StorageResource(ConfigurableResource):
     @property
     def paths(self) -> DataPaths:
         return DataPaths.from_root(Path(self.data_root))
+    
+class TableNamesResource(ConfigurableResource):
+    """A resource for accessing tables."""
+    
+    @property
+    def names(self) -> TableNames:
+        return TableNames()
 
 
 class PostgresResource(ConfigurableResource):
@@ -45,7 +53,7 @@ class PostgresResource(ConfigurableResource):
             self._engine = sqlalchemy.create_engine(self.sqlalchemy_connection_string)
         return self._engine
     
-    
+
 dbt_project = DbtProject(
   project_dir='src/warehouse'
 )
@@ -63,6 +71,8 @@ duckdb_resource = DuckDBResource(
 storage_resource = StorageResource(
     data_root=dg.EnvVar("DATA_ROOT_PATH")
 )
+
+table_names_resource = TableNamesResource()
 
 postgres_resource = PostgresResource(
     host=dg.EnvVar("POSTGRES_HOST"),

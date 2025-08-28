@@ -4,43 +4,11 @@ from dataclasses import dataclass
 import jinja2
 import os
 
-from ..resources.resources import StorageResource
+from ..resources.resources import StorageResource, TableNamesResource
 from .constants import constants
 
 IPUMS_HISTORICAL_YEARS = constants["IPUMS_HISTORICAL_YEARS"]
 ipums_historical_years_partitions = dg.StaticPartitionsDefinition([str(y) for y in IPUMS_HISTORICAL_YEARS])
-
-
-@dataclass(frozen=True)
-class TableNameManager:
-    def ipums_full_count_table_raw(self, year: int) -> str:
-        return f"ipums_full_count_raw_{year}" # TODO: change name to ipums_full_count_table_{year}_raw
-    
-    def ipums_full_count_table_clean(self, year: int) -> str:
-        return f"ipums_full_count_clean_{year}"
-    
-    def crosswalk_hist_id_to_hist_census_place_table_raw(self, year: int) -> str:
-        return f"crosswalk_hist_id_to_hist_census_place_raw_{year}" # TODO: change name to crosswalk_hist_id_to_hist_census_place_table_{year}_raw
-    
-    def crosswalk_hist_id_to_hist_census_place_table_clean(self, year: int) -> str:
-        return f"crosswalk_hist_id_to_hist_census_place_clean_{year}"
-    
-    def ipums_full_count_census_with_census_place_id(self, year: int) -> str:
-        return f"ipums_full_count_census_with_census_place_id_{year}"
-    
-    def ipums_full_count_census_with_census_place_id_all_years(self) -> str:
-        return f"ipums_full_count_census_with_census_place_id_all_years"
-    
-    def ipums_full_count_individual_migration(self) -> str:
-        return f"ipums_full_count_individual_migration"
-    
-    def census_place_population(self) -> str:
-        return f"census_place_population"
-    
-    def census_place_migration(self) -> str:
-        return f"census_place_migration"
-
-
 
 
 def _execute_sql_query_and_return_num_rows(duckdb: DuckDBResource, sql_query: str, table_name: str):
@@ -70,10 +38,10 @@ def _load_table_into_duckdb(duckdb: DuckDBResource, table_name: str, file_path: 
     group_name="ipums_full_count_bronze",
     pool="duckdb_write"
 )
-def ipums_full_count_table_raw(context: dg.AssetExecutionContext, duckdb: DuckDBResource, storage: StorageResource):
+def ipums_full_count_table_raw(context: dg.AssetExecutionContext, duckdb: DuckDBResource, storage: StorageResource, tables: TableNamesResource):
     """An asset for the full count census data for a given year (raw)."""
     year = context.partition_key
-    table_name = TableNameManager().ipums_full_count_table_raw(year)
+    table_name = tables.names.usa.ipums_full_count.ipums_full_count_table_raw(year)
     file_path = storage.paths.usa.ipums_full_count.ipums_full_count(year)
 
     context.log.info(f"Loading IPUMS full count data for {year} into table {table_name}")
@@ -87,11 +55,11 @@ def ipums_full_count_table_raw(context: dg.AssetExecutionContext, duckdb: DuckDB
     group_name="ipums_full_count_silver",
     pool="duckdb_write"
 )
-def ipums_full_count_table_clean(context: dg.AssetExecutionContext, duckdb: DuckDBResource):
+def ipums_full_count_table_clean(context: dg.AssetExecutionContext, duckdb: DuckDBResource, tables: TableNamesResource):
     """An asset for the full count census data for a given year (clean)."""
     year = context.partition_key
-    raw_table_name = TableNameManager().ipums_full_count_table_raw(year)
-    clean_table_name = TableNameManager().ipums_full_count_table_clean(year)
+    raw_table_name = tables.names.usa.ipums_full_count.ipums_full_count_table_raw(year)
+    clean_table_name = tables.names.usa.ipums_full_count.ipums_full_count_table_clean(year)
 
     context.log.info(f"Cleaning IPUMS full count data for {year} into table {clean_table_name}")
 
@@ -115,10 +83,10 @@ def ipums_full_count_table_clean(context: dg.AssetExecutionContext, duckdb: Duck
     group_name="ipums_full_count_bronze",
     pool="duckdb_write"
 )
-def crosswalk_hist_id_to_hist_census_place_table_raw(context: dg.AssetExecutionContext, duckdb: DuckDBResource, storage: StorageResource):
+def crosswalk_hist_id_to_hist_census_place_table_raw(context: dg.AssetExecutionContext, duckdb: DuckDBResource, storage: StorageResource, tables: TableNamesResource):
     """An asset for the crosswalk between full count census hist_id and census place id for a given year (raw)."""
     year = context.partition_key
-    table_name = TableNameManager().crosswalk_hist_id_to_hist_census_place_table_raw(year)
+    table_name = tables.names.usa.ipums_full_count.crosswalk_hist_id_to_hist_census_place_table_raw(year)
     file_path = storage.paths.usa.census_place_project.crosswalk_hist_id_to_hist_census_place(year)
 
     context.log.info(f"Loading crosswalk data for {year} into table {table_name}")
@@ -133,11 +101,11 @@ def crosswalk_hist_id_to_hist_census_place_table_raw(context: dg.AssetExecutionC
     group_name="ipums_full_count_silver",
     pool="duckdb_write"
 )
-def crosswalk_hist_id_to_hist_census_place_table_clean(context: dg.AssetExecutionContext, duckdb: DuckDBResource):
+def crosswalk_hist_id_to_hist_census_place_table_clean(context: dg.AssetExecutionContext, duckdb: DuckDBResource, tables: TableNamesResource):
     """An asset for the crosswalk between full count census hist_id and census place id for a given year (clean)."""
     year = context.partition_key
-    raw_table_name = TableNameManager().crosswalk_hist_id_to_hist_census_place_table_raw(year)
-    clean_table_name = TableNameManager().crosswalk_hist_id_to_hist_census_place_table_clean(year)
+    raw_table_name = tables.names.usa.ipums_full_count.crosswalk_hist_id_to_hist_census_place_table_raw(year)
+    clean_table_name = tables.names.usa.ipums_full_count.crosswalk_hist_id_to_hist_census_place_table_clean(year)
 
     context.log.info(f"Cleaning crosswalk data for {year} into table {clean_table_name}")
 
@@ -160,12 +128,12 @@ def crosswalk_hist_id_to_hist_census_place_table_clean(context: dg.AssetExecutio
     group_name="ipums_full_count_silver",
     pool="duckdb_write"
 )  
-def ipums_full_count_census_with_census_place_id(context: dg.AssetExecutionContext, duckdb: DuckDBResource):
+def ipums_full_count_census_with_census_place_id(context: dg.AssetExecutionContext, duckdb: DuckDBResource, tables: TableNamesResource):
     """An asset for the full count census data with census place id for a given year."""
     year = context.partition_key
-    ipums_full_count_table_name = TableNameManager().ipums_full_count_table_clean(year)
-    crosswalk_hist_id_to_hist_census_place_table_name = TableNameManager().crosswalk_hist_id_to_hist_census_place_table_clean(year)
-    table_name = TableNameManager().ipums_full_count_census_with_census_place_id(year)
+    ipums_full_count_table_name = tables.names.usa.ipums_full_count.ipums_full_count_table_clean(year)
+    crosswalk_hist_id_to_hist_census_place_table_name = tables.names.usa.ipums_full_count.crosswalk_hist_id_to_hist_census_place_table_clean(year)
+    table_name = tables.names.usa.ipums_full_count.ipums_full_count_census_with_census_place_id(year)
 
     context.log.info(f"Joining IPUMS full count data with census place id for {year}")
 
@@ -191,9 +159,9 @@ def ipums_full_count_census_with_census_place_id(context: dg.AssetExecutionConte
     group_name="ipums_full_count_silver",
     pool="duckdb_write"
 )
-def ipums_full_count_census_with_census_place_id_all_years(context: dg.AssetExecutionContext, duckdb: DuckDBResource):
+def ipums_full_count_census_with_census_place_id_all_years(context: dg.AssetExecutionContext, duckdb: DuckDBResource, tables: TableNamesResource):
     """An asset for the full count census data with census place id for all years."""
-    union_table_name = TableNameManager().ipums_full_count_census_with_census_place_id_all_years()
+    union_table_name = tables.names.usa.ipums_full_count.ipums_full_count_census_with_census_place_id_all_years()
 
     context.log.info(f"Joining IPUMS full count data with census place id for all years")
 
@@ -214,7 +182,7 @@ def ipums_full_count_census_with_census_place_id_all_years(context: dg.AssetExec
 
     tables = [
         {
-            "name": TableNameManager().ipums_full_count_census_with_census_place_id(year),
+            "name": tables.names.usa.ipums_full_count.ipums_full_count_census_with_census_place_id(year),
             "year": year
         }
         for year in IPUMS_HISTORICAL_YEARS
@@ -234,10 +202,10 @@ def ipums_full_count_census_with_census_place_id_all_years(context: dg.AssetExec
     group_name="ipums_full_count_silver",
     pool="duckdb_write"
 )
-def ipums_full_count_individual_migration(context: dg.AssetExecutionContext, duckdb: DuckDBResource):
+def ipums_full_count_individual_migration(context: dg.AssetExecutionContext, duckdb: DuckDBResource, tables: TableNamesResource):
     """An asset for the individual migration data for all years."""
-    ipums_full_count_census_with_census_place_id_all_years_table_name = TableNameManager().ipums_full_count_census_with_census_place_id_all_years()
-    table_name = TableNameManager().ipums_full_count_individual_migration()
+    ipums_full_count_census_with_census_place_id_all_years_table_name = tables.names.usa.ipums_full_count.ipums_full_count_census_with_census_place_id_all_years()
+    table_name = tables.names.usa.ipums_full_count.ipums_full_count_individual_migration()
 
     context.log.info(f"Calculating individual migration data for all years")
 
@@ -297,10 +265,10 @@ def ipums_full_count_individual_migration(context: dg.AssetExecutionContext, duc
     group_name="ipums_full_count_gold",
     pool="duckdb_write"
 )
-def census_place_population(context: dg.AssetExecutionContext, duckdb: DuckDBResource):
+def census_place_population(context: dg.AssetExecutionContext, duckdb: DuckDBResource, tables: TableNamesResource):
     """An asset for the census place population for all years."""
-    census_place_population_table_name = TableNameManager().census_place_population()
-    ipums_full_count_census_with_census_place_id_all_years_table_name = TableNameManager().ipums_full_count_census_with_census_place_id_all_years()
+    census_place_population_table_name = tables.names.usa.ipums_full_count.census_place_population()
+    ipums_full_count_census_with_census_place_id_all_years_table_name = tables.names.usa.ipums_full_count.ipums_full_count_census_with_census_place_id_all_years()
 
     context.log.info(f"Calculating census place population for all years")
 
@@ -325,10 +293,10 @@ def census_place_population(context: dg.AssetExecutionContext, duckdb: DuckDBRes
     group_name="ipums_full_count_gold",
     pool="duckdb_write"
 )
-def census_place_migration(context: dg.AssetExecutionContext, duckdb: DuckDBResource):
+def census_place_migration(context: dg.AssetExecutionContext, duckdb: DuckDBResource, tables: TableNamesResource):
     """An asset for the census place migration for all years."""
-    ipums_full_count_individual_migration_table_name = TableNameManager().ipums_full_count_individual_migration()
-    census_place_migration_table_name = TableNameManager().census_place_migration()
+    ipums_full_count_individual_migration_table_name = tables.names.usa.ipums_full_count.ipums_full_count_individual_migration()
+    census_place_migration_table_name = tables.names.usa.ipums_full_count.census_place_migration()
 
     context.log.info(f"Calculating census place migration for all years")
 

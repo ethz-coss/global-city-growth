@@ -7,29 +7,9 @@ import pandas as pd
 from sqlalchemy import text
 import geopandas as gpd
 
-from ..resources.resources import PostgresResource, StorageResource
-from .ipums_full_count import TableNameManager as IpumsFullCountTableNameManager
+from ..resources.resources import PostgresResource, StorageResource, TableNamesResource
 from .ipums_full_count import census_place_migration as census_place_migration_duckdb, census_place_population as census_place_population_duckdb
 
-
-class SourceTableNameManager:
-    def usa_hist_census_place_population(self) -> str:
-        return "usa_hist_census_place_population"
-    
-    def usa_hist_census_place_migration(self) -> str:
-        return "usa_hist_census_place_migration"
-    
-    def usa_nhgis_census_place_population_raw_1990_2020(self) -> str:
-        return "usa_nhgis_census_place_population_1990_2020_raw"
-    
-    def usa_nhgis_census_place_geom_all_years_raw(self) -> str:
-        return "usa_nhgis_census_place_geom_all_years_raw"
-    
-    def usa_hist_census_place_geom_raw(self) -> str:
-        return "usa_hist_census_place_geom_raw"
-    
-    def usa_states_geom_raw(self) -> str:
-        return "usa_states_geom_raw"
 
 
 def _copy_table_from_duckdb_to_postgres(table_duckdb: str, table_postgres: str, duckdb: DuckDBResource, postgres: PostgresResource):
@@ -53,11 +33,11 @@ def _copy_table_from_duckdb_to_postgres(table_duckdb: str, table_postgres: str, 
     group_name="usa_raw",
     pool="duckdb_write"
 )
-def usa_hist_census_place_population(context: dg.AssetExecutionContext, duckdb: DuckDBResource, postgres: PostgresResource):
+def usa_hist_census_place_population(context: dg.AssetExecutionContext, duckdb: DuckDBResource, postgres: PostgresResource, tables: TableNamesResource):
     context.log.info(f"Copying census place population from duckdb to postgres")
     _copy_table_from_duckdb_to_postgres(
-        table_duckdb=IpumsFullCountTableNameManager().census_place_population(),
-        table_postgres=SourceTableNameManager().usa_hist_census_place_population(),
+        table_duckdb=tables.names.usa.ipums_full_count.census_place_population(),
+        table_postgres=tables.names.usa.sources.usa_hist_census_place_population(),
         duckdb=duckdb,
         postgres=postgres
     )
@@ -69,11 +49,11 @@ def usa_hist_census_place_population(context: dg.AssetExecutionContext, duckdb: 
     group_name="usa_raw",
     pool="duckdb_write"
 )
-def usa_hist_census_place_migration(context: dg.AssetExecutionContext, duckdb: DuckDBResource, postgres: PostgresResource):
+def usa_hist_census_place_migration(context: dg.AssetExecutionContext, duckdb: DuckDBResource, postgres: PostgresResource, tables: TableNamesResource):
     context.log.info(f"Copying census place migration from duckdb to postgres")
     _copy_table_from_duckdb_to_postgres(
-        table_duckdb=IpumsFullCountTableNameManager().census_place_migration(),
-        table_postgres=SourceTableNameManager().usa_hist_census_place_migration(),
+        table_duckdb=tables.names.usa.ipums_full_count.census_place_migration(),
+        table_postgres=tables.names.usa.sources.usa_hist_census_place_migration(),
         duckdb=duckdb,
         postgres=postgres
     )
@@ -83,11 +63,11 @@ def usa_hist_census_place_migration(context: dg.AssetExecutionContext, duckdb: D
     kinds={'postgres'},
     group_name="usa_raw"
 )
-def usa_nhgis_census_place_population_1990_2020_raw(context: dg.AssetExecutionContext, postgres: PostgresResource, storage: StorageResource):
+def usa_nhgis_census_place_population_1990_2020_raw(context: dg.AssetExecutionContext, postgres: PostgresResource, storage: StorageResource, tables: TableNamesResource):
     context.log.info(f"Copying census place population from nhgis to postgres")
     data = pd.read_csv(storage.paths.usa.nhgis.census_place_pop_1990_2020(), encoding='latin1')
     data.to_sql(
-        name=SourceTableNameManager().usa_nhgis_census_place_population_raw_1990_2020(),
+        name=tables.names.usa.sources.usa_nhgis_census_place_population_raw_1990_2020(),
         con=postgres.get_engine(),
         if_exists="replace",
         index=False,
@@ -98,7 +78,7 @@ def usa_nhgis_census_place_population_1990_2020_raw(context: dg.AssetExecutionCo
     kinds={'postgres'},
     group_name="usa_raw"
 )
-def usa_nhgis_census_place_geom_all_years_raw(context: dg.AssetExecutionContext, postgres: PostgresResource, storage: StorageResource):
+def usa_nhgis_census_place_geom_all_years_raw(context: dg.AssetExecutionContext, postgres: PostgresResource, storage: StorageResource, tables: TableNamesResource):
     context.log.info(f"Copying census place geom from nhgis to postgres for year")
     census_place_geom_gdf_list = []
     for year in range(1900, 2011, 10):
@@ -108,7 +88,7 @@ def usa_nhgis_census_place_geom_all_years_raw(context: dg.AssetExecutionContext,
     census_place_geom_gdf = pd.concat(census_place_geom_gdf_list)
     census_place_geom_gdf = gpd.GeoDataFrame(census_place_geom_gdf, geometry='geometry')
     census_place_geom_gdf.to_postgis(
-        name=SourceTableNameManager().usa_nhgis_census_place_geom_all_years_raw(),
+        name=tables.names.usa.sources.usa_nhgis_census_place_geom_all_years_raw(),
         con=postgres.get_engine(),
         if_exists="replace",
         index=False,
@@ -120,11 +100,11 @@ def usa_nhgis_census_place_geom_all_years_raw(context: dg.AssetExecutionContext,
     kinds={'postgres'},
     group_name="usa_raw"
 )
-def usa_hist_census_place_geom_raw(context: dg.AssetExecutionContext, postgres: PostgresResource, storage: StorageResource):
+def usa_hist_census_place_geom_raw(context: dg.AssetExecutionContext, postgres: PostgresResource, storage: StorageResource, tables: TableNamesResource):
     context.log.info(f"Copying census place geom from hist to postgres")
     census_place_geom_df = pd.read_csv(storage.paths.usa.census_place_project.hist_census_place_geom())
     census_place_geom_df.to_sql(
-        name=SourceTableNameManager().usa_hist_census_place_geom_raw(),
+        name=tables.names.usa.sources.usa_hist_census_place_geom_raw(),
         con=postgres.get_engine(),
         if_exists="replace",
         index=False,
@@ -137,11 +117,11 @@ def usa_hist_census_place_geom_raw(context: dg.AssetExecutionContext, postgres: 
     kinds={'postgres'},
     group_name="usa_raw"
 )
-def usa_states_geom_raw(context: dg.AssetExecutionContext, postgres: PostgresResource, storage: StorageResource):
+def usa_states_geom_raw(context: dg.AssetExecutionContext, postgres: PostgresResource, storage: StorageResource, tables: TableNamesResource):
     context.log.info(f"Copying states geom from hist to postgres")
     states_geom_gdf = gpd.read_file(storage.paths.usa.misc.usa_state_geom())
     states_geom_gdf.to_postgis(
-        name=SourceTableNameManager().usa_states_geom_raw(),
+        name=tables.names.usa.sources.usa_states_geom_raw(),
         con=postgres.get_engine(),
         if_exists="replace",
         index=False,
