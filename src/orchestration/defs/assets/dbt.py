@@ -26,7 +26,8 @@ def dbt_warehouse(context: dg.AssetExecutionContext, dbt: DbtCliResource):
     manifest=dbt_project.manifest_path,
     partitions_def=dg.StaticPartitionsDefinition([str(s) for s in constants['USA_PIXEL_THRESHOLDS']]),
     select="usa_cluster_base_geom",
-    dagster_dbt_translator=CustomizedDagsterDbtTranslator()
+    dagster_dbt_translator=CustomizedDagsterDbtTranslator(),
+    pool="duckdb_write"
 )
 def usa_cluster_base_geom(context: dg.AssetExecutionContext, dbt: DbtCliResource):
     pixel_threshold = context.partition_key
