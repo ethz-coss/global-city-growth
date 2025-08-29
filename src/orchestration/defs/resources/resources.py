@@ -74,6 +74,8 @@ storage_resource = StorageResource(
 
 table_names_resource = TableNamesResource()
 
+pipes_subprocess_resource = dg.PipesSubprocessClient()
+
 postgres_resource = PostgresResource(
     host=dg.EnvVar("POSTGRES_HOST"),
     port=dg.EnvVar("POSTGRES_PORT"),

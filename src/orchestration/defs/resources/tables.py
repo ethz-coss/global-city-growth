@@ -94,6 +94,29 @@ class USA:
     final: USAFinal = USAFinal()
 
 
+class WorldSources:
+    def world_country_borders_raw(self) -> str:
+        return "world_country_borders_raw"
+    
+    def world_owid_urbanization_raw(self) -> str:
+        return "world_owid_urbanization_raw"
+    
+    def world_raster_ghsl_pop(self, year: int) -> str:
+        return f"world_raster_ghsl_pop_{year}"
+
+    def world_raster_ghsl_smod(self, year: int) -> str:
+        return f"world_raster_ghsl_smod_{year}"
+    
+    def world_crosswalk_cshapes_code_to_iso_code(self) -> str:
+        return "world_crosswalk_cshapes_code_to_iso_code"
+
+
+@dataclass(frozen=True)
+class World:
+    sources: WorldSources = WorldSources()
+
+
 @dataclass(frozen=True)
 class TableNames:
     usa: USA = USA()
+    world: World = World()

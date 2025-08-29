@@ -1,0 +1,37 @@
+sources:
+  - name: ghsl
+    schema: public
+    tables:
+      - name: world_raster_ghsl_pop_1975
+      - name: world_raster_ghsl_pop_1980
+      - name: world_raster_ghsl_pop_1985
+      - name: world_raster_ghsl_pop_1990
+      - name: world_raster_ghsl_pop_1995
+      - name: world_raster_ghsl_pop_2000
+      - name: world_raster_ghsl_pop_2005
+      - name: world_raster_ghsl_pop_2010
+      - name: world_raster_ghsl_pop_2015
+      - name: world_raster_ghsl_pop_2020
+      - name: world_raster_ghsl_pop_2025
+
+      - name: world_raster_ghsl_smod_1975
+      - name: world_raster_ghsl_smod_1980
+      - name: world_raster_ghsl_smod_1985
+      - name: world_raster_ghsl_smod_1990
+      - name: world_raster_ghsl_smod_1995
+      - name: world_raster_ghsl_smod_2000
+      - name: world_raster_ghsl_smod_2005
+      - name: world_raster_ghsl_smod_2010
+      - name: world_raster_ghsl_smod_2015
+      - name: world_raster_ghsl_smod_2020
+      - name: world_raster_ghsl_smod_2025
+
+  - name: cshapes
+    schema: public
+    tables:
+      - name: world_country_borders_raw
+
+  - name: owid
+    schema: public
+    tables:
+      - name: world_owid_urbanization_raw

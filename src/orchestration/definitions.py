@@ -1,17 +1,19 @@
 from dagster import Definitions, in_process_executor
 
 from .defs.assets.ipums_full_count import ipums_full_count_table_raw, crosswalk_hist_id_to_hist_census_place_table_raw, ipums_full_count_table_clean, crosswalk_hist_id_to_hist_census_place_table_clean, ipums_full_count_census_with_census_place_id, ipums_full_count_census_with_census_place_id_all_years, census_place_population, ipums_full_count_individual_migration, census_place_migration
-from .defs.assets.sources import usa_hist_census_place_population, usa_hist_census_place_migration, usa_nhgis_census_place_population_1990_2020_raw, usa_nhgis_census_place_geom_all_years_raw, usa_hist_census_place_geom_raw, usa_states_geom_raw
+from .defs.assets.usa_sources import usa_hist_census_place_population, usa_hist_census_place_migration, usa_nhgis_census_place_population_1990_2020_raw, usa_nhgis_census_place_geom_all_years_raw, usa_hist_census_place_geom_raw, usa_states_geom_raw
 from .defs.assets.dbt import dbt_warehouse, my_example_asset, incremental_example_table
 from .defs.assets.usa import usa_crosswalk_nhgis_census_place_to_connected_component, usa_raster_census_place_convolved, usa_crosswalk_component_id_to_cluster_id
 from .defs.assets.figures import figure_3_size_growth_curve
+from .defs.assets.world_sources import world_ghsl_pop, world_ghsl_smod, world_country_borders_raw, world_owid_urbanization_raw, world_crosswalk_cshapes_code_to_iso_code
 
-from .defs.resources.resources import duckdb_resource, storage_resource, postgres_resource, dbt_resource, table_names_resource
+from .defs.resources.resources import duckdb_resource, storage_resource, postgres_resource, dbt_resource, table_names_resource, pipes_subprocess_resource
 
 
 defs = Definitions(
     assets=[
-        # IPUMS Full Count
+        # USA
+        ## IPUMS Full Count
         ipums_full_count_table_raw,
         crosswalk_hist_id_to_hist_census_place_table_raw,
         ipums_full_count_table_clean,
@@ -22,33 +24,44 @@ defs = Definitions(
         census_place_population,
         census_place_migration,
 
-        # USA Bronze
+        ## USA Bronze
         usa_hist_census_place_population,
         usa_hist_census_place_migration,
         usa_nhgis_census_place_population_1990_2020_raw,
         usa_nhgis_census_place_geom_all_years_raw,
         usa_hist_census_place_geom_raw,
         usa_states_geom_raw,
-        
-         # DBT
-        dbt_warehouse,
-        my_example_asset,
-        incremental_example_table,
 
-        # USA Intermediate
+        ## USA Intermediate
         usa_crosswalk_nhgis_census_place_to_connected_component,
         usa_raster_census_place_convolved,
         usa_crosswalk_component_id_to_cluster_id,
 
-        # Figures
-        figure_3_size_growth_curve
+        ## Figures
+        figure_3_size_growth_curve,
+        
+        # World
+        ## World Raw
+        world_ghsl_pop,
+        world_ghsl_smod,
+        world_country_borders_raw,
+        world_owid_urbanization_raw,
+        world_crosswalk_cshapes_code_to_iso_code,
+        
+        # Shared
+        ## DBT
+        dbt_warehouse,
+        my_example_asset,
+        incremental_example_table,
+
     ],
     resources={
         "duckdb": duckdb_resource,
         "storage": storage_resource,
         "postgres": postgres_resource,
         "dbt": dbt_resource,
-        "tables": table_names_resource
+        "tables": table_names_resource,
+        "bash": pipes_subprocess_resource
     },
     executor=in_process_executor
 )
