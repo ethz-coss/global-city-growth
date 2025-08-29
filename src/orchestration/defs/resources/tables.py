@@ -98,8 +98,8 @@ class WorldSources:
     def world_country_borders_raw(self) -> str:
         return "world_country_borders_raw"
     
-    def world_owid_urbanization_raw(self) -> str:
-        return "world_owid_urbanization_raw"
+    def world_urbanization_raw(self) -> str:
+        return "world_urbanization_raw"
     
     def world_raster_ghsl_pop(self, year: int) -> str:
         return f"world_raster_ghsl_pop_{year}"

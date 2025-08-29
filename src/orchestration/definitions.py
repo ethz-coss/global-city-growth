@@ -5,7 +5,7 @@ from .defs.assets.usa_sources import usa_hist_census_place_population, usa_hist_
 from .defs.assets.dbt import dbt_warehouse, my_example_asset, incremental_example_table
 from .defs.assets.usa import usa_crosswalk_nhgis_census_place_to_connected_component, usa_raster_census_place_convolved, usa_crosswalk_component_id_to_cluster_id
 from .defs.assets.figures import figure_3_size_growth_curve
-from .defs.assets.world_sources import world_ghsl_pop, world_ghsl_smod, world_country_borders_raw, world_owid_urbanization_raw, world_crosswalk_cshapes_code_to_iso_code
+from .defs.assets.world_sources import world_ghsl_pop, world_ghsl_smod, world_country_borders_raw, world_urbanization_raw, world_crosswalk_cshapes_code_to_iso_code
 
 from .defs.resources.resources import duckdb_resource, storage_resource, postgres_resource, dbt_resource, table_names_resource, pipes_subprocess_resource
 
@@ -45,7 +45,7 @@ defs = Definitions(
         world_ghsl_pop,
         world_ghsl_smod,
         world_country_borders_raw,
-        world_owid_urbanization_raw,
+        world_urbanization_raw,
         world_crosswalk_cshapes_code_to_iso_code,
         
         # Shared

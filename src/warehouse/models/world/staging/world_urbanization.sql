@@ -2,7 +2,7 @@ WITH clean_variable_names AS (
     SELECT  "Code" AS country,
             "Year" AS year,
             "Share of population residing in urban areas (HYDE estimates and" AS urban_population_share
-    FROM {{ source('owid', 'world_owid_urbanization_raw') }}
+    FROM {{ source('owid', 'world_urbanization_raw') }}
 ),
 drop_non_country_entities AS (
     SELECT country, year, urban_population_share

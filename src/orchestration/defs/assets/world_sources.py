@@ -93,13 +93,13 @@ def world_crosswalk_cshapes_code_to_iso_code(context: dg.AssetExecutionContext, 
     kinds={'postgres'},
     group_name="world_raw"
 )
-def world_owid_urbanization_raw(context: dg.AssetExecutionContext, postgres: PostgresResource, storage: StorageResource, tables: TableNamesResource):
+def world_urbanization_raw(context: dg.AssetExecutionContext, postgres: PostgresResource, storage: StorageResource, tables: TableNamesResource):
     urbanization_path = storage.paths.world.owid.urbanization()
     context.log.info(f"Copying urbanization from {urbanization_path}")
 
     urbanization_df = pd.read_csv(urbanization_path)
     urbanization_df.to_sql(
-        name=tables.names.world.sources.world_owid_urbanization_raw(),
+        name=tables.names.world.sources.world_urbanization_raw(),
         con=postgres.get_engine(),
         schema='public',
         index=False,

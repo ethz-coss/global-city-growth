@@ -34,4 +34,4 @@ sources:
   - name: owid
     schema: public
     tables:
-      - name: world_owid_urbanization_raw
+      - name: world_urbanization_raw
