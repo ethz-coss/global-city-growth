@@ -1,13 +1,7 @@
 import dagster as dg
-from dagster_duckdb import DuckDBResource
-from dataclasses import dataclass
-import jinja2
 import os
 import pandas as pd
-from sqlalchemy import text
 import geopandas as gpd
-import subprocess
-from typing import List
 
 from ..resources.resources import PostgresResource, StorageResource, TableNamesResource
 from .constants import constants

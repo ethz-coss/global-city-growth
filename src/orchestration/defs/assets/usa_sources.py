@@ -1,8 +1,6 @@
 import dagster as dg
 from dagster_duckdb import DuckDBResource
 from dataclasses import dataclass
-import jinja2
-import os
 import pandas as pd
 from sqlalchemy import text
 import geopandas as gpd

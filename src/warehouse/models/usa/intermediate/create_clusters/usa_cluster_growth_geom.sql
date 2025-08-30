@@ -4,7 +4,7 @@
     ]
 )}}
 
-{% set matching_table = source('matching', 'usa_crosswalk_component_id_to_cluster_id') %}
+{% set crosswalk_table = source('matching', 'usa_crosswalk_component_id_to_cluster_id') %}
 {% set cluster_base_geom_table = ref('usa_cluster_base_geom') %}
 
-{{ create_cluster_growth_from_cluster_base(cluster_base_geom_table, matching_table) }}
+{{ create_cluster_growth_from_cluster_base(cluster_base_geom_table, crosswalk_table) }}

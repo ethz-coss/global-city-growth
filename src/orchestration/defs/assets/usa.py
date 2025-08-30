@@ -5,7 +5,6 @@ import networkx as nx
 from typing import List, Tuple
 from sqlalchemy import text
 import numpy as np
-import jinja2
 import rioxarray as riox
 from rasterio.io import MemoryFile
 import sqlalchemy
@@ -146,15 +145,19 @@ def _year_pairs(years: List[int]) -> List[Tuple[int, int]]:
 )
 def usa_crosswalk_component_id_to_cluster_id(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource):
     context.log.info(f"Creating cluster base matching")
-
-    ipums_years = constants["IPUMS_HISTORICAL_YEARS"]
-    nhgis_years = constants["NHGIS_POP_YEARS"]
     urban_thresholds = constants["USA_URBAN_POPULATION_PIXEL_THRESHOLDS"]
+    engine = postgres.get_engine()
+    with engine.begin() as con:
+        q = f"""
+        SELECT DISTINCT y1, y2
+        FROM {tables.names.usa.transformations.usa_cluster_base_matching()}
+        """
+        year_pairs = pd.read_sql(q, con=con)
+        year_pairs = [(row['y1'], row['y2']) for _, row in year_pairs.iterrows()]
 
     years_threshold_pairs = []
-    all_year_pairs = _year_pairs(ipums_years) + _year_pairs(nhgis_years)
     for ut in urban_thresholds:
-        for y1, y2 in all_year_pairs:
+        for y1, y2 in year_pairs:
             years_threshold_pairs.append((y1, y2, ut))
 
 
