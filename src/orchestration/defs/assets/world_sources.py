@@ -11,6 +11,7 @@ from typing import List
 
 from ..resources.resources import PostgresResource, StorageResource, TableNamesResource
 from .constants import constants
+from ...utils import union_year_raster_tables_into_single_table
 
 
 ghsl_years_partition = dg.StaticPartitionsDefinition([str(y) for y in constants['GHSL_RASTER_YEARS']])
@@ -34,7 +35,7 @@ def _load_ghsl_raster(context: dg.AssetExecutionContext, bash: dg.PipesSubproces
     partitions_def=ghsl_years_partition,
     group_name="world_raw"
 )
-def world_ghsl_pop(context: dg.AssetExecutionContext, storage: StorageResource, tables: TableNamesResource, bash: dg.PipesSubprocessClient):
+def world_raster_ghsl_pop(context: dg.AssetExecutionContext, storage: StorageResource, tables: TableNamesResource, bash: dg.PipesSubprocessClient):
     year = context.partition_key
     context.log.info(f"Copying GHSL pop raster for year {year}")
     ghsl_pop_raster_path = storage.paths.world.ghsl.pop(year=year)
@@ -46,13 +47,41 @@ def world_ghsl_pop(context: dg.AssetExecutionContext, storage: StorageResource, 
     partitions_def=ghsl_years_partition,
     group_name="world_raw"
 )
-def world_ghsl_smod(context: dg.AssetExecutionContext, storage: StorageResource, tables: TableNamesResource, bash: dg.PipesSubprocessClient):
+def world_raster_ghsl_smod(context: dg.AssetExecutionContext, storage: StorageResource, tables: TableNamesResource, bash: dg.PipesSubprocessClient):
     year = context.partition_key
     context.log.info(f"Copying GHSL smod raster for year {year}")
     ghsl_smod_raster_path = storage.paths.world.ghsl.smod(year=year)
     table_name = tables.names.world.sources.world_raster_ghsl_smod(year=year)
     return _load_ghsl_raster(context=context, bash=bash, raster_path=ghsl_smod_raster_path, table_name=table_name)
 
+
+@dg.asset(
+    kinds={'postgres'},
+    group_name="world_raw"
+)
+def world_raster_ghsl_pop_all_years(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource):
+    context.log.info(f"Copying all GHSL pop rasters for all years in a single table")
+    union_year_raster_tables_into_single_table(
+        union_table_name=tables.names.world.sources.world_raster_ghsl_pop_all_years(),
+        get_year_raster_table_name=tables.names.world.sources.world_raster_ghsl_pop,
+        years=constants['GHSL_RASTER_YEARS'],
+        context=context,
+        con=postgres.get_engine()
+    )
+    
+@dg.asset(
+    kinds={'postgres'},
+    group_name="world_raw"
+)
+def world_raster_ghsl_smod_all_years(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource):
+    context.log.info(f"Copying all GHSL smod rasters for all years in a single table")
+    union_year_raster_tables_into_single_table(
+        union_table_name=tables.names.world.sources.world_raster_ghsl_smod_all_years(),
+        get_year_raster_table_name=tables.names.world.sources.world_raster_ghsl_smod,
+        years=constants['GHSL_RASTER_YEARS'],
+        context=context,
+        postgres=postgres
+    )
 
 @dg.asset(
     kinds={'postgres'},

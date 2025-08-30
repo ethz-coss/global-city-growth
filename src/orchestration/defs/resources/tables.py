@@ -64,9 +64,12 @@ class USATransformations:
     
     def usa_raster_census_place(self) -> str:
         return "usa_raster_census_place"
+
+    def usa_raster_census_place_convolved_year(self, year: int) -> str:
+        return f"usa_raster_census_place_convolved_{year}"
     
-    def usa_raster_census_place_convolved(self) -> str:
-        return f"usa_raster_census_place_convolved"
+    def usa_raster_census_place_convolved_all_years(self) -> str:
+        return f"usa_raster_census_place_convolved_all_years"
     
     def usa_cluster_base_geom(self) -> str:
         return "usa_cluster_base_geom"
@@ -106,6 +109,12 @@ class WorldSources:
 
     def world_raster_ghsl_smod(self, year: int) -> str:
         return f"world_raster_ghsl_smod_{year}"
+    
+    def world_raster_ghsl_pop_all_years(self) -> str:
+        return "world_raster_ghsl_pop_all_years"
+    
+    def world_raster_ghsl_smod_all_years(self) -> str:
+        return "world_raster_ghsl_smod_all_years"
     
     def world_crosswalk_cshapes_code_to_iso_code(self) -> str:
         return "world_crosswalk_cshapes_code_to_iso_code"

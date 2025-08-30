@@ -2,7 +2,7 @@ sources:
   - name: convolved_raster
     schema: public
     tables:
-      - name: usa_raster_census_place_convolved
+      - name: usa_raster_census_place_convolved_all_years
   
   - name: matching
     schema: public
