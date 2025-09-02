@@ -9,6 +9,7 @@ sources:
     schema: public
     tables:
       - name: world_country_borders_raw
+      - name: world_crosswalk_cshapes_code_to_iso_code
 
   - name: owid
     schema: public

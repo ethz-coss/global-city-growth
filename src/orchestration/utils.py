@@ -19,7 +19,8 @@ def union_year_raster_tables_into_single_table(union_table_name: str, get_year_r
             {% if not loop.last %}
                 UNION ALL
             {% endif %}
-        {% endfor %}
+        {% endfor %};
+        CREATE INDEX ON {{ table_name }} USING GIST (ST_ConvexHull(rast));
         """
 
     template = jinja2.Template(sql_query)
@@ -37,7 +38,7 @@ def union_year_raster_tables_into_single_table(union_table_name: str, get_year_r
     with postgres.get_engine().begin() as con:
         con.execute(text(sql_query))
 
-def extract_connected_components(edges_df: pd.DataFrame, left_col: str, right_col: str, output_id_col: str) -> pd.DataFrame:
+def extract_connected_components(edges_df: pd.DataFrame, left_col: str, right_col: str, output_id_col: str, context: dg.AssetExecutionContext) -> pd.DataFrame:
     edges = [(str(row[left_col]), str(row[right_col])) for _, row in edges_df.iterrows()]
     network = nx.Graph()
     network.add_edges_from(edges)
@@ -66,7 +67,7 @@ def crosswalk_component_id_to_cluster_id(years_threshold_pairs: List[Tuple[int, 
         """
 
         edges = pd.read_sql(q, con=engine)
-        connected_components_df = extract_connected_components(edges_df=edges, left_col="left_cluster_id", right_col="right_cluster_id", output_id_col="cluster_id")
+        connected_components_df = extract_connected_components(edges_df=edges, left_col="left_cluster_id", right_col="right_cluster_id", output_id_col="cluster_id", context=context)
 
         connected_components_df['y1'] = y1
         connected_components_df['y2'] = y2

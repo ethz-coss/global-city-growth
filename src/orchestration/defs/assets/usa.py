@@ -135,16 +135,13 @@ def usa_raster_census_place_convolved_all_years(context: dg.AssetExecutionContex
         postgres=postgres
     )
 
-def _year_pairs(years: List[int]) -> List[Tuple[int, int]]:
-    return [(y1, y2) for y1 in years for y2 in years if y1 <= y2]
-
 @dg.asset(
     deps=[TableNamesResource().names.usa.transformations.usa_cluster_base_matching()],
     kinds={'postgres'},
     group_name="usa_intermediate_create_clusters"
 )
 def usa_crosswalk_component_id_to_cluster_id(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource):
-    context.log.info(f"Creating cluster base matching")
+    context.log.info(f"Creating matching between connected components and cluster ids")
     urban_thresholds = constants["USA_URBAN_POPULATION_PIXEL_THRESHOLDS"]
     engine = postgres.get_engine()
     with engine.begin() as con:

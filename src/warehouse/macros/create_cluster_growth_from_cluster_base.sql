@@ -34,7 +34,7 @@ cluster_growth_ordered AS (
     FROM cluster_growth_ranked
 ),
 cluster_growth_final AS (
-    SELECT  CONCAT(y1, '-', y2, '-', urban_threshold, '-', LPAD(cluster_order_id::text, 4, '0')) AS cluster_id,
+    SELECT  CONCAT(y1, '-', y2, '-', urban_threshold, '-', LPAD(cluster_order_id::text, 7, '0')) AS cluster_id,
             y1,
             y2,
             urban_threshold, 

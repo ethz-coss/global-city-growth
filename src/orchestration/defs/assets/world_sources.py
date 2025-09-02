@@ -50,6 +50,7 @@ def world_raster_ghsl_smod(context: dg.AssetExecutionContext, storage: StorageRe
 
 
 @dg.asset(
+    deps=[world_raster_ghsl_pop],
     kinds={'postgres'},
     group_name="world_raw"
 )
@@ -60,10 +61,11 @@ def world_raster_ghsl_pop_all_years(context: dg.AssetExecutionContext, postgres:
         get_year_raster_table_name=tables.names.world.sources.world_raster_ghsl_pop,
         years=constants['GHSL_RASTER_YEARS'],
         context=context,
-        con=postgres.get_engine()
+        postgres=postgres
     )
     
 @dg.asset(
+    deps=[world_raster_ghsl_smod],
     kinds={'postgres'},
     group_name="world_raw"
 )

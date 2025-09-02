@@ -54,7 +54,7 @@ vars:
     WORLD_DB_SCAN_EPS: 100
     WORLD_DB_SCAN_MIN_POINTS: 1
     WORLD_CITY_POPULATION_THRESHOLD: 5000
-    WORLD_DEGREE_OF_URBANIZATION_THRESHOLDS: [20, 21, 22, 23] # These threshold are exclusive, so 21 is 22 or more, 22 is 23 or more, etc.
+    WORLD_DEGREE_OF_URBANIZATION_THRESHOLDS: [21, 22, 23] # These threshold are exclusive, so 21 is 22 or more, 22 is 23 or more, etc.
 
   defaults:
     USA_URBAN_POPULATION_PIXEL_THRESHOLD: 50

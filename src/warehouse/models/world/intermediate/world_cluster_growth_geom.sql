@@ -3,3 +3,8 @@
       {'columns': ['geom'], 'type': 'gist'}
     ]
 )}}
+
+{% set crosswalk_table = source('matching', 'world_crosswalk_component_id_to_cluster_id') %}
+{% set cluster_base_geom_table = ref('world_cluster_base_geom') %}
+
+{{ create_cluster_growth_from_cluster_base(cluster_base_geom_table, crosswalk_table) }}

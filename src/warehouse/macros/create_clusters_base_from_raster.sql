@@ -35,7 +35,7 @@ cluster_ordered AS (
 ),
 cluster_final AS (
     SELECT
-        CONCAT('{{ year }}', '-', '{{ urban_threshold }}', '-', LPAD(cluster_order_id::text, 4, '0')) AS cluster_id,
+        CONCAT('{{ year }}', '-', '{{ urban_threshold }}', '-', LPAD(cluster_order_id::text, 7, '0')) AS cluster_id,
         {{ year }} AS year,
         {{ urban_threshold }} AS urban_threshold,
         geom

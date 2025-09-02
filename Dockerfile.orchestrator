@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y git
 # For some reason rasterio needs to be built from source, and hence we need to install its dependencies manually
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gdal-bin libgdal-dev libproj-dev proj-bin libgeos-dev \
-    build-essential pkg-config git postgresql-client postgis raster2pgsql && \
+    build-essential pkg-config git postgresql-client postgis && \
     rm -rf /var/lib/apt/lists/*
 
 ENV GDAL_CONFIG=/usr/bin/gdal-config \

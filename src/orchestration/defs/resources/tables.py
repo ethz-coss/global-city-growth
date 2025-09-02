@@ -96,7 +96,7 @@ class USA:
     transformations: USATransformations = USATransformations()
     final: USAFinal = USAFinal()
 
-
+@dataclass(frozen=True)
 class WorldSources:
     def world_country_borders_raw(self) -> str:
         return "world_country_borders_raw"
@@ -118,11 +118,21 @@ class WorldSources:
     
     def world_crosswalk_cshapes_code_to_iso_code(self) -> str:
         return "world_crosswalk_cshapes_code_to_iso_code"
+    
+
+@dataclass(frozen=True)
+class WorldTransformations:
+    def world_cluster_base_matching(self) -> str:
+        return "world_cluster_base_matching"
+    
+    def world_crosswalk_component_id_to_cluster_id(self) -> str:
+        return "world_crosswalk_component_id_to_cluster_id"
 
 
 @dataclass(frozen=True)
 class World:
     sources: WorldSources = WorldSources()
+    transformations: WorldTransformations = WorldTransformations()
 
 
 @dataclass(frozen=True)

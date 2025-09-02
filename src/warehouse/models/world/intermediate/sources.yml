@@ -1,0 +1,5 @@
+sources:
+  - name: matching
+    schema: public
+    tables:
+      - name: world_crosswalk_component_id_to_cluster_id
