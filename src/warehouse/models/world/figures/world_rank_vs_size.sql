@@ -2,7 +2,7 @@ SELECT  cluster_id,
         y1 AS year,
         country,
         LOG(population_y1) AS log_population,
-        LOG(population_y2 / population_y1) AS log_growth,
+        LOG(ROW_NUMBER() OVER (PARTITION BY y1, country ORDER BY population_y1 DESC)) AS log_rank,
         analysis_id
 FROM {{ ref('world_cluster_growth_population_country_analysis') }}
-WHERE y2 = y1 + 10
+WHERE y1 = y2
