@@ -130,11 +130,25 @@ class WorldTransformations:
     def world_crosswalk_component_id_to_cluster_id(self) -> str:
         return "world_crosswalk_component_id_to_cluster_id"
 
+@dataclass(frozen=True)
+class WorldFigures:
+    def world_size_vs_growth(self) -> str:
+        return "world_size_vs_growth"
+    
+    def world_rank_vs_size(self) -> str:
+        return "world_rank_vs_size"
+    
+    def world_size_growth_slopes(self) -> str:
+        return "world_size_growth_slopes"
+    
+    def world_rank_size_slopes(self) -> str:
+        return "world_rank_size_slopes"
 
 @dataclass(frozen=True)
 class World:
     sources: WorldSources = WorldSources()
     transformations: WorldTransformations = WorldTransformations()
+    figures: WorldFigures = WorldFigures()
 
 
 class Other:
