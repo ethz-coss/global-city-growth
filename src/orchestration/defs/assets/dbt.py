@@ -11,6 +11,8 @@ class CustomizedDagsterDbtTranslator(DagsterDbtTranslator):
         
     def get_group_name(self, dbt_resource_props):
         gname = "_".join(dbt_resource_props["fqn"][1:-1])
+        if 'figures' in gname:
+            gname = "figure_data_prep"
         return gname
 
 

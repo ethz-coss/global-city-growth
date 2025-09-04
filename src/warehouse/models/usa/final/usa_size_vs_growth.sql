@@ -1,5 +1,5 @@
 {% set population_threshold = var('constants')['USA_CITY_POPULATION_THRESHOLD'] %}
-{% set urban_threshold = var('defaults')['USA_URBAN_POPULATION_PIXEL_THRESHOLD'] %}
+{% set urban_threshold = 50 %}
 
 WITH log_size_vs_growth AS (
     SELECT  cluster_id,
