@@ -2,6 +2,8 @@ from pygam import LinearGAM, s
 import numpy as np
 import pandas as pd
 from typing import Tuple
+import base64
+import dagster as dg
 
 
 def fit_penalized_b_spline(df: pd.DataFrame, xaxis: str, yaxis: str, lam: float) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
@@ -32,3 +34,15 @@ def cluster_bootstrap(data: pd.DataFrame, value_col: str, cluster_col: str, nboo
         bootstrap_sample = pd.concat([data[data[cluster_col] == c] for c in sampled_cluster_ids])
         bootstrap_means.append(np.mean(bootstrap_sample[value_col]))
     return np.mean(bootstrap_means), np.percentile(bootstrap_means, 2.5), np.percentile(bootstrap_means, 97.5)
+
+
+def materialize_image(path: str) -> dg.MaterializeResult:
+    with open(path, "rb") as file:
+        image_data = file.read()
+    base64_data = base64.b64encode(image_data).decode('utf-8')
+    md_content = f"![Image](data:image/jpeg;base64,{base64_data})"
+    return dg.MaterializeResult(
+        metadata={
+            "preview": dg.MetadataValue.md(md_content)
+        }
+    )

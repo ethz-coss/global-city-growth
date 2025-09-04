@@ -17,7 +17,7 @@ import matplotlib.gridspec as gridspec
 
 from ...resources.resources import PostgresResource, TableNamesResource
 from .figure_config import style_config, region_colors, figure_dir
-from .figure_utils import cluster_bootstrap, fit_penalized_b_spline
+from .figure_utils import cluster_bootstrap, fit_penalized_b_spline, materialize_image
 from ..constants import constants
 
 def _create_bicolor_cmap(cmap_neg: str, cmap_pos: str, midpoint_frac: float, name: str = 'bicolor_cmap', N: int = 256) -> mcolors.LinearSegmentedColormap:
@@ -262,16 +262,6 @@ def _plot_growth_size_curve_by_region(fig: plt.Figure, ax: plt.Axes, style_confi
     sns.despine(ax=ax)
     return fig, ax
 
-def _materialize_image(path: str) -> dg.MaterializeResult:
-    with open(path, "rb") as file:
-        image_data = file.read()
-    base64_data = base64.b64encode(image_data).decode('utf-8')
-    md_content = f"![Image](data:image/jpeg;base64,{base64_data})"
-    return dg.MaterializeResult(
-        metadata={
-            "preview": dg.MetadataValue.md(md_content)
-        }
-    )
 
 @dg.asset(
     deps=[TableNamesResource().names.world.figures.world_size_growth_slopes()],
@@ -293,7 +283,7 @@ def figure_2_map(context: dg.AssetExecutionContext, postgres: PostgresResource, 
     fig.savefig(figure_path, dpi=300)
     plt.close(fig)
 
-    return _materialize_image(path=figure_path)
+    return materialize_image(path=figure_path)
 
 
 @dg.asset(
@@ -322,5 +312,5 @@ def figure_2_plots(context: dg.AssetExecutionContext, postgres: PostgresResource
     fig.savefig(figure_path, dpi=300, bbox_inches='tight')
     plt.close(fig)
 
-    return _materialize_image(path=figure_path)
+    return materialize_image(path=figure_path)
     

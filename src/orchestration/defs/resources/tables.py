@@ -94,6 +94,12 @@ class USAFigures:
     def usa_rank_size_slopes(self) -> str:
         return "usa_rank_size_slopes"
     
+    def usa_average_growth(self) -> str:
+        return "usa_average_growth"
+    
+    def usa_size_vs_growth_normalized(self) -> str:
+        return "usa_size_vs_growth_normalized"
+    
 
 @dataclass(frozen=True)
 class USA:
@@ -161,6 +167,9 @@ class WorldFigures:
     
     def world_size_vs_growth_normalized(self) -> str:
         return "world_size_vs_growth_normalized"
+    
+    def world_size_growth_slopes_urbanization(self) -> str:
+        return "world_size_growth_slopes_urbanization"
 
 @dataclass(frozen=True)
 class World:

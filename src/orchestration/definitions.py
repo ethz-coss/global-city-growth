@@ -7,6 +7,7 @@ from .defs.assets.world_sources import world_raster_ghsl_pop, world_raster_ghsl_
 from .defs.assets.world import world_crosswalk_component_id_to_cluster_id
 from .defs.assets.figures.figure_data_prep import analysis_parameters, world_size_growth_slopes, world_rank_size_slopes, usa_size_growth_slopes, usa_rank_size_slopes
 from .defs.assets.figures.figure_2 import figure_2_map, figure_2_plots
+from .defs.assets.figures.figure_3 import figure_3
 from .defs.assets.dbt import dbt_warehouse, my_example_asset, incremental_example_table
 
 from .defs.resources.resources import duckdb_resource, storage_resource, postgres_resource, dbt_resource, table_names_resource, pipes_subprocess_resource, postgres_pandas_io_manager
@@ -69,7 +70,8 @@ defs = Definitions(
 
         ## Figures
         figure_2_map,
-        figure_2_plots
+        figure_2_plots,
+        figure_3
 
     ],
     resources={
