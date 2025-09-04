@@ -2,28 +2,11 @@ import dagster as dg
 import pandas as pd
 from pygam import LinearGAM, s
 import numpy as np
+from typing import List
 
 from ..resources.resources import PostgresResource, StorageResource, TableNamesResource
 from .constants import constants
 
-
-@dg.asset(
-    kinds={'postgres'},
-    group_name="figure_data_prep"
-)
-def analysis_parameters(context: dg.AssetExecutionContext, postgres: PostgresResource, storage: StorageResource, tables: TableNamesResource):
-    analysis_parameters_path = storage.paths.other.analysis_parameters()
-    context.log.info(f"Copying countries with region and subregion from {analysis_parameters_path}")
-
-    analysis_parameters_df = pd.read_csv(analysis_parameters_path)
-    analysis_parameters_df.to_sql(
-        name=tables.names.other.analysis_parameters(),
-        con=postgres.get_engine(),
-        schema='public',
-        index=False,
-        if_exists='replace'
-    )
-   
 
 def fit_penalized_b_spline(df, xaxis, yaxis, lam):
     X = df[[xaxis]].values
@@ -42,83 +25,111 @@ def get_mean_derivative_penalized_b_spline(df, xaxis, yaxis, lam):
     mean_derivative = np.mean(derivative)
     return mean_derivative
 
-def get_analysis_ids(postgres: PostgresResource, tables: TableNamesResource):
-    q = f"""
-    SELECT analysis_id FROM {tables.names.other.analysis_parameters()}
-    """
-    analysis_ids_df = pd.read_sql(sql=q, con=postgres.get_engine())
-    return analysis_ids_df['analysis_id'].tolist()
+def get_slopes_for_all_analysis_ids(df: pd.DataFrame, analysis_ids: List[int], group_by_keys: List[str], slopes_column_name: str, xaxis: str, yaxis: str, lam: float) -> pd.DataFrame:
+    slopes = []
+    for analysis_id in analysis_ids:
+        df_analysis_id = df[df['analysis_id'] == analysis_id]
+        slopes_analysis_id = df_analysis_id.groupby(group_by_keys).apply(lambda x: get_mean_derivative_penalized_b_spline(df=x, xaxis=xaxis, yaxis=yaxis, lam=lam)).reset_index().rename(columns={0: slopes_column_name})
+        slopes_analysis_id['analysis_id'] = analysis_id
+        slopes.append(slopes_analysis_id)
+
+    slopes = pd.concat(slopes)
+    return slopes
 
 
 @dg.asset(
-    deps=["world_size_vs_growth"],
     kinds={'postgres'},
-    group_name="figure_data_prep"
+    group_name="figure_data_prep",
+    io_manager_key="postgres_io_manager"
 )
-def world_size_growth_slopes(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource):
-    context.log.info("Preparing figure data")
-    analysis_ids = get_analysis_ids(postgres=postgres, tables=tables)
+def analysis_parameters(context: dg.AssetExecutionContext, storage: StorageResource) -> pd.DataFrame:
+    analysis_parameters_path = storage.paths.other.analysis_parameters()
+    context.log.info(f"Copying countries with region and subregion from {analysis_parameters_path}")
+    analysis_parameters_df = pd.read_csv(analysis_parameters_path)
+    return analysis_parameters_df
 
-    world_size_growth_slopes = []
-    for analysis_id in analysis_ids:
-        q = f"""
-        SELECT * 
-        FROM {tables.names.world.figures.world_size_vs_growth()}
-        WHERE analysis_id = {analysis_id}
-        """
-        world_size_vs_growth = pd.read_sql(sql=q, con=postgres.get_engine())
+@dg.asset(
+    deps=["world_size_vs_growth", "analysis_parameters"],
+    kinds={'postgres'},
+    group_name="figure_data_prep",
+    io_manager_key="postgres_io_manager"
+)
+def world_size_growth_slopes(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource)  -> pd.DataFrame:
+    context.log.info("Calculating world size growth slopes LALLALALA")
+    xaxis = 'log_population'
+    yaxis = 'log_growth'
+    lam = constants['PENALTY_SIZE_GROWTH_CURVE']
+    slopes_column_name = 'size_growth_slope'
 
-        xaxis = 'log_population'
-        yaxis = 'log_growth'
-        lam = constants['PENALTY_SIZE_GROWTH_CURVE']
+    world_size_vs_growth =pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_size_vs_growth()}", con=postgres.get_engine())
+    analysis_parameters = pd.read_sql(f"SELECT * FROM {tables.names.other.analysis_parameters()}", con=postgres.get_engine())
+    analysis_ids = analysis_parameters['analysis_id'].tolist()
 
-        world_size_growth_slopes_analysis_id = world_size_vs_growth.groupby(['country', 'year']).apply(lambda x: get_mean_derivative_penalized_b_spline(df=x, xaxis=xaxis, yaxis=yaxis, lam=lam)).reset_index().rename(columns={0: 'size_growth_slope'})
-        world_size_growth_slopes_analysis_id['analysis_id'] = analysis_id
-        world_size_growth_slopes.append(world_size_growth_slopes_analysis_id)
-
-
-    world_size_growth_slopes = pd.concat(world_size_growth_slopes)  
-    world_size_growth_slopes.to_sql(
-        name=tables.names.world.figures.world_size_growth_slopes(),
-        con=postgres.get_engine(),
-        schema='public',
-        index=False,
-        if_exists='replace'
-    )
+    world_size_growth_slopes_df = get_slopes_for_all_analysis_ids(df=world_size_vs_growth, analysis_ids=analysis_ids, group_by_keys=['country', 'year'], slopes_column_name=slopes_column_name, xaxis=xaxis, yaxis=yaxis, lam=lam)
+    return world_size_growth_slopes_df
 
 
 @dg.asset(
-    deps=["world_rank_vs_size"],
+    deps=["world_rank_vs_size", "analysis_parameters"],
     kinds={'postgres'},
-    group_name="figure_data_prep"
+    group_name="figure_data_prep",
+    io_manager_key="postgres_io_manager"
 )
-def world_rank_size_slopes(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource):
-    context.log.info("Preparing figure data")
-    analysis_ids = get_analysis_ids(postgres=postgres, tables=tables)
+def world_rank_size_slopes(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> pd.DataFrame:
+    context.log.info("Calculating world rank size slopes AAAAA")
+    xaxis = 'log_rank'
+    yaxis = 'log_population'
+    lam = constants['PENALTY_RANK_SIZE_CURVE']
+    slopes_column_name = 'rank_size_slope'
 
-    world_rank_size_slopes = []
-    for analysis_id in analysis_ids:
-        q = f"""
-        SELECT * 
-        FROM {tables.names.world.figures.world_rank_vs_size()}
-        WHERE analysis_id = {analysis_id}
-        """
-        world_rank_vs_size = pd.read_sql(sql=q, con=postgres.get_engine())
+    world_rank_vs_size = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_rank_vs_size()}", con=postgres.get_engine())
+    analysis_parameters = pd.read_sql(f"SELECT * FROM {tables.names.other.analysis_parameters()}", con=postgres.get_engine())
+    analysis_ids = analysis_parameters['analysis_id'].tolist()
 
-        xaxis = 'log_rank'
-        yaxis = 'log_population'
-        lam = constants['PENALTY_RANK_SIZE_CURVE']
+    world_rank_size_slopes_df = get_slopes_for_all_analysis_ids(df=world_rank_vs_size, analysis_ids=analysis_ids, group_by_keys=['country', 'year'], slopes_column_name=slopes_column_name, xaxis=xaxis, yaxis=yaxis, lam=lam)
+    world_rank_size_slopes_df[slopes_column_name] = world_rank_size_slopes_df[slopes_column_name].abs()
+    return world_rank_size_slopes_df
 
-        world_rank_size_slopes_analysis_id = world_rank_vs_size.groupby(['country', 'year']).apply(lambda x: get_mean_derivative_penalized_b_spline(df=x, xaxis=xaxis, yaxis=yaxis, lam=lam)).reset_index().rename(columns={0: 'rank_size_slope'})
-        world_rank_size_slopes_analysis_id['rank_size_slope'] = world_rank_size_slopes_analysis_id['rank_size_slope'].abs()
-        world_rank_size_slopes_analysis_id['analysis_id'] = analysis_id
-        world_rank_size_slopes.append(world_rank_size_slopes_analysis_id)
 
-    world_rank_size_slopes = pd.concat(world_rank_size_slopes)
-    world_rank_size_slopes.to_sql(
-        name=tables.names.world.figures.world_rank_size_slopes(),
-        con=postgres.get_engine(),
-        schema='public',
-        index=False,
-        if_exists='replace'
-    )
+@dg.asset(
+    deps=["usa_size_vs_growth", "analysis_parameters"],
+    kinds={'postgres'},
+    group_name="figure_data_prep",
+    io_manager_key="postgres_io_manager"
+)
+def usa_size_growth_slopes(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> pd.DataFrame:
+    context.log.info("Calculating usa size growth slopes AAAAA")
+    xaxis = 'log_population'
+    yaxis = 'log_growth'
+    lam = constants['PENALTY_SIZE_GROWTH_CURVE']
+    slopes_column_name = 'size_growth_slope'
+
+    usa_size_vs_growth = pd.read_sql(f"SELECT * FROM {tables.names.usa.figures.usa_size_vs_growth()}", con=postgres.get_engine())
+    analysis_parameters = pd.read_sql(f"SELECT * FROM {tables.names.other.analysis_parameters()}", con=postgres.get_engine())
+    analysis_ids = analysis_parameters['analysis_id'].tolist()
+
+    usa_size_growth_slopes_df = get_slopes_for_all_analysis_ids(df=usa_size_vs_growth, analysis_ids=analysis_ids, group_by_keys=['year'], slopes_column_name=slopes_column_name, xaxis=xaxis, yaxis=yaxis, lam=lam)
+    usa_size_growth_slopes_df[slopes_column_name] = usa_size_growth_slopes_df[slopes_column_name].abs()
+    return usa_size_growth_slopes_df
+
+
+@dg.asset(
+    deps=["usa_rank_vs_size", "analysis_parameters"],
+    kinds={'postgres'},
+    group_name="figure_data_prep",
+    io_manager_key="postgres_io_manager"
+)
+def usa_rank_size_slopes(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> pd.DataFrame:
+    context.log.info("Calculating usa rank size slopes AAAAA")
+    xaxis = 'log_rank'
+    yaxis = 'log_population'
+    lam = constants['PENALTY_RANK_SIZE_CURVE']
+    slopes_column_name = 'rank_size_slope'
+
+    usa_rank_vs_size = pd.read_sql(f"SELECT * FROM {tables.names.usa.figures.usa_rank_vs_size()}", con=postgres.get_engine())
+    analysis_parameters = pd.read_sql(f"SELECT * FROM {tables.names.other.analysis_parameters()}", con=postgres.get_engine())
+    analysis_ids = analysis_parameters['analysis_id'].tolist()
+
+    usa_rank_size_slopes_df = get_slopes_for_all_analysis_ids(df=usa_rank_vs_size, analysis_ids=analysis_ids, group_by_keys=['year'], slopes_column_name=slopes_column_name, xaxis=xaxis, yaxis=yaxis, lam=lam)
+    usa_rank_size_slopes_df[slopes_column_name] = usa_rank_size_slopes_df[slopes_column_name].abs()
+    return usa_rank_size_slopes_df

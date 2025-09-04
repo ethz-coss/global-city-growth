@@ -1,10 +1,11 @@
 from dagster_duckdb import DuckDBResource
 from dagster_dbt import DbtProject, DbtCliResource
-from dagster import ConfigurableResource
+from dagster import ConfigurableResource, ConfigurableIOManager
 from pathlib import Path
 import dagster as dg
 import sqlalchemy
 import os
+import pandas as pd
 from pydantic import PrivateAttr
 import json
 
@@ -52,7 +53,26 @@ class PostgresResource(ConfigurableResource):
         if self._engine is None:
             self._engine = sqlalchemy.create_engine(self.sqlalchemy_connection_string)
         return self._engine
+
+
+class PostgresPandasIOManager(ConfigurableIOManager):
+    postgres: PostgresResource
+
+    def handle_output(self, context: dg.OutputContext, obj: pd.DataFrame):
+        context.log.info(f"Saving {obj.shape[0]} rows to {context.asset_key.path}")
+        table_name = context.asset_key.path[-1]
+        obj.to_sql(
+            name=table_name,
+            con=self.postgres.get_engine(),
+            schema='public',
+            index=False,
+            if_exists='replace'
+        )
     
+    def load_input(self, context: dg.InputContext) -> pd.DataFrame:
+        table_name = context.asset_key.path[-1]
+        df = pd.read_sql(f"SELECT * FROM {table_name}", self.postgres.get_engine())
+        return df
 
 dbt_project = DbtProject(
   project_dir='src/warehouse'
@@ -82,4 +102,8 @@ postgres_resource = PostgresResource(
     user=dg.EnvVar("POSTGRES_USER"),
     password=dg.EnvVar("POSTGRES_PASSWORD"),
     database=dg.EnvVar("POSTGRES_DB_MAIN")
+)
+
+postgres_pandas_io_manager = PostgresPandasIOManager(
+    postgres=postgres_resource
 )

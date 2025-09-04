@@ -5,11 +5,11 @@ from .defs.assets.usa_sources import usa_hist_census_place_population, usa_hist_
 from .defs.assets.usa import usa_crosswalk_nhgis_census_place_to_connected_component, usa_raster_census_place_convolved_year, usa_raster_census_place_convolved_all_years, usa_crosswalk_component_id_to_cluster_id
 from .defs.assets.world_sources import world_raster_ghsl_pop, world_raster_ghsl_smod, world_country_borders_raw, world_urbanization_raw, world_crosswalk_cshapes_code_to_iso_code, world_raster_ghsl_pop_all_years, world_raster_ghsl_smod_all_years
 from .defs.assets.world import world_crosswalk_component_id_to_cluster_id
-from .defs.assets.figure_data_prep import analysis_parameters, world_size_growth_slopes, world_rank_size_slopes
+from .defs.assets.figure_data_prep import analysis_parameters, world_size_growth_slopes, world_rank_size_slopes, usa_size_growth_slopes, usa_rank_size_slopes
 from .defs.assets.figures import figure_3_size_growth_curve
 from .defs.assets.dbt import dbt_warehouse, my_example_asset, incremental_example_table
 
-from .defs.resources.resources import duckdb_resource, storage_resource, postgres_resource, dbt_resource, table_names_resource, pipes_subprocess_resource
+from .defs.resources.resources import duckdb_resource, storage_resource, postgres_resource, dbt_resource, table_names_resource, pipes_subprocess_resource, postgres_pandas_io_manager
 
 
 defs = Definitions(
@@ -63,7 +63,9 @@ defs = Definitions(
         analysis_parameters,
         world_size_growth_slopes,
         world_rank_size_slopes,
-
+        usa_size_growth_slopes,
+        usa_rank_size_slopes,
+        
         ## Figures
         figure_3_size_growth_curve
 
@@ -74,7 +76,8 @@ defs = Definitions(
         "postgres": postgres_resource,
         "dbt": dbt_resource,
         "tables": table_names_resource,
-        "bash": pipes_subprocess_resource
+        "bash": pipes_subprocess_resource,
+        "postgres_io_manager": postgres_pandas_io_manager
     },
     executor=in_process_executor
 )
