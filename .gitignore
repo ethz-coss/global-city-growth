@@ -18,6 +18,6 @@ warehouse/target/
 
 tmp/
 data/
-figures/
+/figures/
 
 .dagster_instance/
