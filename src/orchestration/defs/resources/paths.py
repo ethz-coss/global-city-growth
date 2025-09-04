@@ -84,6 +84,9 @@ class OWIDPaths:
 
     def urbanization(self) -> Path:
         return self.root / "urban-population-share-2050.csv"
+    
+    def countries_with_regions(self) -> Path:
+        return self.root / "countries_with_regions.csv"
 
 
 @dataclass(frozen=True)

@@ -132,3 +132,19 @@ def world_urbanization_raw(context: dg.AssetExecutionContext, postgres: Postgres
     )
 
 
+@dg.asset(
+    kinds={'postgres'},
+    group_name="world_raw"
+)
+def countries_with_regions(context: dg.AssetExecutionContext, postgres: PostgresResource, storage: StorageResource, tables: TableNamesResource):
+    countries_with_regions_path = storage.paths.world.owid.countries_with_regions()
+    context.log.info(f"Copying countries with region and subregion from {countries_with_regions_path}")
+
+    countries_with_regions_df = pd.read_csv(countries_with_regions_path)
+    countries_with_regions_df.to_sql(
+        name=tables.names.world.sources.countries_with_regions(),
+        con=postgres.get_engine(),
+        schema='public',
+        index=False,
+        if_exists='replace'
+    )

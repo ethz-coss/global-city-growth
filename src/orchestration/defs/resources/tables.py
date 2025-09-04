@@ -119,6 +119,8 @@ class WorldSources:
     def world_crosswalk_cshapes_code_to_iso_code(self) -> str:
         return "world_crosswalk_cshapes_code_to_iso_code"
     
+    def countries_with_regions(self) -> str:
+        return "countries_with_regions"
 
 @dataclass(frozen=True)
 class WorldTransformations:
