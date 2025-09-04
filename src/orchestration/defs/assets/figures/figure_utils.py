@@ -25,6 +25,14 @@ def get_mean_derivative_penalized_b_spline(df: pd.DataFrame, xaxis: str, yaxis: 
     return mean_derivative
 
 
+def get_bootstrap_ci_mean_derivative_penalized_b_spline(df: pd.DataFrame, xaxis: str, yaxis: str, lam: float, n_boots: int) -> Tuple[float, float, float]:
+    means = []
+    for i in range(n_boots):
+        df_bootstrap = df.sample(frac=1, replace=True)
+        means.append(get_mean_derivative_penalized_b_spline(df=df_bootstrap, xaxis=xaxis, yaxis=yaxis, lam=lam))
+    return np.mean(means), np.quantile(means, 0.025), np.quantile(means, 0.975)
+
+
 def cluster_bootstrap(data: pd.DataFrame, value_col: str, cluster_col: str, nboots: int) -> Tuple[float, float, float]:
     unique_clusters = data[cluster_col].unique()
     n_clusters = len(unique_clusters)

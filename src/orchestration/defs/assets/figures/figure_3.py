@@ -9,16 +9,9 @@ from typing import Tuple, Dict, Any
 
 from ...resources.resources import PostgresResource, TableNamesResource
 from .figure_config import style_config, figure_dir
-from .figure_utils import fit_penalized_b_spline, materialize_image, get_mean_derivative_penalized_b_spline
+from .figure_utils import fit_penalized_b_spline, materialize_image, get_mean_derivative_penalized_b_spline, get_bootstrap_ci_mean_derivative_penalized_b_spline
 from ..constants import constants
 
-
-def _get_bootstrap_ci_mean_derivative_penalized_b_spline(df: pd.DataFrame, xaxis: str, yaxis: str, lam: float, n_boots: int) -> Tuple[float, float, float]:
-    means = []
-    for i in range(n_boots):
-        df_bootstrap = df.sample(frac=1, replace=True)
-        means.append(get_mean_derivative_penalized_b_spline(df=df_bootstrap, xaxis=xaxis, yaxis=yaxis, lam=lam))
-    return np.mean(means), np.quantile(means, 0.025), np.quantile(means, 0.975)
 
 
 def _size_growth_slope_by_year_with_cis(df: pd.DataFrame, xaxis: str, yaxis: str, lam: float, n_boots: int) -> Tuple[float, float, float]:
@@ -26,7 +19,7 @@ def _size_growth_slope_by_year_with_cis(df: pd.DataFrame, xaxis: str, yaxis: str
     slopes_with_cis = []
     for y in years:
         df_y = df[df['year'] == y].copy()
-        mean_value, ci_low, ci_high = _get_bootstrap_ci_mean_derivative_penalized_b_spline(df=df_y, xaxis=xaxis, yaxis=yaxis, lam=lam, n_boots=n_boots)
+        mean_value, ci_low, ci_high = get_bootstrap_ci_mean_derivative_penalized_b_spline(df=df_y, xaxis=xaxis, yaxis=yaxis, lam=lam, n_boots=n_boots)
         slopes_with_cis.append({
             'year': y,
             'size_growth_slope': mean_value,
@@ -202,12 +195,12 @@ def _plot_size_growth_curve_usa_by_epoch(fig: plt.Figure, ax: plt.Axes, style_co
 
 
 @dg.asset(
-    deps=[TableNamesResource().names.usa.figures.usa_size_vs_growth_normalized(), TableNamesResource().names.usa.figures.usa_average_growth(), TableNamesResource().names.usa.figures.usa_size_vs_growth(), TableNamesResource().names.world.figures.world_size_growth_slopes_urbanization(), ],
+    deps=[TableNamesResource().names.usa.figures.usa_size_vs_growth_normalized(), TableNamesResource().names.usa.figures.usa_average_growth(), TableNamesResource().names.usa.figures.usa_size_vs_growth(), TableNamesResource().names.world.figures.world_size_growth_slopes_urbanization(), TableNamesResource().names.world.figures.world_size_vs_growth()],
     group_name="figures"
 )
 def figure_3(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> dg.MaterializeResult:
     # Create a figure
-    context.log.info(f"Creating figure 2: plots")
+    context.log.info(f"Creating figure 3")
     figure_file_name = 'figure_3.png'
     figure_path = os.path.join(figure_dir, figure_file_name)
 
@@ -217,7 +210,7 @@ def figure_3(context: dg.AssetExecutionContext, postgres: PostgresResource, tabl
     world_size_growth_slopes = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_size_growth_slopes_urbanization()}", con=postgres.get_engine())
     _plot_size_growth_slope_vs_urbanization(fig=fig, ax=ax1, style_config=style_config, df=world_size_growth_slopes)
 
-    n_boots = 10
+    n_boots = 100
     q = f"""
     SELECT *
     FROM {tables.names.world.figures.world_size_vs_growth()}

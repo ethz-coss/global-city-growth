@@ -170,6 +170,9 @@ class WorldFigures:
     
     def world_size_growth_slopes_urbanization(self) -> str:
         return "world_size_growth_slopes_urbanization"
+    
+    def world_rank_size_slopes_urbanization(self) -> str:
+        return "world_rank_size_slopes_urbanization"
 
 @dataclass(frozen=True)
 class World:
