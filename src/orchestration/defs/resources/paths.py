@@ -46,6 +46,7 @@ class USAPaths:
     nhgis: NhgisPaths
     ipums_full_count: IpumsFullCountPaths
     misc: USMiscPaths
+    
     @classmethod
     def from_root(cls, root: Path) -> "USAPaths":
         return cls(
@@ -105,14 +106,26 @@ class WorldPaths:
     
 
 @dataclass(frozen=True)
+class OtherPaths:
+    root: Path
+
+    def analysis_parameters(self) -> Path:
+        return self.root / "analysis_parameters.csv"
+    
+
+    
+
+@dataclass(frozen=True)
 class DataPaths:
     usa: USAPaths
     world: WorldPaths
+    other: OtherPaths
 
     @classmethod
     def from_root(cls, root: Path) -> "DataPaths":
         return cls(
             usa=USAPaths.from_root(root / "usa"),
-            world=WorldPaths.from_root(root / "world")
+            world=WorldPaths.from_root(root / "world"),
+            other=OtherPaths(root / "other")
         )
     

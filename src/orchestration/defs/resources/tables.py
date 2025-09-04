@@ -137,7 +137,13 @@ class World:
     transformations: WorldTransformations = WorldTransformations()
 
 
+class Other:
+    def analysis_parameters(self) -> str:
+        return "analysis_parameters"
+
+
 @dataclass(frozen=True)
 class TableNames:
     usa: USA = USA()
     world: World = World()
+    other: Other = Other()
