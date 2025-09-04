@@ -149,6 +149,18 @@ class WorldFigures:
     
     def world_rank_size_slopes(self) -> str:
         return "world_rank_size_slopes"
+    
+    def world_average_size_growth_slope_with_borders(self) -> str:
+        return "world_average_size_growth_slope_with_borders"
+    
+    def world_average_growth_group(self) -> str:
+        return "world_average_growth_group"
+    
+    def world_average_growth(self) -> str:
+        return "world_average_growth"
+    
+    def world_size_vs_growth_normalized(self) -> str:
+        return "world_size_vs_growth_normalized"
 
 @dataclass(frozen=True)
 class World:

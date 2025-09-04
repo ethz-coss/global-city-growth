@@ -12,69 +12,70 @@ WITH city_population AS (
     FROM {{ ref('world_cluster_growth_population_country_analysis') }}
     WHERE y1 + 10 = y2
 ),
-average_growth_rate_largest_city AS (
+average_growth_largest_city AS (
     SELECT  country, 
             year, 
             analysis_id,
             'largest_city' AS group,
-            LOG(SUM(population_y2) / SUM(population_y1)) AS log_average_growth_rate
+            LOG(SUM(population_y2) / SUM(population_y1)) AS log_average_growth
     FROM city_population
     WHERE city_rank = 1
     GROUP BY country, year, analysis_id
 ),
-average_growth_rates_above_5M AS (
+average_growth_above_5M AS (
     SELECT  country, 
             year, 
             analysis_id,
             'above_5M' AS group,
-            LOG(SUM(population_y2) / SUM(population_y1)) AS log_average_growth_rate
+            LOG(SUM(population_y2) / SUM(population_y1)) AS log_average_growth
     FROM city_population
     WHERE above_5M = 1
     GROUP BY country, year, analysis_id
 ),
-average_growth_rates_above_1M AS (
+average_growth_above_1M AS (
     SELECT  country, 
             year, 
             analysis_id,
             'above_1M' AS group,
-            LOG(SUM(population_y2) / SUM(population_y1)) AS log_average_growth_rate
+            LOG(SUM(population_y2) / SUM(population_y1)) AS log_average_growth
     FROM city_population
     WHERE above_1M = 1
     GROUP BY country, year, analysis_id
 ),
-average_growth_rates_below_1M AS (
+average_growth_below_1M AS (
     SELECT  country, 
             year, 
             analysis_id,
             'below_1M' AS group,
-            LOG(SUM(population_y2) / SUM(population_y1)) AS log_average_growth_rate
+            LOG(SUM(population_y2) / SUM(population_y1)) AS log_average_growth
     FROM city_population
     WHERE below_1M = 1
     GROUP BY country, year, analysis_id
 ),
-average_growth_rates_group AS (
+average_growth_group AS (
     SELECT *
-    FROM average_growth_rate_largest_city
+    FROM average_growth_largest_city
     UNION ALL
     SELECT *
-    FROM average_growth_rates_above_5M
+    FROM average_growth_above_5M
     UNION ALL
     SELECT *
-    FROM average_growth_rates_above_1M
+    FROM average_growth_above_1M
     UNION ALL
     SELECT *
-    FROM average_growth_rates_below_1M
+    FROM average_growth_below_1M
 ),
-average_growth_rates_group_demeaned AS (
+average_growth_group_demeaned AS (
     SELECT  a.country, 
             a.year, 
             a.analysis_id,
             g.group,
-            g.log_average_growth_rate AS log_average_growth_rate_group,
-            g.log_average_growth_rate - a.log_average_growth_rate AS log_average_growth_rate_group_demeaned
-    FROM {{ ref('world_average_growth_rates') }} a
-    LEFT JOIN average_growth_rates_group g
+            g.log_average_growth AS log_average_growth_group,
+            g.log_average_growth - a.log_average_growth AS log_average_growth_group_demeaned,
+            a.region
+    FROM average_growth_group g
+    INNER JOIN {{ ref('world_average_growth') }} a
     USING (country, year, analysis_id)
 )
 SELECT * 
-FROM average_growth_rates_group_demeaned
+FROM average_growth_group_demeaned

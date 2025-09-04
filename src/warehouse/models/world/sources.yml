@@ -15,3 +15,4 @@ sources:
     schema: public
     tables:
       - name: world_urbanization_raw
+      - name: countries_with_regions
