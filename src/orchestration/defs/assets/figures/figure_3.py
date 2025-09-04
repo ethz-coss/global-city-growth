@@ -1,23 +1,15 @@
 import dagster as dg
 import pandas as pd
 import numpy as np
-import base64
 import matplotlib.pyplot as plt
-import statsmodels.formula.api as smf
 import plotly.express as px
 import seaborn as sns
-import geopandas as gpd
 import os
-from typing import Tuple, Dict, List, Any
-
-import matplotlib.colors as mcolors
-from matplotlib.colors import to_rgba
-from mpl_toolkits.axes_grid1 import make_axes_locatable
-import matplotlib.gridspec as gridspec
+from typing import Tuple, Dict, Any
 
 from ...resources.resources import PostgresResource, TableNamesResource
-from .figure_config import style_config, region_colors, figure_dir
-from .figure_utils import cluster_bootstrap, fit_penalized_b_spline, materialize_image, get_mean_derivative_penalized_b_spline
+from .figure_config import style_config, figure_dir
+from .figure_utils import fit_penalized_b_spline, materialize_image, get_mean_derivative_penalized_b_spline
 from ..constants import constants
 
 

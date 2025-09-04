@@ -1,14 +1,12 @@
 import dagster as dg
 import pandas as pd
 import numpy as np
-import base64
 import matplotlib.pyplot as plt
-import statsmodels.formula.api as smf
 import plotly.express as px
 import seaborn as sns
 import geopandas as gpd
 import os
-from typing import Tuple, Dict, List, Any
+from typing import Tuple, Dict, Any
 
 import matplotlib.colors as mcolors
 from matplotlib.colors import to_rgba
