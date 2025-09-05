@@ -8,7 +8,7 @@ import os
 from typing import Tuple, Dict, Any
 
 from ...resources.resources import PostgresResource, TableNamesResource
-from .figure_config import style_config, figure_dir
+from .figure_config import style_config, figure_dir, MAIN_ANALYSIS_ID
 from .figure_utils import fit_penalized_b_spline, materialize_image, get_mean_derivative_penalized_b_spline, get_bootstrap_ci_mean_derivative_penalized_b_spline
 from ..constants import constants
 
@@ -51,7 +51,7 @@ def _plot_size_growth_slope_vs_urbanization(fig: plt.Figure, ax: plt.Axes, style
     x_axis_inset_label = 'Takeoff year\n(Year 20% urban)'
     y_axis_inset_label = 'Size-growth slope'
 
-    lam = constants['PENALTY_SIZE_GROWTH_CURVE']
+    lam = constants['PENALTY_SLOPE_SPLINE']
     color = px.colors.qualitative.Plotly[0]
 
     x, y, ci_low, ci_high = fit_penalized_b_spline(df=df, xaxis=x_axis, yaxis=y_axis, lam=lam)
@@ -207,7 +207,7 @@ def figure_3(context: dg.AssetExecutionContext, postgres: PostgresResource, tabl
     fig, axes = plt.subplots(2,2, figsize=(10, 10), gridspec_kw={'wspace': 0.25, 'hspace': 0.25})
     ax1, ax2, ax3, ax4 = axes.flatten()
 
-    world_size_growth_slopes = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_size_growth_slopes_urbanization()}", con=postgres.get_engine())
+    world_size_growth_slopes = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_size_growth_slopes_urbanization()} WHERE analysis_id = {MAIN_ANALYSIS_ID}", con=postgres.get_engine())
     _plot_size_growth_slope_vs_urbanization(fig=fig, ax=ax1, style_config=style_config, df=world_size_growth_slopes)
 
     n_boots = 100
@@ -215,17 +215,18 @@ def figure_3(context: dg.AssetExecutionContext, postgres: PostgresResource, tabl
     SELECT *
     FROM {tables.names.world.figures.world_size_vs_growth()}
     WHERE country = 'KOR'
+    AND analysis_id = {MAIN_ANALYSIS_ID}
     """
     kor_size_vs_growth = pd.read_sql(q, con=postgres.get_engine())
     _plot_size_growth_curve_kor_by_year(fig=fig, ax=ax2, style_config=style_config, df_size_vs_growth=kor_size_vs_growth, n_boots=n_boots)
 
 
-    usa_size_vs_growth = pd.read_sql(f"SELECT * FROM {tables.names.usa.figures.usa_size_vs_growth()}", con=postgres.get_engine())
+    usa_size_vs_growth = pd.read_sql(f"SELECT * FROM {tables.names.usa.figures.usa_size_vs_growth()} WHERE analysis_id = {MAIN_ANALYSIS_ID}", con=postgres.get_engine())
     _plot_size_growth_slope_usa_by_year(fig=fig, ax=ax3, style_config=style_config, df_size_vs_growth=usa_size_vs_growth, n_boots=n_boots)
 
 
-    usa_size_vs_growth_normalized = pd.read_sql(f"SELECT * FROM {tables.names.usa.figures.usa_size_vs_growth_normalized()}", con=postgres.get_engine())
-    usa_average_growth = pd.read_sql(f"SELECT * FROM {tables.names.usa.figures.usa_average_growth()}", con=postgres.get_engine())
+    usa_size_vs_growth_normalized = pd.read_sql(f"SELECT * FROM {tables.names.usa.figures.usa_size_vs_growth_normalized()} WHERE analysis_id = {MAIN_ANALYSIS_ID}", con=postgres.get_engine())
+    usa_average_growth = pd.read_sql(f"SELECT * FROM {tables.names.usa.figures.usa_average_growth()} WHERE analysis_id = {MAIN_ANALYSIS_ID}", con=postgres.get_engine())
     _plot_size_growth_curve_usa_by_epoch(fig=fig, ax=ax4, style_config=style_config, df_size_vs_growth_normalized=usa_size_vs_growth_normalized, df_average_growth=usa_average_growth)
     
     fig.savefig(figure_path, dpi=300, bbox_inches='tight')

@@ -22,3 +22,6 @@ region_colors = {
 }
 
 figure_dir = '/app/figures'
+table_dir = '/app/figures/tables'
+
+MAIN_ANALYSIS_ID = 1

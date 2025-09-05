@@ -3,7 +3,8 @@ SELECT  country,
         rank_size_slope, 
         urban_population_share, 
         takeoff_year,
-        region2 AS region
+        region2 AS region,
+        analysis_id
 FROM {{ source('figure_data_prep', 'world_rank_size_slopes') }}
 JOIN {{ ref('world_urbanization') }}
 USING (country, year)

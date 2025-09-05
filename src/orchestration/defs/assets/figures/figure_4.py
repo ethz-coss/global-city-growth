@@ -9,7 +9,7 @@ from typing import Tuple, Dict
 
 
 from ...resources.resources import PostgresResource, TableNamesResource
-from .figure_config import style_config, figure_dir, region_colors
+from .figure_config import style_config, figure_dir, region_colors, MAIN_ANALYSIS_ID
 from .figure_utils import fit_penalized_b_spline, materialize_image, get_bootstrap_ci_mean_derivative_penalized_b_spline
 from ..constants import constants
 
@@ -46,7 +46,7 @@ def _plot_rank_size_slope_by_urban_population_share(fig, ax, style_config, df: p
 
     color = px.colors.qualitative.Plotly[0]
 
-    lam = 1000 # TODO: set a constant with a penalty for other spline curves
+    lam = constants['PENALTY_SLOPE_SPLINE']
 
     x, y, ci_low, ci_high = fit_penalized_b_spline(df=df, xaxis=x_axis, yaxis=y_axis, lam=lam)
 
@@ -121,9 +121,9 @@ def _plot_rank_size_slope_by_region(fig, ax, style_config, region_colors: Dict[s
     x_axis_label = 'Year'
     y_axis_label = 'Dominance of large cities\n(Zipf exponent)'
 
-    lam = 1000
+    lam = constants['PENALTY_SLOPE_SPLINE']
     
-    regions = df[region_col].unique()
+    regions = sorted(df[region_col].unique())
     for r in regions:
         df_r = df[df[region_col] == r]
         x, y, ci_low, ci_high = fit_penalized_b_spline(df=df_r, xaxis=x_axis, yaxis=y_axis, lam=lam)
@@ -154,7 +154,7 @@ def _plot_rank_size_slope_by_takeoff_year(fig, ax, style_config, df: pd.DataFram
     x_axis_label = 'Takeoff year (Year 20% urban)'
     y_axis_label = 'Dominance of large cities\n(Zipd exponent)'
 
-    lam = 1000
+    lam = constants['PENALTY_SLOPE_SPLINE']
 
     for i, yr in enumerate(years):
         df_y = df[df['year'] == yr]
@@ -239,16 +239,17 @@ def figure_4(context: dg.AssetExecutionContext, postgres: PostgresResource, tabl
     ax4 = fig.add_subplot(gs_top[1, 1])
     ax5 = fig.add_subplot(gs_main[1])
 
-    world_rank_size_slopes_urbanization = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_rank_size_slopes_urbanization()}", con=postgres.get_engine())
+    world_rank_size_slopes_urbanization = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_rank_size_slopes_urbanization()} WHERE analysis_id = {MAIN_ANALYSIS_ID}", con=postgres.get_engine())
     _plot_rank_size_slope_by_urban_population_share(fig=fig, ax=ax1, style_config=style_config, df=world_rank_size_slopes_urbanization)
 
     n_boots = 100
-    usa_rank_vs_size = pd.read_sql(f"SELECT * FROM {tables.names.usa.figures.usa_rank_vs_size()}", con=postgres.get_engine())
+    usa_rank_vs_size = pd.read_sql(f"SELECT * FROM {tables.names.usa.figures.usa_rank_vs_size()} WHERE analysis_id = {MAIN_ANALYSIS_ID}", con=postgres.get_engine())
 
     q = f"""
     SELECT *
     FROM {tables.names.world.figures.world_rank_vs_size()}
     WHERE country = 'KOR'
+    AND analysis_id = {MAIN_ANALYSIS_ID}
     """
     kor_rank_vs_size = pd.read_sql(q, con=postgres.get_engine())
 

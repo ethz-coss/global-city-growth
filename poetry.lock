@@ -4707,6 +4707,18 @@ granian = ["granian (>=2.3.1)"]
 uvicorn = ["uvicorn (>=0.34.0)"]
 
 [[package]]
+name = "stargazer"
+version = "0.0.7"
+description = "Nicely formatted regression reporting"
+optional = false
+python-versions = "*"
+groups = ["main"]
+files = [
+    {file = "stargazer-0.0.7-py3-none-any.whl", hash = "sha256:0bd47e7fd0a41317724743a63f6c92472d27adf8ab12d7e4d2682fc31aa51bca"},
+    {file = "stargazer-0.0.7.tar.gz", hash = "sha256:ba40f35a492377cc1a1dcc55c45a63e177a6fc0d51c926b50a1b70b23a93c72f"},
+]
+
+[[package]]
 name = "starlette"
 version = "0.47.3"
 description = "The little ASGI library that shines."
@@ -5540,4 +5552,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12, <3.14"
-content-hash = "7ab81942834f10250c544a378d113c7e576aa032dd51c1fe2f21aca006988fd1"
+content-hash = "321829d4bdc18aad7b06c85a2e7be84d34949678faf5e79deb9c1c5bac23837d"

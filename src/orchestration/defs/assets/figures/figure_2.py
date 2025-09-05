@@ -14,7 +14,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.gridspec as gridspec
 
 from ...resources.resources import PostgresResource, TableNamesResource
-from .figure_config import style_config, region_colors, figure_dir
+from .figure_config import style_config, region_colors, figure_dir, MAIN_ANALYSIS_ID
 from .figure_utils import cluster_bootstrap, fit_penalized_b_spline, materialize_image
 from ..constants import constants
 
@@ -274,6 +274,7 @@ def figure_2_map(context: dg.AssetExecutionContext, postgres: PostgresResource, 
     q = f"""
     SELECT * 
     FROM {tables.names.world.figures.world_average_size_growth_slope_with_borders()}
+    WHERE analysis_id = {MAIN_ANALYSIS_ID}
     """
     rank_size_slopes_and_country_borders = gpd.read_postgis(q, con=postgres.get_engine())
     _plot_world_map_with_colorbar(fig=fig, ax=ax, style_config=style_config, gdf=rank_size_slopes_and_country_borders)
@@ -300,11 +301,11 @@ def figure_2_plots(context: dg.AssetExecutionContext, postgres: PostgresResource
     ax2 = fig.add_subplot(gs[0, 1])  
 
     nboots = 10
-    world_average_growth_rate_group = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_average_growth_group()}", con=postgres.get_engine())    
+    world_average_growth_rate_group = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_average_growth_group()} WHERE analysis_id = {MAIN_ANALYSIS_ID}", con=postgres.get_engine())    
     _plot_average_growth_rates_group_barchart_by_region(fig=fig, ax=ax1, style_config=style_config, colors=region_colors, df=world_average_growth_rate_group, nboots=nboots)
 
-    world_size_vs_growth_normalized = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_size_vs_growth_normalized()}", con=postgres.get_engine())
-    world_average_growth = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_average_growth()}", con=postgres.get_engine())
+    world_size_vs_growth_normalized = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_size_vs_growth_normalized()} WHERE analysis_id = {MAIN_ANALYSIS_ID}", con=postgres.get_engine())
+    world_average_growth = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_average_growth()} WHERE analysis_id = {MAIN_ANALYSIS_ID}", con=postgres.get_engine())
     _plot_growth_size_curve_by_region(fig=fig, ax=ax2, style_config=style_config, colors=region_colors, df_size_vs_growth_normalized=world_size_vs_growth_normalized, df_average_growth=world_average_growth)
     
     fig.savefig(figure_path, dpi=300, bbox_inches='tight')

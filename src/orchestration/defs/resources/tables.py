@@ -100,7 +100,9 @@ class USAFigures:
     def usa_size_vs_growth_normalized(self) -> str:
         return "usa_size_vs_growth_normalized"
     
-
+    def usa_dataset_summary_table(self) -> str:
+        return "usa_dataset_summary_table"
+    
 @dataclass(frozen=True)
 class USA:
     ipums_full_count: IpumsFullCount = IpumsFullCount()
@@ -173,6 +175,9 @@ class WorldFigures:
     
     def world_rank_size_slopes_urbanization(self) -> str:
         return "world_rank_size_slopes_urbanization"
+    
+    def world_dataset_summary_table(self) -> str:
+        return "world_dataset_summary_table"
 
 @dataclass(frozen=True)
 class World:

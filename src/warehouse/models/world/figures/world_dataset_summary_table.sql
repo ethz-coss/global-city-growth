@@ -1,0 +1,8 @@
+SELECT  analysis_id, 
+        COUNT(DISTINCT cluster_id) AS num_cities, 
+        COUNT(DISTINCT country) AS num_countries, 
+        COUNT(DISTINCT y1) + 1 AS num_years, 
+        MIN(y1) AS min_year, 
+        MAX(y2) AS max_year
+FROM {{ ref('world_cluster_growth_population_country_analysis') }}
+GROUP BY analysis_id
