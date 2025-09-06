@@ -55,5 +55,5 @@ vars:
     WORLD_DEGREE_OF_URBANIZATION_THRESHOLDS: [21, 22, 23] # These threshold are exclusive, so 21 is 22 or more, 22 is 23 or more, etc
 
     PENALTY_SIZE_GROWTH_CURVE: 100
-    PENALTY_RANK_SIZE_CURVE: 10
+    PENALTY_RANK_SIZE_CURVE: 1
     PENALTY_SLOPE_SPLINE: 1000

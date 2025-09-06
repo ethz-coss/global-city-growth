@@ -179,11 +179,21 @@ class WorldFigures:
     def world_dataset_summary_table(self) -> str:
         return "world_dataset_summary_table"
 
+
+@dataclass(frozen=True)
+class WorldSupplementaryInformation:
+    def world_linearity_test_size_vs_growth(self) -> str:
+        return "world_linearity_test_size_vs_growth"
+    
+    def world_linearity_test_rank_size_curve(self) -> str:
+        return "world_linearity_test_rank_size_curve"
+
 @dataclass(frozen=True)
 class World:
     sources: WorldSources = WorldSources()
     transformations: WorldTransformations = WorldTransformations()
     figures: WorldFigures = WorldFigures()
+    si: WorldSupplementaryInformation = WorldSupplementaryInformation()
 
 
 class Other:

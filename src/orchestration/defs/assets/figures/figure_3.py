@@ -1,3 +1,4 @@
+# src/orchestration/defs/assets/figures/figure_3.py
 import dagster as dg
 import pandas as pd
 import numpy as np

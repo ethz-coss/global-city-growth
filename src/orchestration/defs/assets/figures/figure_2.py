@@ -1,3 +1,4 @@
+# src/orchestration/defs/assets/figures/figure_2.py
 import dagster as dg
 import pandas as pd
 import numpy as np
@@ -9,6 +10,7 @@ import os
 from typing import Tuple, Dict, Any
 
 import matplotlib.colors as mcolors
+
 from matplotlib.colors import to_rgba
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.gridspec as gridspec

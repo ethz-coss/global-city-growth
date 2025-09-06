@@ -1,6 +1,5 @@
+# src/orchestration/defs/assets/figures/figure_config.py
 import plotly.express as px
-
-## Figure 2
 
 style_config = {
     'font_name': 'Helvetica',
@@ -22,6 +21,7 @@ region_colors = {
 }
 
 figure_dir = '/app/figures'
+figure_si_dir = '/app/figures/si'
 table_dir = '/app/figures/tables'
 
 MAIN_ANALYSIS_ID = 1
