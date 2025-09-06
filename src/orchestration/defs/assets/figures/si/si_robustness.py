@@ -1,4 +1,5 @@
 # src/orchestration/defs/assets/figures/tables.py
+from sqlite3 import paramstyle
 import dagster as dg
 import pandas as pd
 import os
@@ -10,10 +11,9 @@ from ..figure_config import table_si_dir, MAIN_ANALYSIS_ID
 from ..tables import make_table_2
 
 
-def get_analysis_ids(postgres: PostgresResource, tables: TableNamesResource) -> Tuple[str, str]:
-    analysis_ids = pd.read_sql(f"SELECT * FROM {tables.names.other.analysis_parameters()}", con=postgres.get_engine())
-    analysis_ids = analysis_ids['analysis_id'].tolist()
-    return analysis_ids
+def get_analysis_parameters(postgres: PostgresResource, tables: TableNamesResource) -> Tuple[str, str]:
+    params = pd.read_sql(f"SELECT * FROM {tables.names.other.analysis_parameters()}", con=postgres.get_engine())
+    return params
 
 
 
@@ -23,12 +23,10 @@ def get_analysis_ids(postgres: PostgresResource, tables: TableNamesResource) -> 
 )
 def world_robustness_tables(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> dg.MaterializeResult:
     context.log.info("Creating world robustness tables")
-    analysis_ids = get_analysis_ids(postgres=postgres, tables=tables)
+    params = pd.read_sql(f"SELECT * FROM {tables.names.other.analysis_parameters()}", con=postgres.get_engine())
+    analysis_ids = params[params['robustness_for_dataset'] == 'world']['analysis_id'].tolist()
 
     for analysis_id in analysis_ids:
-        if analysis_id == MAIN_ANALYSIS_ID:
-            continue
-
         table_file_name = f'table_2_robustness_{analysis_id}.txt'
         table_path = os.path.join(table_si_dir, table_file_name)
 

@@ -18,8 +18,7 @@ from .figure_utils import fit_penalized_b_spline, materialize_image, get_bootstr
 from ..constants import constants
 
 
-def _make_table_slopes_by_urbanization(df: pd.DataFrame, x_axis: str, y_axis: str, context: dg.AssetExecutionContext) -> pd.DataFrame:
-    context.log.info(f"Number of records in df: {len(df)}")
+def _make_table_slopes_by_urbanization(df: pd.DataFrame, x_axis: str, y_axis: str) -> pd.DataFrame:
     ols_reg_no_fe = smf.ols(f'{y_axis} ~ {x_axis}', data=df).fit()
     ols_reg_with_country_year_fe = smf.ols(f'{y_axis} ~ {x_axis} + C(country) + C(year)', data=df).fit()
 
@@ -92,7 +91,7 @@ def _get_latex_from_formatted_table_slopes_by_urbanization(table: pd.DataFrame, 
     return latex
 
 
-def make_table_2(df_size_growth_slopes: pd.DataFrame, df_rank_size_slopes: pd.DataFrame, context) -> str:
+def make_table_2(df_size_growth_slopes: pd.DataFrame, df_rank_size_slopes: pd.DataFrame) -> str:
     x_axis_1 = 'urban_population_share'
     y_axis_1 = 'size_growth_slope'
     x_label_1 = 'Urban population share'
@@ -104,11 +103,8 @@ def make_table_2(df_size_growth_slopes: pd.DataFrame, df_rank_size_slopes: pd.Da
     x_label_2 = 'Urban population share'
     y_label_2 = 'Zipf exponent'
 
-    context.log.info(f"Number of records in df_size_growth_slopes: {len(df_size_growth_slopes)}")
-    context.log.info(f"Number of records in df_rank_size_slopes: {len(df_rank_size_slopes)}")
-
-    table_1 = _make_table_slopes_by_urbanization(df=df_size_growth_slopes, x_axis=x_axis_1, y_axis=y_axis_1, context=context)
-    table_2 = _make_table_slopes_by_urbanization(df=df_rank_size_slopes, x_axis=x_axis_2, y_axis=y_axis_2, context=context)
+    table_1 = _make_table_slopes_by_urbanization(df=df_size_growth_slopes, x_axis=x_axis_1, y_axis=y_axis_1)
+    table_2 = _make_table_slopes_by_urbanization(df=df_rank_size_slopes, x_axis=x_axis_2, y_axis=y_axis_2)
 
     table_1_formatted = _format_table_slopes_by_urbanization_for_latex(table=table_1, x_label=x_label_1)
     table_2_formatted = _format_table_slopes_by_urbanization_for_latex(table=table_2, x_label=x_label_2)
