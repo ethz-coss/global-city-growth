@@ -64,20 +64,20 @@ def _plot_world_map_with_colorbar(fig: plt.Figure, ax: plt.Axes, style_config: D
     projection_epsg = 4087
 
     font_family = style_config['font_family']
-    inset_font_size = style_config['inset_font_size'] 
-    inset_tick_font_size = style_config['inset_tick_font_size']
-    inset_text_label_font_size = style_config['inset_text_label_font_size']
+    inset_font_size = style_config['inset_map_font_size'] 
+    inset_tick_font_size = style_config['inset_map_tick_font_size'] 
+    inset_text_label_font_size = style_config['inset_map_tick_font_size']
     colorbar_label_fontsize = style_config['colorbar_label_font_size']
 
     colorbar_pos = [0.4, 0.13, 0.2, 0.025]
     colorbar_label_pos = 'top'
     colorbar_label = 'Size-growth slope'
 
-    inset_distribution_pos = [0.66, 0.2, 0.1, 0.2]
+    inset_distribution_pos = [0.64, 0.2, 0.09, 0.16]
     inset_distribution_ylabel = 'Density'
     inset_distribution_xlabel = 'Size-growth slope'
 
-    inset_growth_size_pos = [0.1, 0.2, 0.15, 0.2]
+    inset_growth_size_pos = [0.2, 0.2, 0.12, 0.2]
     inset_growth_size_xlabel = 'Size (log population)'
     inset_growth_size_ylabel = 'Growth rate (log)'
 
@@ -133,17 +133,18 @@ def _plot_world_map_with_colorbar(fig: plt.Figure, ax: plt.Axes, style_config: D
     ax_inset2.plot(x_, y_, color='black', linewidth=1)
 
     p_der = np.polyder(p)
-    x_points = [4.5, 6.5]
-    shift_y = [-0.008, 0.008]
+    x_points = [4.5, 5.5, 6.5]
+    shift_y = [-0.008, 0,  0.008]
     color_tangent = px.colors.qualitative.Plotly[1]
     for i, x_tan in enumerate(x_points):
         y_tan = np.polyval(p, x_tan)
         slope = np.polyval(p_der, x_tan)
-        x_line = np.linspace(x_tan - 0.5, x_tan + 0.5, 2)
+        x_line = np.linspace(x_tan - 0.4, x_tan + 0.4, 2)
         y_line = slope * (x_line - x_tan) + y_tan
         ax_inset2.plot(x_line, y_line, color=color_tangent, linestyle='--', linewidth=1.5)
         shift_y_i = shift_y[i]
-        ax_inset2.text(x_tan, y_tan + shift_y_i, f'Slope', fontsize=inset_text_label_font_size, ha='center', va='center', fontfamily=font_family, color=color_tangent)
+        if i == 2:
+            ax_inset2.text(x_tan, y_tan + shift_y_i, f'Slope', fontsize=inset_text_label_font_size, ha='center', va='center', fontfamily=font_family, color=color_tangent)
 
 
     ax_inset2.annotate(
@@ -153,7 +154,9 @@ def _plot_world_map_with_colorbar(fig: plt.Figure, ax: plt.Axes, style_config: D
         xycoords='data',
         arrowprops=dict(facecolor='black', shrink=0.05, width=0.5, headwidth=4, headlength=8),
         ha='center',
-        va='center'
+        va='center',
+        fontsize=inset_font_size,
+        fontfamily=font_family
     )
     # ax_inset2.text(5.5, 0.12, f'Size-growth slope =\naverage slope of this curve', fontsize=inset_font_size, fontfamily=font_family, ha='center', va='center')
     ax_inset2.set_xlabel(inset_growth_size_xlabel, fontsize=inset_font_size, fontfamily=font_family)
@@ -264,7 +267,7 @@ def _plot_growth_size_curve_by_region(fig: plt.Figure, ax: plt.Axes, style_confi
 
 
 @dg.asset(
-    deps=[TableNamesResource().names.world.figures.world_size_growth_slopes()],
+    deps=[TableNamesResource().names.world.figures.world_average_size_growth_slope_with_borders()],
     group_name="figures"
 )
 def figure_2_map(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> dg.MaterializeResult:
@@ -280,8 +283,7 @@ def figure_2_map(context: dg.AssetExecutionContext, postgres: PostgresResource, 
     """
     rank_size_slopes_and_country_borders = gpd.read_postgis(q, con=postgres.get_engine())
     _plot_world_map_with_colorbar(fig=fig, ax=ax, style_config=style_config, gdf=rank_size_slopes_and_country_borders)
-    fig.tight_layout() # TODO: Move to bbox inches tight
-    fig.savefig(figure_path, dpi=300)
+    fig.savefig(figure_path, dpi=300, bbox_inches='tight')
     plt.close(fig)
 
     return materialize_image(path=figure_path)
@@ -302,7 +304,7 @@ def figure_2_plots(context: dg.AssetExecutionContext, postgres: PostgresResource
     ax1 = fig.add_subplot(gs[0, 0])
     ax2 = fig.add_subplot(gs[0, 1])  
 
-    nboots = 10
+    nboots = 1000
     world_average_growth_rate_group = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_average_growth_group()} WHERE analysis_id = {MAIN_ANALYSIS_ID}", con=postgres.get_engine())    
     _plot_average_growth_rates_group_barchart_by_region(fig=fig, ax=ax1, style_config=style_config, colors=region_colors, df=world_average_growth_rate_group, nboots=nboots)
 

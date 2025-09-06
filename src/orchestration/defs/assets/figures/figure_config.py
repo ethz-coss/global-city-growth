@@ -11,6 +11,8 @@ style_config = {
     'inset_tick_font_size': 8,
     'inset_text_label_font_size': 8,
     'colorbar_label_font_size': 12,
+    'inset_map_font_size': 8,
+    'inset_map_tick_font_size': 6,
 }
 
 region_colors = {
@@ -23,5 +25,6 @@ region_colors = {
 figure_dir = '/app/figures'
 figure_si_dir = '/app/figures/si'
 table_dir = '/app/figures/tables'
+table_si_dir = '/app/figures/si/tables'
 
 MAIN_ANALYSIS_ID = 1

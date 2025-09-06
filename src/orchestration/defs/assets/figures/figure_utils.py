@@ -42,7 +42,7 @@ def cluster_bootstrap(data: pd.DataFrame, value_col: str, cluster_col: str, nboo
         sampled_cluster_ids = np.random.choice(unique_clusters, size=n_clusters, replace=True)
         bootstrap_sample = pd.concat([data[data[cluster_col] == c] for c in sampled_cluster_ids])
         bootstrap_means.append(np.mean(bootstrap_sample[value_col]))
-    return np.mean(bootstrap_means), np.percentile(bootstrap_means, 2.5), np.percentile(bootstrap_means, 97.5)
+    return np.median(bootstrap_means), np.percentile(bootstrap_means, 2.5), np.percentile(bootstrap_means, 97.5)
 
 
 def materialize_image(path: str) -> dg.MaterializeResult:

@@ -11,16 +11,25 @@
 
 {% set analysis_parameters = run_query(get_analysis_parameters_query) %}
 
+WITH
 {% for row in analysis_parameters %}
-    {{ get_world_cluster_growth_population_country(
-                urban_threshold=row.world_urban_threshold,
-                city_population_threshold=row.world_city_population_threshold,
-                country_min_num_cities=row.world_country_min_num_cities,
-                country_exclude=row.world_country_exclude,
-                analysis_id=row.analysis_id
-            ) 
-    }}
-    {% if not loop.last %}
-    UNION ALL
-    {% endif %}
+    world_cluster_growth_population_country_analysis_{{ row.analysis_id }} AS (
+        {{ get_world_cluster_growth_population_country(
+                    urban_threshold=row.world_urban_threshold,
+                    city_population_threshold=row.world_city_population_threshold,
+                    country_min_num_cities=row.world_country_min_num_cities,
+                    country_exclude=row.world_country_exclude,
+                    analysis_id=row.analysis_id
+                ) 
+        }}
+    ),
 {% endfor %}
+world_cluster_growth_population_country_analysis AS (
+    {% set queries = [] %}
+    {% for row in analysis_parameters %}
+    {% set query = "SELECT * FROM world_cluster_growth_population_country_analysis_" ~ row.analysis_id %}
+    {% do queries.append(query) %}
+    {% endfor %}
+    {{ queries | join(' UNION ALL\n') }}
+)
+SELECT * FROM world_cluster_growth_population_country_analysis

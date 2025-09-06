@@ -10,5 +10,5 @@ JOIN {{ ref('world_urbanization') }}
 USING (country, year)
 JOIN {{ ref('world_takeoff_years') }}
 USING (country)
-JOIN {{ source('owid', 'countries_with_regions') }}
+JOIN {{ source('owid', 'world_country_region') }}
 USING (country)

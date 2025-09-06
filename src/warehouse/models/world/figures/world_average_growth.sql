@@ -23,7 +23,7 @@ average_growth_with_region AS (
             log_average_growth, 
             region2 AS region
     FROM average_growth
-    INNER JOIN {{ source('owid', 'countries_with_regions') }}
+    INNER JOIN {{ source('owid', 'world_country_region') }}
     USING (country)
 )
 SELECT * 

@@ -221,7 +221,7 @@ def _plot_normalized_rank_size_slope_distribution(fig, ax, style_config, df: pd.
 
 
 @dg.asset(
-    deps=[TableNamesResource().names.world.figures.world_rank_size_slopes_urbanization()],
+    deps=[TableNamesResource().names.world.figures.world_rank_size_slopes_urbanization(), TableNamesResource().names.usa.figures.usa_rank_vs_size(), TableNamesResource().names.world.figures.world_rank_vs_size()],
     group_name="figures"
 )
 def figure_4(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> dg.MaterializeResult:
