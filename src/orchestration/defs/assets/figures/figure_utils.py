@@ -31,7 +31,7 @@ def get_bootstrap_ci_mean_derivative_penalized_b_spline(df: pd.DataFrame, xaxis:
     for i in range(n_boots):
         df_bootstrap = df.sample(frac=1, replace=True)
         means.append(get_mean_derivative_penalized_b_spline(df=df_bootstrap, xaxis=xaxis, yaxis=yaxis, lam=lam))
-    return np.mean(means), np.quantile(means, 0.025), np.quantile(means, 0.975)
+    return np.median(means), np.quantile(means, 0.025), np.quantile(means, 0.975)
 
 
 def cluster_bootstrap(data: pd.DataFrame, value_col: str, cluster_col: str, nboots: int) -> Tuple[float, float, float]:
@@ -55,3 +55,37 @@ def materialize_image(path: str) -> dg.MaterializeResult:
             "preview": dg.MetadataValue.md(md_content)
         }
     )
+
+
+def size_growth_slope_by_year_with_cis(df: pd.DataFrame, xaxis: str, yaxis: str, lam: float, n_boots: int) -> Tuple[float, float, float]:
+    years = sorted(df['year'].unique().tolist())
+    slopes_with_cis = []
+    for y in years:
+        df_y = df[df['year'] == y].copy()
+        mean_value, ci_low, ci_high = get_bootstrap_ci_mean_derivative_penalized_b_spline(df=df_y, xaxis=xaxis, yaxis=yaxis, lam=lam, n_boots=n_boots)
+        slopes_with_cis.append({
+            'year': y,
+            'size_growth_slope': mean_value,
+            'ci_low': ci_low,
+            'ci_high': ci_high
+        })
+
+    slopes_with_cis = pd.DataFrame(slopes_with_cis)
+    return slopes_with_cis
+
+
+def rank_size_slope_by_year_with_cis(df: pd.DataFrame, xaxis: str, yaxis: str, lam: float, n_boots: int) -> Tuple[float, float, float]:
+    years = sorted(df['year'].unique().tolist())
+    slopes_with_cis = []
+    for y in years:
+        df_y = df[df['year'] == y].copy()
+        mean_value, ci_low, ci_high = get_bootstrap_ci_mean_derivative_penalized_b_spline(df=df_y, xaxis=xaxis, yaxis=yaxis, lam=lam, n_boots=n_boots)
+        slopes_with_cis.append({
+            'year': y,
+            'rank_size_slope': -1 * mean_value,
+            'ci_low': -1 * ci_low,
+            'ci_high': -1 * ci_high
+        })
+
+    slopes_with_cis = pd.DataFrame(slopes_with_cis)
+    return slopes_with_cis

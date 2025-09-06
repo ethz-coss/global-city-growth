@@ -11,25 +11,8 @@ from typing import Tuple, Dict
 
 from ...resources.resources import PostgresResource, TableNamesResource
 from .figure_config import style_config, figure_dir, region_colors, MAIN_ANALYSIS_ID
-from .figure_utils import fit_penalized_b_spline, materialize_image, get_bootstrap_ci_mean_derivative_penalized_b_spline
+from .figure_utils import fit_penalized_b_spline, materialize_image, rank_size_slope_by_year_with_cis
 from ..constants import constants
-
-
-def _rank_size_slope_by_year_with_cis(df: pd.DataFrame, xaxis: str, yaxis: str, lam: float, n_boots: int) -> Tuple[float, float, float]:
-    years = sorted(df['year'].unique().tolist())
-    slopes_with_cis = []
-    for y in years:
-        df_y = df[df['year'] == y].copy()
-        mean_value, ci_low, ci_high = get_bootstrap_ci_mean_derivative_penalized_b_spline(df=df_y, xaxis=xaxis, yaxis=yaxis, lam=lam, n_boots=n_boots)
-        slopes_with_cis.append({
-            'year': y,
-            'rank_size_slope': -1 * mean_value,
-            'ci_low': -1 * ci_low,
-            'ci_high': -1 * ci_high
-        })
-
-    slopes_with_cis = pd.DataFrame(slopes_with_cis)
-    return slopes_with_cis
 
 
 
@@ -66,8 +49,8 @@ def _plot_rank_size_slope_by_urban_population_share(fig, ax, style_config, df: p
 def _plot_rank_size_slope_usa_kor(fig, ax, style_config, df_usa_rank_vs_size: pd.DataFrame, df_kor_rank_vs_size: pd.DataFrame, n_boots: int) -> None:
     lam = constants['PENALTY_RANK_SIZE_CURVE']
 
-    df_usa = _rank_size_slope_by_year_with_cis(df=df_usa_rank_vs_size, xaxis='log_rank', yaxis='log_population', lam=lam, n_boots=n_boots)
-    df_kor = _rank_size_slope_by_year_with_cis(df=df_kor_rank_vs_size, xaxis='log_rank', yaxis='log_population', lam=lam, n_boots=n_boots)
+    df_usa = rank_size_slope_by_year_with_cis(df=df_usa_rank_vs_size, xaxis='log_rank', yaxis='log_population', lam=lam, n_boots=n_boots)
+    df_kor = rank_size_slope_by_year_with_cis(df=df_kor_rank_vs_size, xaxis='log_rank', yaxis='log_population', lam=lam, n_boots=n_boots)
 
 
     font_family = style_config['font_family']

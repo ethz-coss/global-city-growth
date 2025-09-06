@@ -12,7 +12,7 @@ from .defs.assets.figures.figure_4 import figure_4
 from .defs.assets.figures.tables import table_1, table_2
 from .defs.assets.dbt import dbt_warehouse, my_example_asset, incremental_example_table
 from .defs.assets.figures.si.si_linear_rigidity import world_linearity_test_size_vs_growth, world_linearity_test_rank_size_curve, figure_si_linear_rigidity
-from .defs.assets.figures.si.si_robustness import world_robustness_tables
+from .defs.assets.figures.si.si_robustness import world_robustness_tables, usa_robustness_figure
 from .defs.resources.resources import duckdb_resource, storage_resource, postgres_resource, dbt_resource, table_names_resource, pipes_subprocess_resource, postgres_pandas_io_manager
 
 
@@ -84,6 +84,7 @@ defs = Definitions(
         world_linearity_test_rank_size_curve,
         figure_si_linear_rigidity,
         world_robustness_tables,
+        usa_robustness_figure,
     ],
     resources={
         "duckdb": duckdb_resource,

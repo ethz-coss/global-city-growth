@@ -10,27 +10,8 @@ from typing import Tuple, Dict, Any
 
 from ...resources.resources import PostgresResource, TableNamesResource
 from .figure_config import style_config, figure_dir, MAIN_ANALYSIS_ID
-from .figure_utils import fit_penalized_b_spline, materialize_image, get_mean_derivative_penalized_b_spline, get_bootstrap_ci_mean_derivative_penalized_b_spline
+from .figure_utils import fit_penalized_b_spline, materialize_image, size_growth_slope_by_year_with_cis
 from ..constants import constants
-
-
-
-def _size_growth_slope_by_year_with_cis(df: pd.DataFrame, xaxis: str, yaxis: str, lam: float, n_boots: int) -> Tuple[float, float, float]:
-    years = sorted(df['year'].unique().tolist())
-    slopes_with_cis = []
-    for y in years:
-        df_y = df[df['year'] == y].copy()
-        mean_value, ci_low, ci_high = get_bootstrap_ci_mean_derivative_penalized_b_spline(df=df_y, xaxis=xaxis, yaxis=yaxis, lam=lam, n_boots=n_boots)
-        slopes_with_cis.append({
-            'year': y,
-            'size_growth_slope': mean_value,
-            'ci_low': ci_low,
-            'ci_high': ci_high
-        })
-
-    slopes_with_cis = pd.DataFrame(slopes_with_cis)
-    return slopes_with_cis
-
 
 def _plot_size_growth_slope_vs_urbanization(fig: plt.Figure, ax: plt.Axes, style_config: Dict[str, Any], df: pd.DataFrame) -> Tuple[plt.Figure, plt.Axes]:
     font_family = style_config['font_family']
@@ -100,7 +81,7 @@ def _plot_size_growth_curve_kor_by_year(fig: plt.Figure, ax: plt.Axes, style_con
     y_axis_inset_label = 'Size-growth slope'
 
     lam = constants['PENALTY_SIZE_GROWTH_CURVE']
-    df_size_growth_slope = _size_growth_slope_by_year_with_cis(df=df_size_vs_growth, xaxis=x_axis, yaxis=y_axis, lam=lam, n_boots=n_boots)
+    df_size_growth_slope = size_growth_slope_by_year_with_cis(df=df_size_vs_growth, xaxis=x_axis, yaxis=y_axis, lam=lam, n_boots=n_boots)
 
     colors = [px.colors.qualitative.Plotly[4], px.colors.qualitative.Plotly[6], px.colors.qualitative.Plotly[7]]
 
@@ -134,7 +115,7 @@ def _plot_size_growth_curve_kor_by_year(fig: plt.Figure, ax: plt.Axes, style_con
 
 def _plot_size_growth_slope_usa_by_year(fig: plt.Figure, ax: plt.Axes, style_config: Dict[str, Any], df_size_vs_growth: pd.DataFrame, n_boots: int) -> Tuple[plt.Figure, plt.Axes]:
     lam = constants['PENALTY_SIZE_GROWTH_CURVE']
-    df_slopes_with_cis = _size_growth_slope_by_year_with_cis(df=df_size_vs_growth, xaxis='log_population', yaxis='log_growth', lam=lam, n_boots=n_boots)
+    df_slopes_with_cis = size_growth_slope_by_year_with_cis(df=df_size_vs_growth, xaxis='log_population', yaxis='log_growth', lam=lam, n_boots=n_boots)
 
     font_family = style_config['font_family']
     axis_font_size = style_config['axis_font_size']
