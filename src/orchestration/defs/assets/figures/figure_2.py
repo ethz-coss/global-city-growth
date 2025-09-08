@@ -14,10 +14,11 @@ import matplotlib.colors as mcolors
 from matplotlib.colors import to_rgba
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.gridspec as gridspec
+from sqlalchemy import true
 
 from ...resources.resources import PostgresResource, TableNamesResource
 from .figure_config import style_config, region_colors, figure_dir, MAIN_ANALYSIS_ID
-from .figure_utils import cluster_bootstrap, fit_penalized_b_spline, materialize_image
+from .figure_utils import cluster_bootstrap, fit_penalized_b_spline, materialize_image, annotate_letter_label
 from ..constants import constants
 
 def _create_bicolor_cmap(cmap_neg: str, cmap_pos: str, midpoint_frac: float, name: str = 'bicolor_cmap', N: int = 256) -> mcolors.LinearSegmentedColormap:
@@ -113,7 +114,7 @@ def _plot_world_map_with_colorbar(fig: plt.Figure, ax: plt.Axes, style_config: D
     ax_inset = fig.add_axes(inset_distribution_pos)
     sns.kdeplot(gdf_proj[col], ax=ax_inset, color='black', fill=True, alpha=0.2)
     ax_inset.axvline(x=gdf_proj[col].median(), color='black', linestyle='--', linewidth=0.5)
-    ax_inset.text(gdf_proj[col].median() + 0.01, 25, f'Median: {gdf_proj[col].median():.2f}', fontsize=inset_text_label_font_size, ha='center', va='center', fontfamily=font_family)
+    # ax_inset.text(gdf_proj[col].median() + 0.01, 25, f'Median: {gdf_proj[col].median():.2f}', fontsize=inset_text_label_font_size, ha='center', va='center', fontfamily=font_family)
     ax_inset.set_xlabel(inset_distribution_xlabel, fontsize=inset_font_size, fontfamily=font_family)
     ax_inset.set_ylabel(inset_distribution_ylabel, fontsize=inset_font_size, fontfamily=font_family)
     ax_inset.tick_params(axis='both', which='major', labelsize=inset_tick_font_size)
@@ -194,8 +195,7 @@ def _plot_average_growth_rates_group_barchart_by_region(fig: plt.Figure, ax: plt
     font_family = style_config['font_family']
     tick_font_size = style_config['tick_font_size']
 
-    x_axis_label = 'City sub-group'
-    y_axis_label = 'Sub-group growth advantage\nover national average'
+    y_axis_label = 'Growth advantage over national average \n' + r'($\log(g_{\text{group}} \ / \ g_{\text{national}})$)'
 
     region_col = 'region'
     group_col = 'group'
@@ -224,7 +224,6 @@ def _plot_average_growth_rates_group_barchart_by_region(fig: plt.Figure, ax: plt
     ax.set_xticks(np.arange(len(group_to_label.keys())) + 0.2)
     ax.set_xticklabels(group_to_label.values(), fontsize=tick_font_size, fontfamily=font_family)
     ax.set_ylabel(y_axis_label, fontsize=axis_font_size, fontfamily=font_family)
-    ax.set_xlabel(x_axis_label, fontsize=axis_font_size, fontfamily=font_family)
     ax.tick_params(axis='both', which='major', labelsize=tick_font_size)
     ax.set_title('Growth advantage', fontsize=title_font_size, fontfamily=font_family)
     sns.despine(ax=ax)
@@ -283,6 +282,8 @@ def figure_2_map(context: dg.AssetExecutionContext, postgres: PostgresResource, 
     """
     rank_size_slopes_and_country_borders = gpd.read_postgis(q, con=postgres.get_engine())
     _plot_world_map_with_colorbar(fig=fig, ax=ax, style_config=style_config, gdf=rank_size_slopes_and_country_borders)
+    annotate_letter_label(axes=[ax], left_side=[True], letter_label_font_size=style_config['letter_label_font_size'], font_family=style_config['font_family'])
+
     fig.savefig(figure_path, dpi=300, bbox_inches='tight')
     plt.close(fig)
 
@@ -312,6 +313,8 @@ def figure_2_plots(context: dg.AssetExecutionContext, postgres: PostgresResource
     world_average_growth = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_average_growth()} WHERE analysis_id = {MAIN_ANALYSIS_ID}", con=postgres.get_engine())
     _plot_growth_size_curve_by_region(fig=fig, ax=ax2, style_config=style_config, colors=region_colors, df_size_vs_growth_normalized=world_size_vs_growth_normalized, df_average_growth=world_average_growth)
     
+    dummy_fig, dummy_ax = plt.subplots(figsize=(10, 4))
+    annotate_letter_label(axes=[dummy_ax, ax1, ax2], left_side=[True, False, True], letter_label_font_size=style_config['letter_label_font_size'], font_family=style_config['font_family'])
     fig.savefig(figure_path, dpi=300, bbox_inches='tight')
     plt.close(fig)
 

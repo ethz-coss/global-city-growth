@@ -13,6 +13,7 @@ style_config = {
     'colorbar_label_font_size': 12,
     'inset_map_font_size': 8,
     'inset_map_tick_font_size': 6,
+    'letter_label_font_size': 16,
 }
 
 region_colors = {

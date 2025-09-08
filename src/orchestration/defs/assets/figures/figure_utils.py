@@ -2,7 +2,8 @@
 from pygam import LinearGAM, s
 import numpy as np
 import pandas as pd
-from typing import Tuple
+from typing import Tuple, List
+import matplotlib.pyplot as plt
 import base64
 import dagster as dg
 
@@ -89,3 +90,18 @@ def rank_size_slope_by_year_with_cis(df: pd.DataFrame, xaxis: str, yaxis: str, l
 
     slopes_with_cis = pd.DataFrame(slopes_with_cis)
     return slopes_with_cis
+
+
+def annotate_letter_label(axes: List[plt.Axes], left_side: List[bool], letter_label_font_size: int, font_family: str) -> None:
+    for i, ax in enumerate(axes):
+        y = 0.99
+        x = 0.05 if left_side[i] else 0.95
+        ax.annotate(
+            text=f'{chr(65 + i)}',
+            xy=(x, y),
+            xycoords='axes fraction',
+            ha='left',
+            va='top',
+            fontsize=letter_label_font_size,
+            fontfamily=font_family
+        )

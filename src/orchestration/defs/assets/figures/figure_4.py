@@ -8,10 +8,12 @@ import seaborn as sns
 import os
 from typing import Tuple, Dict
 
+from sqlalchemy.sql.expression import true
+
 
 from ...resources.resources import PostgresResource, TableNamesResource
 from .figure_config import style_config, figure_dir, region_colors, MAIN_ANALYSIS_ID
-from .figure_utils import fit_penalized_b_spline, materialize_image, rank_size_slope_by_year_with_cis
+from .figure_utils import fit_penalized_b_spline, materialize_image, rank_size_slope_by_year_with_cis, annotate_letter_label
 from ..constants import constants
 
 
@@ -135,7 +137,7 @@ def _plot_rank_size_slope_by_takeoff_year(fig, ax, style_config, df: pd.DataFram
     x_axis = 'takeoff_year'
     y_axis = 'rank_size_slope'
 
-    x_axis_label = 'Takeoff year (Year 20% urban)'
+    x_axis_label = r'First year urban share $> 20\%$'
     y_axis_label = 'Dominance of large cities\n(Zipd exponent)'
 
     lam = constants['PENALTY_SLOPE_SPLINE']
@@ -214,8 +216,8 @@ def figure_4(context: dg.AssetExecutionContext, postgres: PostgresResource, tabl
     figure_path = os.path.join(figure_dir, figure_file_name)
 
     fig = plt.figure(figsize=(10, 12))
-    gs_main = GridSpec(2, 1, figure=fig, height_ratios=[6, 1], hspace=0.1)
-    gs_top = gs_main[0].subgridspec(2, 2, hspace=0.45, wspace=0.25)
+    gs_main = GridSpec(2, 1, figure=fig, height_ratios=[6, 1], hspace=0.15)
+    gs_top = gs_main[0].subgridspec(2, 2, hspace=0.25, wspace=0.25)
 
     ax1 = fig.add_subplot(gs_top[0, 0])
     ax2 = fig.add_subplot(gs_top[0, 1])
@@ -245,6 +247,8 @@ def figure_4(context: dg.AssetExecutionContext, postgres: PostgresResource, tabl
     _plot_rank_size_slope_by_takeoff_year(fig=fig, ax=ax4, style_config=style_config, df=world_rank_size_slopes_urbanization)
 
     _plot_normalized_rank_size_slope_distribution(fig=fig, ax=ax5, style_config=style_config, df=world_rank_size_slopes_urbanization)
+
+    annotate_letter_label(axes=[ax1, ax2, ax3, ax4, ax5], left_side=[True, True, True, False, True], letter_label_font_size=style_config['letter_label_font_size'], font_family=style_config['font_family'])
     
     fig.savefig(figure_path, dpi=300, bbox_inches='tight')
     plt.close(fig)

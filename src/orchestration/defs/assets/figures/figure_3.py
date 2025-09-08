@@ -6,11 +6,11 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 import seaborn as sns
 import os
-from typing import Tuple, Dict, Any
+from typing import Tuple, Dict, Any, List
 
 from ...resources.resources import PostgresResource, TableNamesResource
 from .figure_config import style_config, figure_dir, MAIN_ANALYSIS_ID
-from .figure_utils import fit_penalized_b_spline, materialize_image, size_growth_slope_by_year_with_cis
+from .figure_utils import fit_penalized_b_spline, materialize_image, size_growth_slope_by_year_with_cis, annotate_letter_label
 from ..constants import constants
 
 def _plot_size_growth_slope_vs_urbanization(fig: plt.Figure, ax: plt.Axes, style_config: Dict[str, Any], df: pd.DataFrame) -> Tuple[plt.Figure, plt.Axes]:
@@ -30,7 +30,7 @@ def _plot_size_growth_slope_vs_urbanization(fig: plt.Figure, ax: plt.Axes, style
     x_axis_inset = 'takeoff_year'
     y_axis_inset = 'size_growth_slope'
 
-    x_axis_inset_label = 'Takeoff year\n(Year 20% urban)'
+    x_axis_inset_label = 'First year\n' + r'urban share $> 20\%$'
     y_axis_inset_label = 'Size-growth slope'
 
     lam = constants['PENALTY_SLOPE_SPLINE']
@@ -67,7 +67,7 @@ def _plot_size_growth_curve_kor_by_year(fig: plt.Figure, ax: plt.Axes, style_con
     inset_font_size = style_config['inset_font_size']
     inset_tick_font_size = style_config['inset_tick_font_size']
 
-    years_size_growth_curve = [1975, 2015]
+    years_size_growth_curve = [1975, 1995, 2015]
     x_axis = 'log_population'
     y_axis = 'log_growth'
 
@@ -83,7 +83,7 @@ def _plot_size_growth_curve_kor_by_year(fig: plt.Figure, ax: plt.Axes, style_con
     lam = constants['PENALTY_SIZE_GROWTH_CURVE']
     df_size_growth_slope = size_growth_slope_by_year_with_cis(df=df_size_vs_growth, xaxis=x_axis, yaxis=y_axis, lam=lam, n_boots=n_boots)
 
-    colors = [px.colors.qualitative.Plotly[4], px.colors.qualitative.Plotly[6], px.colors.qualitative.Plotly[7]]
+    colors = [px.colors.qualitative.Plotly[7], px.colors.qualitative.Plotly[4], px.colors.qualitative.Plotly[6]]
 
     for i, yr in enumerate(years_size_growth_curve):
         pop_growth_kor_t = df_size_vs_growth[df_size_vs_growth['year'] == yr] 
@@ -175,7 +175,6 @@ def _plot_size_growth_curve_usa_by_epoch(fig: plt.Figure, ax: plt.Axes, style_co
     sns.despine(ax=ax)
     return fig, ax
 
-
 @dg.asset(
     deps=[TableNamesResource().names.usa.figures.usa_size_vs_growth_normalized(), TableNamesResource().names.usa.figures.usa_average_growth(), TableNamesResource().names.usa.figures.usa_size_vs_growth(), TableNamesResource().names.world.figures.world_size_growth_slopes_urbanization(), TableNamesResource().names.world.figures.world_size_vs_growth()],
     group_name="figures"
@@ -211,6 +210,7 @@ def figure_3(context: dg.AssetExecutionContext, postgres: PostgresResource, tabl
     usa_average_growth = pd.read_sql(f"SELECT * FROM {tables.names.usa.figures.usa_average_growth()} WHERE analysis_id = {MAIN_ANALYSIS_ID}", con=postgres.get_engine())
     _plot_size_growth_curve_usa_by_epoch(fig=fig, ax=ax4, style_config=style_config, df_size_vs_growth_normalized=usa_size_vs_growth_normalized, df_average_growth=usa_average_growth)
     
+    annotate_letter_label(axes=[ax1, ax2, ax3, ax4], left_side=[False, False, False, False], letter_label_font_size=style_config['letter_label_font_size'], font_family=style_config['font_family'])
     fig.savefig(figure_path, dpi=300, bbox_inches='tight')
     plt.close(fig)
 
