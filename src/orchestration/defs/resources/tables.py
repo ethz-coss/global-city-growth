@@ -96,6 +96,9 @@ class USAFigures:
     
     def usa_dataset_summary_table(self) -> str:
         return "usa_dataset_summary_table"
+
+    def usa_year_epoch(self) -> str:
+        return "usa_year_epoch"
     
 @dataclass(frozen=True)
 class USA:
