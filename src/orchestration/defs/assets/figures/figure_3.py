@@ -210,7 +210,7 @@ def figure_3(context: dg.AssetExecutionContext, postgres: PostgresResource, tabl
     usa_average_growth = pd.read_sql(f"SELECT * FROM {tables.names.usa.figures.usa_average_growth()} WHERE analysis_id = {MAIN_ANALYSIS_ID}", con=postgres.get_engine())
     _plot_size_growth_curve_usa_by_epoch(fig=fig, ax=ax4, style_config=style_config, df_size_vs_growth_normalized=usa_size_vs_growth_normalized, df_average_growth=usa_average_growth)
     
-    annotate_letter_label(axes=[ax1, ax2, ax3, ax4], left_side=[False, False, False, False], letter_label_font_size=style_config['letter_label_font_size'], font_family=style_config['font_family'])
+    annotate_letter_label(axes=[ax1, ax2, ax4, ax3], left_side=[False, False, False, False], letter_label_font_size=style_config['letter_label_font_size'], font_family=style_config['font_family'])
     fig.savefig(figure_path, dpi=300, bbox_inches='tight')
     plt.close(fig)
 
