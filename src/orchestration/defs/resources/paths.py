@@ -65,7 +65,7 @@ class GHSLPaths:
         return self.root / "pop" / f"GHS_POP_E{year}_GLOBE_R2023A_54009_1000_V1_0.tif"
     
     def smod(self, year: int) -> Path:
-        return self.root / "smod" / f"GHS_SMOD_E{year}_GLOBE_R2023A_54009_1000_V1_0.tif"
+        return self.root / "smod" / f"GHS_SMOD_E{year}_GLOBE_R2023A_54009_1000_V2_0.tif"
 
 
 @dataclass(frozen=True)

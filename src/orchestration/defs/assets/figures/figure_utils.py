@@ -73,7 +73,7 @@ def size_growth_slope_by_year_with_cis(df: pd.DataFrame, xaxis: str, yaxis: str,
 
     slopes_with_cis = pd.DataFrame(slopes_with_cis)
     return slopes_with_cis
-
+    
 
 def rank_size_slope_by_year_with_cis(df: pd.DataFrame, xaxis: str, yaxis: str, lam: float, n_boots: int) -> Tuple[float, float, float]:
     years = sorted(df['year'].unique().tolist())

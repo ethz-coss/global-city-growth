@@ -149,6 +149,7 @@ def _make_table_dataset_summary(df_usa_dataset_summary_table: pd.DataFrame, df_w
     group_name="figures"
 )
 def table_1(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> dg.MaterializeResult:
+    context.log.info(f"Creating table 1")
     table_file_name = 'table_1.txt'
     table_path = os.path.join(table_dir, table_file_name)
 
@@ -182,7 +183,7 @@ def table_2(context: dg.AssetExecutionContext, postgres: PostgresResource, table
     world_rank_size_slopes_urbanization = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_rank_size_slopes_urbanization()} WHERE analysis_id = {MAIN_ANALYSIS_ID}", con=postgres.get_engine())  
     context.log.info(f"Number of records in world_rank_size_slopes_urbanization: {len(world_rank_size_slopes_urbanization[['country', 'year']].drop_duplicates())}")
     context.log.info(f"Number of records in world_size_growth_slopes_urbanization: {len(world_size_growth_slopes_urbanization[['country', 'year']].drop_duplicates())}")
-    latex_table = make_table_2(df_size_growth_slopes=world_size_growth_slopes_urbanization, df_rank_size_slopes=world_rank_size_slopes_urbanization, context=context)
+    latex_table = make_table_2(df_size_growth_slopes=world_size_growth_slopes_urbanization, df_rank_size_slopes=world_rank_size_slopes_urbanization)
 
     with open(table_path, 'w') as f:
         f.write(latex_table)

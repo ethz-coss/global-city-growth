@@ -13,7 +13,7 @@ from sqlalchemy.sql.expression import true
 
 from ...resources.resources import PostgresResource, TableNamesResource
 from .figure_config import style_config, figure_dir, region_colors, MAIN_ANALYSIS_ID
-from .figure_utils import fit_penalized_b_spline, materialize_image, rank_size_slope_by_year_with_cis, annotate_letter_label
+from .figure_utils import fit_penalized_b_spline, materialize_image, rank_size_slope_by_year_with_cis, annotate_letter_label, get_mean_derivative_penalized_b_spline
 from ..constants import constants
 
 
@@ -48,11 +48,26 @@ def _plot_rank_size_slope_by_urban_population_share(fig, ax, style_config, df: p
     return fig, ax
 
 
+def _get_rank_size_slope_by_year(df: pd.DataFrame, xaxis: str, yaxis: str, lam: float) -> pd.DataFrame:
+    years = sorted(df['year'].unique())
+    slopes = []
+    for y in years:
+        df_y = df[df['year'] == y].copy()
+        rank_size_slope = -1 * get_mean_derivative_penalized_b_spline(df=df_y, xaxis=xaxis, yaxis=yaxis, lam=lam)
+        slopes.append({
+            'year': y,
+            'rank_size_slope': rank_size_slope,
+        })
+
+    slopes = pd.DataFrame(slopes)
+    return slopes
+
+
 def _plot_rank_size_slope_usa_kor(fig, ax, style_config, df_usa_rank_vs_size: pd.DataFrame, df_kor_rank_vs_size: pd.DataFrame, n_boots: int) -> None:
     lam = constants['PENALTY_RANK_SIZE_CURVE']
 
-    df_usa = rank_size_slope_by_year_with_cis(df=df_usa_rank_vs_size, xaxis='log_rank', yaxis='log_population', lam=lam, n_boots=n_boots)
-    df_kor = rank_size_slope_by_year_with_cis(df=df_kor_rank_vs_size, xaxis='log_rank', yaxis='log_population', lam=lam, n_boots=n_boots)
+    df_usa = _get_rank_size_slope_by_year(df=df_usa_rank_vs_size, xaxis='log_rank', yaxis='log_population', lam=lam)
+    df_kor = _get_rank_size_slope_by_year(df=df_kor_rank_vs_size, xaxis='log_rank', yaxis='log_population', lam=lam)
 
 
     font_family = style_config['font_family']
@@ -73,11 +88,9 @@ def _plot_rank_size_slope_usa_kor(fig, ax, style_config, df_usa_rank_vs_size: pd
     color = px.colors.qualitative.Plotly[0]
 
     ax.plot(df_usa[x_axis], df_usa[y_axis], color=color, linewidth=2, marker='o')
-    ax.fill_between(df_usa[x_axis], df_usa['ci_low'], df_usa['ci_high'], color=color, alpha=0.2)
 
     ax_inset = fig.add_axes([0.78, 0.66, 0.1, 0.1])
-    ax_inset.plot(df_kor[x_axis], df_kor[y_axis], color=color, linewidth=2, marker='o')
-    ax_inset.fill_between(df_kor[x_axis], df_kor['ci_low'], df_kor['ci_high'], color=color, alpha=0.2)
+    ax_inset.plot(df_kor[x_axis], df_kor[y_axis], color=color, linewidth=2, marker='o', markersize=5)
 
     ax_inset.set_xlabel(x_axis_label, fontsize=inset_font_size, fontfamily=font_family)
     ax_inset.set_ylabel(inset_y_axis_label, fontsize=inset_font_size, fontfamily=font_family)
@@ -225,7 +238,7 @@ def figure_4(context: dg.AssetExecutionContext, postgres: PostgresResource, tabl
     ax4 = fig.add_subplot(gs_top[1, 1])
     ax5 = fig.add_subplot(gs_main[1])
 
-    world_rank_size_slopes_urbanization = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_rank_size_slopes_urbanization()} WHERE analysis_id = {MAIN_ANALYSIS_ID}", con=postgres.get_engine())
+    world_rank_size_slopes_urbanization = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_rank_size_slopes_urbanization()} WHERE analysis_id = {MAIN_ANALYSIS_ID} AND year <= 2025", con=postgres.get_engine())
     _plot_rank_size_slope_by_urban_population_share(fig=fig, ax=ax1, style_config=style_config, df=world_rank_size_slopes_urbanization)
 
     n_boots = 100
