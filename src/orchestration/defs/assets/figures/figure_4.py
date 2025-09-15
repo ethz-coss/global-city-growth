@@ -238,7 +238,7 @@ def figure_4(context: dg.AssetExecutionContext, postgres: PostgresResource, tabl
     ax4 = fig.add_subplot(gs_top[1, 1])
     ax5 = fig.add_subplot(gs_main[1])
 
-    world_rank_size_slopes_urbanization = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_rank_size_slopes_urbanization()} WHERE analysis_id = {MAIN_ANALYSIS_ID} AND year <= 2025", con=postgres.get_engine())
+    world_rank_size_slopes_urbanization = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_rank_size_slopes_urbanization()} WHERE analysis_id = {MAIN_ANALYSIS_ID}", con=postgres.get_engine())
     _plot_rank_size_slope_by_urban_population_share(fig=fig, ax=ax1, style_config=style_config, df=world_rank_size_slopes_urbanization)
 
     n_boots = 100

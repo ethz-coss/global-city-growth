@@ -176,6 +176,9 @@ class WorldFigures:
     def world_dataset_summary_table(self) -> str:
         return "world_dataset_summary_table"
 
+    def world_region_regression_with_urbanization_controls(self) -> str:
+        return "world_region_regression_with_urbanization_controls"
+
 
 @dataclass(frozen=True)
 class WorldSupplementaryInformation:
