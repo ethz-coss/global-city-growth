@@ -27,12 +27,6 @@ def _plot_size_growth_slope_vs_urbanization(fig: plt.Figure, ax: plt.Axes, style
     x_axis_label = 'Urban population share'
     y_axis_label = 'Growth advantage of large cities\n(size-growth slope)'
 
-    x_axis_inset = 'takeoff_year'
-    y_axis_inset = 'size_growth_slope'
-
-    x_axis_inset_label = 'First year\n' + r'urban share $> 20\%$'
-    y_axis_inset_label = 'Size-growth slope'
-
     lam = constants['PENALTY_SLOPE_SPLINE']
     color = px.colors.qualitative.Plotly[0]
 
@@ -44,17 +38,7 @@ def _plot_size_growth_slope_vs_urbanization(fig: plt.Figure, ax: plt.Axes, style
     ax.set_xlabel(x_axis_label, fontsize=axis_font_size, fontfamily=font_family)
     ax.set_ylabel(y_axis_label, fontsize=axis_font_size, fontfamily=font_family)
     ax.tick_params(axis='both', which='major', labelsize=tick_font_size)
-
-    ax_inset = fig.add_axes([0.35, 0.75, 0.1, 0.1])
-    x_inset, y_inset, ci_low_inset, ci_high_inset = fit_penalized_b_spline(df=df, xaxis=x_axis_inset, yaxis=y_axis_inset, lam=lam)
-    ax_inset.plot(x_inset, y_inset, color=color, linewidth=2)
-    ax_inset.fill_between(x_inset, ci_low_inset, ci_high_inset, color=color, alpha=0.2)
-    ax_inset.axhline(y=0, color='black', linestyle='--', linewidth=0.5)
-    ax_inset.set_xlabel(x_axis_inset_label, fontsize=inset_font_size, fontfamily=font_family)
-    ax_inset.set_ylabel(y_axis_inset_label, fontsize=inset_font_size, fontfamily=font_family)
-    ax_inset.tick_params(axis='both', which='major', labelsize=inset_tick_font_size)
     ax.set_title('Global cross-section', fontsize=title_font_size, fontfamily=font_family)
-    sns.despine(ax=ax_inset)
     sns.despine(ax=ax)
     return fig, ax
 
@@ -200,7 +184,7 @@ def _plot_region_regression_with_urbanization_controls(fig: plt.Figure, ax: plt.
                 fontfamily=font_family)
 
     ax.set_xlabel('')
-    ax.set_ylabel('Deviation of mean regional\nsize-growth slope from global average', fontsize=axis_font_size, fontfamily=font_family)
+    ax.set_ylabel('Deviation of region size-growth slope\nfrom global average', fontsize=axis_font_size, fontfamily=font_family)
     ax.set_xticks(index)
     ax.set_xticklabels(df.index, rotation=0, ha="center")
     ax.tick_params(axis='both', which='major', labelsize=tick_font_size)

@@ -142,4 +142,42 @@ def world_region_regression_with_urbanization_controls(context: dg.AssetExecutio
     results = pd.concat(results)
     return results
 
-    
+
+def _get_projections_for_world_size_growth_slopes(df_size_growth_slopes: pd.DataFrame, df_urbanization_projections: pd.DataFrame) -> pd.DataFrame:
+    size_growth_reg = smf.ols('size_growth_slope ~ urban_population_share', data=df_size_growth_slopes).fit()
+    intercept, slope = size_growth_reg.params['Intercept'], size_growth_reg.params['urban_population_share']
+    df_urbanization_projections['size_growth_slope'] = intercept + slope * df_urbanization_projections['urban_population_share']
+    df_size_growth_slope_projections = df_urbanization_projections[['country', 'year', 'size_growth_slope']].copy()
+    return df_size_growth_slope_projections
+
+@dg.asset(
+    deps=[TableNamesResource().names.world.figures.world_size_growth_slopes_urbanization(), TableNamesResource().names.world.figures.world_urbanization()],
+    kinds={'postgres'},
+    group_name="figure_data_prep",
+    io_manager_key="postgres_io_manager"
+)
+def world_size_growth_slopes_projections(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> pd.DataFrame:
+    context.log.info("Calculating world size growth slopes projections")
+    q = f"""
+    SELECT *
+    FROM {tables.names.world.figures.world_urbanization()}
+    WHERE year >= 2020 AND MOD(year, 10) = 0
+    """
+    urbanization_projections = pd.read_sql(q, con=postgres.get_engine())
+
+    q = f"""
+    SELECT *
+    FROM {tables.names.world.figures.world_size_growth_slopes_urbanization()}
+    WHERE year < 2020
+    """
+    size_growth_slopes = pd.read_sql(q, con=postgres.get_engine())
+    analysis_ids = size_growth_slopes['analysis_id'].unique().tolist()
+    size_growth_slopes_projections = []
+    for analysis_id in analysis_ids:
+        size_growth_slopes_analysis_id = size_growth_slopes[size_growth_slopes['analysis_id'] == analysis_id]
+        projections = _get_projections_for_world_size_growth_slopes(df_size_growth_slopes=size_growth_slopes_analysis_id, df_urbanization_projections=urbanization_projections.copy())
+        projections['analysis_id'] = analysis_id
+        size_growth_slopes_projections.append(projections)
+
+    size_growth_slopes_projections = pd.concat(size_growth_slopes_projections)
+    return size_growth_slopes_projections

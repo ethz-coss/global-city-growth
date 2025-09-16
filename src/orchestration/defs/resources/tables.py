@@ -143,6 +143,9 @@ class WorldTransformations:
 
 @dataclass(frozen=True)
 class WorldFigures:
+    def world_urbanization(self) -> str:
+        return "world_urbanization"
+    
     def world_size_vs_growth(self) -> str:
         return "world_size_vs_growth"
     
@@ -172,6 +175,12 @@ class WorldFigures:
     
     def world_rank_size_slopes_urbanization(self) -> str:
         return "world_rank_size_slopes_urbanization"
+
+    def world_rank_size_slopes_projections(self) -> str:
+        return "world_rank_size_slopes_projections"
+
+    def world_rank_size_slopes_with_projections_and_regions(self) -> str:
+        return "world_rank_size_slopes_with_projections_and_regions"
     
     def world_dataset_summary_table(self) -> str:
         return "world_dataset_summary_table"
