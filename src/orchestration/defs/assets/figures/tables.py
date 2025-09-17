@@ -13,8 +13,6 @@ import re
 
 
 from ...resources.resources import PostgresResource, TableNamesResource
-from .figure_config import style_config, figure_dir, table_dir, region_colors, MAIN_ANALYSIS_ID
-from .figure_utils import fit_penalized_b_spline, materialize_image, get_bootstrap_ci_mean_derivative_penalized_b_spline
 from ..constants import constants
 
 

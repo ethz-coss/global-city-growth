@@ -116,7 +116,7 @@ def world_crosswalk_cshapes_code_to_iso_code(context: dg.AssetExecutionContext, 
 
 @dg.asset(
     kinds={'postgres'},
-    group_name="world_raw"
+    group_name="world_raw",
 )
 def world_urbanization_raw(context: dg.AssetExecutionContext, postgres: PostgresResource, storage: StorageResource, tables: TableNamesResource):
     urbanization_path = storage.paths.world.owid.urbanization()

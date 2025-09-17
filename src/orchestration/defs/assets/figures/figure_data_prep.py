@@ -8,8 +8,7 @@ import statsmodels.formula.api as smf
 
 from ...resources.resources import PostgresResource, StorageResource, TableNamesResource
 from ..constants import constants
-from .figure_utils import get_mean_derivative_penalized_b_spline
-from .figure_config import MAIN_ANALYSIS_ID
+from .figure_stats import get_mean_derivative_penalized_b_spline
 
 @dg.asset(
     kinds={'postgres'},
