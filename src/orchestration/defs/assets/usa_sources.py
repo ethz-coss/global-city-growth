@@ -59,18 +59,13 @@ def usa_hist_census_place_migration(context: dg.AssetExecutionContext, duckdb: D
 
 @dg.asset(
     kinds={'postgres'},
-    group_name="usa_raw"
+    group_name="usa_raw",
+    io_manager_key="postgres_io_manager"
 )
 def usa_nhgis_census_place_population_1990_2020_raw(context: dg.AssetExecutionContext, postgres: PostgresResource, storage: StorageResource, tables: TableNamesResource):
     context.log.info(f"Copying census place population from nhgis to postgres")
     data = pd.read_csv(storage.paths.usa.nhgis.census_place_pop_1990_2020(), encoding='latin1')
-    data.to_sql(
-        name=tables.names.usa.sources.usa_nhgis_census_place_population_raw_1990_2020(),
-        con=postgres.get_engine(),
-        if_exists="replace",
-        index=False,
-        schema="public"
-    )
+    return data
 
 @dg.asset(
     kinds={'postgres'},
@@ -96,19 +91,13 @@ def usa_nhgis_census_place_geom_all_years_raw(context: dg.AssetExecutionContext,
 
 @dg.asset(
     kinds={'postgres'},
-    group_name="usa_raw"
+    group_name="usa_raw",
+    io_manager_key="postgres_io_manager"
 )
 def usa_hist_census_place_geom_raw(context: dg.AssetExecutionContext, postgres: PostgresResource, storage: StorageResource, tables: TableNamesResource):
     context.log.info(f"Copying census place geom from hist to postgres")
     census_place_geom_df = pd.read_csv(storage.paths.usa.census_place_project.hist_census_place_geom())
-    census_place_geom_df.to_sql(
-        name=tables.names.usa.sources.usa_hist_census_place_geom_raw(),
-        con=postgres.get_engine(),
-        if_exists="replace",
-        index=False,
-        schema="public"
-    )
-
+    return census_place_geom_df
 
 
 @dg.asset(
