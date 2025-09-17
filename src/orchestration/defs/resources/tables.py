@@ -99,6 +99,9 @@ class USAFigures:
 
     def usa_year_epoch(self) -> str:
         return "usa_year_epoch"
+
+    def usa_rank_size_slopes_change(self) -> str:
+        return "usa_rank_size_slopes_change"
     
 @dataclass(frozen=True)
 class USA:
@@ -170,21 +173,15 @@ class WorldFigures:
     def world_size_growth_slopes_projections(self) -> str:
         return "world_size_growth_slopes_projections"
 
-    def world_size_growth_slopes_urbanization(self) -> str:
-        return "world_size_growth_slopes_urbanization"
+    def world_size_growth_slopes_historical_urbanization(self) -> str:
+        return "world_size_growth_slopes_historical_urbanization"
     
     def world_rank_vs_size(self) -> str:
         return "world_rank_vs_size"
 
-    def world_rank_size_slopes(self) -> str:
-        return "world_rank_size_slopes"
+    def world_rank_size_slopes_change_by_urbanization_group(self) -> str:
+        return "world_rank_size_slopes_change_by_urbanization_group"
     
-    def world_rank_size_slopes_historical(self) -> str:
-        return "world_rank_size_slopes_historical"
-
-    def world_rank_size_slopes_projections(self) -> str:
-        return "world_rank_size_slopes_projections"
-
     def world_rank_size_slopes_change(self) -> str:
         return "world_rank_size_slopes_change"
     

@@ -196,7 +196,7 @@ def _plot_size_growth_curve_usa_by_analysis_id(fig: plt.Figure, ax: plt.Axes, st
 
 
 @dg.asset(
-    deps=[TableNamesResource().names.world.figures.world_size_growth_slopes_urbanization(), TableNamesResource().names.world.figures.world_rank_size_slopes_urbanization(), TableNamesResource().names.other.analysis_parameters()],
+    deps=[TableNamesResource().names.other.analysis_parameters()],
     group_name="supplementary_information"
 )
 def world_robustness_tables(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> dg.MaterializeResult:

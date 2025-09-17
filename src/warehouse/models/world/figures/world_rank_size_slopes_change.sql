@@ -6,7 +6,12 @@ WITH world_rank_size_slopes_base AS (
     FROM {{ ref('world_rank_size_slopes') }}
     WHERE year IN (1975, 2000)
 )
-SELECT country, year, analysis_id, region, year_base, rank_size_slope / rank_size_slope_base  - 1 AS rank_size_slope_change
+SELECT  country, 
+        year, 
+        analysis_id, 
+        region, 
+        year_base, 
+        rank_size_slope / rank_size_slope_base  - 1 AS rank_size_slope_change
 FROM world_rank_size_slopes_base
-JOIN {{ ref('world_rank_size_slopes_with_projections_and_regions') }}
+JOIN {{ ref('world_rank_size_slopes') }}
 USING (country, analysis_id)

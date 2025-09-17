@@ -62,7 +62,7 @@ def _get_projections_for_world_size_growth_slopes(df_size_growth_slopes: pd.Data
     return df_urbanization_projections.assign(size_growth_slope=predictions)[['country', 'year', 'size_growth_slope']]
 
 @dg.asset(
-    deps=[TableNamesResource().names.world.figures.world_size_growth_slopes_urbanization(), TableNamesResource().names.world.figures.world_urbanization()],
+    deps=[TableNamesResource().names.world.figures.world_size_growth_slopes_historical_urbanization(), TableNamesResource().names.world.figures.world_urbanization()],
     kinds={'postgres'},
     group_name="figure_data_prep",
     io_manager_key="postgres_io_manager"
@@ -78,7 +78,7 @@ def world_size_growth_slopes_projections(context: dg.AssetExecutionContext, post
 
     q = f"""
     SELECT *
-    FROM {tables.names.world.figures.world_size_growth_slopes_urbanization()}
+    FROM {tables.names.world.figures.world_size_growth_slopes_historical_urbanization()}
     WHERE year < 2020
     """
     size_growth_slopes = pd.read_sql(q, con=postgres.get_engine())
@@ -123,7 +123,7 @@ def _get_regression_results_for_region_regression_with_urbanization_controls(df:
 
 
 @dg.asset(
-    deps=[TableNamesResource().names.world.figures.world_size_growth_slopes_urbanization(), TableNamesResource().names.world.sources.world_country_region()],
+    deps=[TableNamesResource().names.world.figures.world_size_growth_slopes_historical_urbanization(), TableNamesResource().names.world.sources.world_country_region()],
     kinds={'postgres'},
     group_name="figure_data_prep",
     io_manager_key="postgres_io_manager"
@@ -133,7 +133,7 @@ def world_region_regression_with_urbanization_controls(context: dg.AssetExecutio
     
     q = f"""
     SELECT *
-    FROM {tables.names.world.figures.world_size_growth_slopes_urbanization()}
+    FROM {tables.names.world.figures.world_size_growth_slopes_historical_urbanization()}
     JOIN {tables.names.world.sources.world_country_region()}
     USING (country)
     WHERE year < 2020

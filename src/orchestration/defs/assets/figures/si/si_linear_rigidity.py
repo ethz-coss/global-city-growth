@@ -1,4 +1,5 @@
 # src/orchestration/defs/assets/figures/si/si_linear_rigidity.py
+
 import numpy as np
 import pandas as pd
 from scipy.stats import norm
@@ -254,7 +255,7 @@ def _plot_rank_size_linearity_test_results(fig: plt.Figure, ax: plt.Axes, style_
     sns.despine(ax=ax)
     return fig, ax
         
-    
+"""
 
 @dg.asset(
     deps=[TableNamesResource().names.world.figures.world_size_vs_growth()],
@@ -350,4 +351,4 @@ def figure_si_linear_rigidity(context: dg.AssetExecutionContext, postgres: Postg
     fig.savefig(figure_path, dpi=300, bbox_inches='tight')
     plt.close(fig)
 
-    return materialize_image(path=figure_path)
+    return materialize_image(path=figure_path)"""

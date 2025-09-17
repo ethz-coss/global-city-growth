@@ -17,7 +17,7 @@ average_size_growth_slope AS (
     SELECT  country, 
             analysis_id,
             AVG(size_growth_slope) AS size_growth_slope
-    FROM {{ source('figure_data_prep', 'world_size_growth_slopes') }}
+    FROM {{ source('figure_data_prep', 'world_size_growth_slopes_historical') }}
     GROUP BY country, analysis_id
 ),
 average_size_growth_slope_with_borders AS (

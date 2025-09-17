@@ -1,14 +1,27 @@
-SELECT  country, 
-        year, 
-        analysis_id,
-        rank_size_slope, 
-        urban_population_share, 
-        region2 AS region,
-        urban_population_share_1950
-FROM {{ source('figure_data_prep', 'world_rank_size_slopes') }}
-JOIN {{ ref('world_urbanization') }}
-USING (country, year)
-JOIN urban_population_share_1950
-USING (country)
-JOIN {{ source('owid', 'world_country_region') }}
-USING (country)
+WITH urbanization_groups AS (
+    SELECT  country, 
+            CASE WHEN urban_population_share <= 0.6 THEN '0-60'
+                 ELSE '60-100'
+            END AS urban_population_share_group
+    FROM {{ ref('world_urbanization') }}
+    WHERE year = 1975
+),
+rank_size_slope_change_with_1975_base AS (
+    SELECT *
+    FROM {{ ref('world_rank_size_slopes_change') }}
+    WHERE year_base = 1975
+),
+world_rank_size_slopes_change_by_urbanization_group AS (
+    SELECT  country, 
+            year, 
+            analysis_id,
+            region,
+            rank_size_slope_change,
+            urban_population_share_group
+    FROM rank_size_slope_change_with_1975_base
+    JOIN urbanization_groups
+    USING (country)
+)
+SELECT *
+FROM world_rank_size_slopes_change_by_urbanization_group
+ORDER BY analysis_id, country, year

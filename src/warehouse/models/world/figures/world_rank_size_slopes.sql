@@ -1,13 +1,23 @@
 WITH world_rank_size_slopes_with_projections AS (
-    SELECT country, year, analysis_id, rank_size_slope
-    FROM{{ source('figure_data_prep', 'world_rank_size_slopes') }}
+    SELECT  country, 
+            year, 
+            analysis_id, 
+            rank_size_slope
+    FROM{{ source('figure_data_prep', 'world_rank_size_slopes_historical') }}
     WHERE year < 2030
     UNION ALL
-    SELECT country, year, analysis_id, rank_size_slope
+    SELECT  country, 
+            year, 
+            analysis_id, 
+            rank_size_slope
     FROM {{ ref('world_rank_size_slopes_projections') }}
 ),
 world_rank_size_slopes_with_projections_and_region AS (
-    SELECT country, year, analysis_id, rank_size_slope, region2 AS region    
+    SELECT  country, 
+            year, 
+            analysis_id, 
+            rank_size_slope, 
+            region2 AS region    
     FROM world_rank_size_slopes_with_projections
     JOIN {{ source('owid', 'world_country_region') }}
     USING (country)

@@ -14,7 +14,7 @@ rank_size_slopes_start AS (
             analysis_id,
             MOD(year, 10) AS mod_year,
             rank_size_slope AS rank_size_slope_start
-    FROM {{ source('figure_data_prep', 'world_rank_size_slopes') }}
+    FROM {{ source('figure_data_prep', 'world_rank_size_slopes_historical') }}
     WHERE year IN (2020, 2025)
 ),
 rank_size_slopes_projections AS (
