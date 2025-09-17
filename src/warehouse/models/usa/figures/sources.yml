@@ -1,0 +1,5 @@
+sources:
+  - name: figure_data_prep
+    schema: public
+    tables:
+      - name: usa_rank_size_slopes

@@ -5,7 +5,7 @@ from .defs.assets.usa_sources import usa_hist_census_place_population, usa_hist_
 from .defs.assets.usa import usa_crosswalk_nhgis_census_place_to_connected_component, usa_raster_census_place_convolved_year, usa_raster_census_place_convolved_all_years, usa_crosswalk_component_id_to_cluster_id
 from .defs.assets.world_sources import world_raster_ghsl_pop, world_raster_ghsl_smod, world_country_borders_raw, world_urbanization_raw, world_crosswalk_cshapes_code_to_iso_code, world_raster_ghsl_pop_all_years, world_raster_ghsl_smod_all_years, world_country_region
 from .defs.assets.world import world_crosswalk_component_id_to_cluster_id
-from .defs.assets.figures.figure_data_prep import analysis_parameters, world_size_growth_slopes, world_rank_size_slopes, world_region_regression_with_urbanization_controls, world_size_growth_slopes_projections
+from .defs.assets.figures.figure_data_prep import analysis_parameters, world_size_growth_slopes_historical, world_rank_size_slopes_historical, world_region_regression_with_urbanization_controls, world_size_growth_slopes_projections, usa_rank_size_slopes
 from .defs.assets.figures.figure_2 import figure_2_map, figure_2_plots
 from .defs.assets.figures.figure_3 import figure_3
 from .defs.assets.figures.figure_4 import figure_4
@@ -66,10 +66,11 @@ defs = Definitions(
 
         ## Figure Data Prep
         analysis_parameters,
-        world_size_growth_slopes,
-        world_rank_size_slopes,
+        world_size_growth_slopes_historical,
+        world_rank_size_slopes_historical,
         world_region_regression_with_urbanization_controls,
         world_size_growth_slopes_projections,
+        usa_rank_size_slopes,
 
         ## Figures
         figure_2_map,

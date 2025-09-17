@@ -146,41 +146,47 @@ class WorldFigures:
     def world_urbanization(self) -> str:
         return "world_urbanization"
     
-    def world_size_vs_growth(self) -> str:
-        return "world_size_vs_growth"
-    
-    def world_rank_vs_size(self) -> str:
-        return "world_rank_vs_size"
-    
-    def world_size_growth_slopes(self) -> str:
-        return "world_size_growth_slopes"
-    
-    def world_rank_size_slopes(self) -> str:
-        return "world_rank_size_slopes"
-    
-    def world_average_size_growth_slope_with_borders(self) -> str:
-        return "world_average_size_growth_slope_with_borders"
-    
+    def world_average_growth(self) -> str:
+        return "world_average_growth"
+
     def world_average_growth_group(self) -> str:
         return "world_average_growth_group"
     
-    def world_average_growth(self) -> str:
-        return "world_average_growth"
-    
+    def world_size_vs_growth(self) -> str:
+        return "world_size_vs_growth"
+
     def world_size_vs_growth_normalized(self) -> str:
         return "world_size_vs_growth_normalized"
-    
+
+    def world_size_growth_slopes(self) -> str:
+        return "world_size_growth_slopes"
+
+    def world_size_growth_slopes_historical(self) -> str:
+        return "world_size_growth_slopes_historical"
+
+    def world_average_size_growth_slope_with_borders(self) -> str:
+        return "world_average_size_growth_slope_with_borders"
+
+    def world_size_growth_slopes_projections(self) -> str:
+        return "world_size_growth_slopes_projections"
+
     def world_size_growth_slopes_urbanization(self) -> str:
         return "world_size_growth_slopes_urbanization"
     
-    def world_rank_size_slopes_urbanization(self) -> str:
-        return "world_rank_size_slopes_urbanization"
+    def world_rank_vs_size(self) -> str:
+        return "world_rank_vs_size"
+
+    def world_rank_size_slopes(self) -> str:
+        return "world_rank_size_slopes"
+    
+    def world_rank_size_slopes_historical(self) -> str:
+        return "world_rank_size_slopes_historical"
 
     def world_rank_size_slopes_projections(self) -> str:
         return "world_rank_size_slopes_projections"
 
-    def world_rank_size_slopes_with_projections_and_regions(self) -> str:
-        return "world_rank_size_slopes_with_projections_and_regions"
+    def world_rank_size_slopes_change(self) -> str:
+        return "world_rank_size_slopes_change"
     
     def world_dataset_summary_table(self) -> str:
         return "world_dataset_summary_table"

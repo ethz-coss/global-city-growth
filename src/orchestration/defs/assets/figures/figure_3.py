@@ -18,8 +18,6 @@ def _plot_size_growth_slope_vs_urbanization(fig: plt.Figure, ax: plt.Axes, style
     axis_font_size = style_config['axis_font_size']
     tick_font_size = style_config['tick_font_size']
     title_font_size = style_config['title_font_size']
-    inset_font_size = style_config['inset_font_size']
-    inset_tick_font_size = style_config['inset_tick_font_size']
 
     x_axis = 'urban_population_share'
     y_axis = 'size_growth_slope'

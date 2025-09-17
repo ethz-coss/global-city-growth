@@ -1,6 +1,5 @@
 # src/orchestration/defs/assets/figures/figure_4.py
 import dagster as dg
-from numpy import True_
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
@@ -8,6 +7,7 @@ import plotly.express as px
 import seaborn as sns
 import os
 from typing import Tuple, Dict
+from matplotlib import ticker as mtick
 
 from sqlalchemy.sql.expression import true
 
@@ -19,32 +19,37 @@ from ..constants import constants
 
 
 
-def _plot_rank_size_slope_by_urban_population_share(fig, ax, style_config, df: pd.DataFrame) -> None:
+def _plot_rank_size_slope_by_urban_population_share_groups(fig, ax, style_config, df: pd.DataFrame) -> None:
     font_family = style_config['font_family']
     axis_font_size = style_config['axis_font_size']
     tick_font_size = style_config['tick_font_size']
     title_font_size = style_config['title_font_size']
 
-    x_axis = 'urban_population_share'
-    y_axis = 'rank_size_slope'
+    x_axis = 'year'
+    y_axis = 'rank_size_slope_change'
 
-    x_axis_label = 'Urban population share'
-    y_axis_label = 'Dominance of large cities\n(Zipf exponent)'
+    x_axis_label = 'Year'
+    y_axis_label = 'Change in dominance of large cities\n' + r'$(\alpha_{t} \ / \ \alpha_{1975} - 1)$'
 
-    color = px.colors.qualitative.Plotly[0]
+    colors = [px.colors.qualitative.Plotly[4], px.colors.qualitative.Plotly[6]]
 
-    lam = constants['PENALTY_SLOPE_SPLINE'] 
+    lam = constants['PENALTY_SLOPE_SPLINE']
 
-    x, y, ci_low, ci_high = fit_penalized_b_spline(df=df, xaxis=x_axis, yaxis=y_axis, lam=lam)
+    groups = sorted(df['urban_population_share_group'].unique())
 
-    ax.plot(x, y, color=color, linewidth=2)
-    ax.fill_between(x, ci_low, ci_high, color=color, alpha=0.2)
+    for i, g in enumerate(groups):
+        df_g = df[df['urban_population_share_group'] == g]
+        x, y, ci_low, ci_high = fit_penalized_b_spline(df=df_g, xaxis=x_axis, yaxis=y_axis, lam=lam)
+        ax.plot(x, y, label=f'{g}%', color=colors[i])
+        ax.fill_between(x, ci_low, ci_high, alpha=0.2, color=colors[i])
 
     ax.set_xlabel(x_axis_label, fontsize=axis_font_size, fontfamily=font_family)
     ax.set_ylabel(y_axis_label, fontsize=axis_font_size, fontfamily=font_family)
+    ax.yaxis.set_major_formatter(mtick.PercentFormatter(1.0))
     ax.tick_params(axis='both', which='major', labelsize=tick_font_size)
-
     ax.set_title('Global cross-section', fontsize=title_font_size, fontfamily=font_family)
+    ax.set_ylim(-.05, 0.2)
+    ax.legend(loc='lower right', fontsize=axis_font_size, frameon=False, title='Urban population share', title_fontsize=axis_font_size, ncol=2)
     sns.despine(ax=ax)
     return fig, ax
 
@@ -156,7 +161,7 @@ def _plot_rank_size_slope_by_urban_population_share_1950(fig, ax, style_config, 
     y_axis = 'rank_size_slope'
 
     x_axis_label = 'Urban population share in 1950'
-    y_axis_label = 'Dominance of large cities\n(Zipd exponent)'
+    y_axis_label = 'Dominance of large cities\n(Zipf exponent)'
 
     lam = constants['PENALTY_SLOPE_SPLINE']
 
@@ -187,6 +192,8 @@ def figure_4(context: dg.AssetExecutionContext, postgres: PostgresResource, tabl
 
     fig, axes = plt.subplots(2, 2, figsize=(10, 10), gridspec_kw={'wspace': 0.25, 'hspace': 0.25})
     ax1, ax2, ax3, ax4 = axes.flatten()
+    engine = postgres.get_engine()
+
 
     n_boots = 10
     usa_rank_vs_size = pd.read_sql(f"SELECT * FROM {tables.names.usa.figures.usa_rank_vs_size()} WHERE analysis_id = {MAIN_ANALYSIS_ID}", con=postgres.get_engine())
