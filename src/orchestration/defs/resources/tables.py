@@ -197,8 +197,8 @@ class WorldFigures:
     def world_region_regression_with_urbanization_controls(self) -> str:
         return "world_region_regression_with_urbanization_controls"
 
-    def world_population_share_cities_above_one_million_projections(self) -> str:
-        return "world_population_share_cities_above_one_million_projections"
+    def world_population_share_cities_above_1m(self) -> str:
+        return "world_population_share_cities_above_1m"
 
 
 @dataclass(frozen=True)

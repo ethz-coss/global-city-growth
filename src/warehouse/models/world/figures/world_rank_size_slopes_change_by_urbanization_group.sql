@@ -14,6 +14,7 @@ rank_size_slope_change_with_1975_base AS (
 world_rank_size_slopes_change_by_urbanization_group AS (
     SELECT  country, 
             year, 
+            year - 1975 AS year_since_1975,
             analysis_id,
             region,
             rank_size_slope_change,
