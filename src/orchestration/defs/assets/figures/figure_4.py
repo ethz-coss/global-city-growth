@@ -157,6 +157,7 @@ def _plot_population_shares_in_cities_above_one_million_bars(fig: plt.Figure, ax
     y_axis_label = ''
     x_axis_label = 'Urban population share in\ncities above 1M'
     fig, ax = _plot_bars_with_cis(fig=fig, ax=ax, df=bars_with_cis, y_axis_label=y_axis_label, x_axis_label=x_axis_label)
+    ax.set_xticks([0.2, 0.3, 0.4, 0.5])
     ax.xaxis.set_major_formatter(mtick.PercentFormatter(1.0, decimals=0))
     return fig, ax
 
