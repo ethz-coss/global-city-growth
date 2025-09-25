@@ -85,6 +85,9 @@ class OWIDPaths:
 
     def urbanization(self) -> Path:
         return self.root / "urban-population-share-2050.csv"
+
+    def population(self) -> Path:
+        return self.root / "population-long-run-with-projections.csv"
     
     def countries_with_regions(self) -> Path:
         return self.root / "countries_with_regions.csv"

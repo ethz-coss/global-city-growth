@@ -21,7 +21,7 @@ style_config = {
     'title_font_size': 14,
     'label_font_size': 12,
     'tick_font_size': 10,
-    'inset_title_font_size': 10,
+    'inset_title_font_size': 12,
     'inset_label_font_size': 10,
     'inset_tick_font_size': 8,
     'inset_text_label_font_size': 8,

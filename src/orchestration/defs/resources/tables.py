@@ -179,17 +179,26 @@ class WorldFigures:
     def world_rank_vs_size(self) -> str:
         return "world_rank_vs_size"
 
+    def world_rank_size_slopes(self) -> str:
+        return "world_rank_size_slopes"
+
     def world_rank_size_slopes_change_by_urbanization_group(self) -> str:
         return "world_rank_size_slopes_change_by_urbanization_group"
     
     def world_rank_size_slopes_change(self) -> str:
         return "world_rank_size_slopes_change"
     
+    def world_rank_size_slopes_decade_change(self) -> str:
+        return "world_rank_size_slopes_decade_change"
+    
     def world_dataset_summary_table(self) -> str:
         return "world_dataset_summary_table"
 
     def world_region_regression_with_urbanization_controls(self) -> str:
         return "world_region_regression_with_urbanization_controls"
+
+    def world_population_share_cities_above_one_million_projections(self) -> str:
+        return "world_population_share_cities_above_one_million_projections"
 
 
 @dataclass(frozen=True)

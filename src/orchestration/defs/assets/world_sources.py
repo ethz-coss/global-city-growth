@@ -132,3 +132,15 @@ def world_country_region(context: dg.AssetExecutionContext, storage: StorageReso
     countries_with_regions_df = pd.read_csv(countries_with_regions_path)
     return countries_with_regions_df
     
+
+
+@dg.asset(
+    kinds={'postgres'},
+    group_name="world_raw",
+    io_manager_key="postgres_io_manager"
+)
+def world_population_raw(context: dg.AssetExecutionContext, storage: StorageResource):
+    population_path = storage.paths.world.owid.population()
+    context.log.info(f"Copying population from {population_path}")
+    population_df = pd.read_csv(population_path)
+    return population_df
