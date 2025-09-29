@@ -6,9 +6,9 @@ from .defs.assets.usa import usa_crosswalk_nhgis_census_place_to_connected_compo
 from .defs.assets.world_sources import world_raster_ghsl_pop, world_raster_ghsl_smod, world_country_borders_raw, world_urbanization_raw, world_crosswalk_cshapes_code_to_iso_code, world_raster_ghsl_pop_all_years, world_raster_ghsl_smod_all_years, world_country_region, world_population_raw
 from .defs.assets.world import world_crosswalk_component_id_to_cluster_id
 from .defs.assets.figures.figure_data_prep import analysis_parameters, world_size_growth_slopes_historical, world_rank_size_slopes_historical, world_region_regression_with_urbanization_controls, world_size_growth_slopes_projections, usa_rank_size_slopes
-from .defs.assets.figures.figure_2 import figure_2_map, figure_2_plots
+from .defs.assets.figures.figure_1 import figure_1_map, figure_1_plots
+from .defs.assets.figures.figure_2 import figure_2
 from .defs.assets.figures.figure_3 import figure_3
-from .defs.assets.figures.figure_4 import figure_4
 # from .defs.assets.figures.tables import table_1, table_2
 from .defs.assets.dbt import dbt_warehouse, my_example_asset, incremental_example_table
 from .defs.assets.figures.si.si_figure_data_prep import world_size_growth_slopes_ols, world_rank_size_slopes_ols, world_linearity_test_rank_vs_size, world_linearity_test_size_vs_growth
@@ -76,10 +76,10 @@ defs = Definitions(
         usa_rank_size_slopes,
 
         ## Figures
-        figure_2_map,
-        figure_2_plots,
+        figure_1_map,
+        figure_1_plots,
+        figure_2,
         figure_3,
-        figure_4,
 
         ## SI Figure Data Prep
         world_size_growth_slopes_ols,
