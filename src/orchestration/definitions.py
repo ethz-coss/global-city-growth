@@ -14,7 +14,7 @@ from .defs.assets.dbt import dbt_warehouse, my_example_asset, incremental_exampl
 from .defs.assets.figures.si.si_figure_data_prep import world_size_growth_slopes_ols, world_rank_size_slopes_ols, world_linearity_test_rank_vs_size, world_linearity_test_size_vs_growth
 from .defs.assets.figures.si.si_projections import si_figure_equation_correlation, si_figure_projection_vs_historical_share_population_cities_above_1m
 from .defs.assets.figures.si.si_linear_rigidity import si_figure_linear_rigidity
-# from .defs.assets.figures.si.si_robustness import world_robustness_tables, usa_robustness_figure
+from .defs.assets.figures.si.si_robustness import si_figure_usa_robustness
 from .defs.resources.resources import duckdb_resource, storage_resource, postgres_resource, dbt_resource, table_names_resource, pipes_subprocess_resource, postgres_pandas_io_manager
 
 
@@ -90,7 +90,8 @@ defs = Definitions(
         ## Supplementary Information
         si_figure_equation_correlation,
         si_figure_projection_vs_historical_share_population_cities_above_1m,
-        si_figure_linear_rigidity
+        si_figure_linear_rigidity,
+        si_figure_usa_robustness
     ],
     resources={
         "duckdb": duckdb_resource,
