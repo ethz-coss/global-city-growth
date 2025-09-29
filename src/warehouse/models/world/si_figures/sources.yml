@@ -1,8 +1,7 @@
 sources:
-  - name: figure_data_prep
+  - name: si_figure_data_prep
     schema: public
     tables:
       - name: world_size_growth_slopes_historical
       - name: world_rank_size_slopes_historical
       - name: world_size_growth_slopes_projections
-      - name: world_rank_size_slopes_ols

@@ -2,6 +2,7 @@ from typing import Tuple, Callable, Optional
 import pandas as pd
 import numpy as np
 from pygam import LinearGAM, s
+import statsmodels.formula.api as smf
 
 
 def fit_penalized_b_spline(df: pd.DataFrame, xaxis: str, yaxis: str, lam: float) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
@@ -21,6 +22,10 @@ def get_mean_derivative_penalized_b_spline(df: pd.DataFrame, xaxis: str, yaxis: 
     derivative = np.gradient(y, x)
     mean_derivative = np.mean(derivative)
     return mean_derivative
+
+def get_ols_slope(df: pd.DataFrame, xaxis: str, yaxis: str) -> float:
+    ols = smf.ols(f'{yaxis} ~ {xaxis}', data=df).fit()
+    return ols.params[xaxis]
 
 def bootstrap_ci(estimator: Callable[[pd.DataFrame], float], df: pd.DataFrame, nboots: int = 1000, alpha: float = 0.05) -> Tuple[float, float, float]:
     stats = np.empty(nboots, dtype=float)

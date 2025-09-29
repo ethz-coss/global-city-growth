@@ -1,0 +1,129 @@
+# src/orchestration/defs/assets/figures/figure_data_prep.py
+import dagster as dg
+import pandas as pd
+from pygam import LinearGAM, s
+import numpy as np
+from typing import List
+import statsmodels.formula.api as smf
+from scipy.stats import norm
+
+from ....resources.resources import PostgresResource, StorageResource, TableNamesResource
+from ...constants import constants
+from ..figure_stats import get_mean_derivative_penalized_b_spline, get_ols_slope
+from ..figure_io import MAIN_ANALYSIS_ID
+
+
+@dg.asset(
+    deps=[TableNamesResource().names.world.figures.world_size_vs_growth()],
+    kinds={'postgres'},
+    group_name="si_figure_data_prep",
+    io_manager_key="postgres_io_manager"
+)
+def world_size_growth_slopes_ols(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource)  -> pd.DataFrame:
+    context.log.info("Calculating world size growth slopes")
+    xaxis = 'log_population'
+    yaxis = 'log_growth'
+
+    world_size_vs_growth = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_size_vs_growth()}", con=postgres.get_engine())
+    slopes = world_size_vs_growth.groupby(['analysis_id', 'country', 'year']).apply(lambda x: get_ols_slope(df=x, xaxis=xaxis, yaxis=yaxis)).reset_index().rename(columns={0:'size_growth_slope'})
+    return slopes
+
+
+@dg.asset(
+    deps=[TableNamesResource().names.world.figures.world_rank_vs_size()],
+    kinds={'postgres'},
+    group_name="si_figure_data_prep",
+    io_manager_key="postgres_io_manager"
+)
+def world_rank_size_slopes_ols(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource)  -> pd.DataFrame:
+    context.log.info("Calculating world rank size slopes")
+    xaxis = 'log_rank'
+    yaxis = 'log_population'
+
+    world_rank_vs_size = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_rank_vs_size()}", con=postgres.get_engine())
+    slopes = world_rank_vs_size.groupby(['analysis_id', 'country', 'year']).apply(lambda x: get_ols_slope(df=x, xaxis=xaxis, yaxis=yaxis)).reset_index().rename(columns={0:'rank_size_slope'})
+    slopes['rank_size_slope'] = slopes['rank_size_slope'].abs()
+    return slopes
+
+
+def _calculate_gaussian_loglik(y_true: np.ndarray, y_pred: np.ndarray) -> float:
+    n = len(y_true)
+    rss = np.sum((y_true - y_pred)**2)
+    sigma2_mle = rss / n
+    log_likelihood = np.sum(norm.logpdf(y_true, loc=y_pred, scale=np.sqrt(sigma2_mle)))
+    return log_likelihood
+
+def _test_linearity_of_size_growth_curve(df: pd.DataFrame, x_axis: str, y_axis: str, n_boots: int, lam: float) -> bool:
+    df = df[[x_axis, y_axis]].copy()
+    n = df.shape[0]
+    lin = smf.ols(f'{y_axis} ~ {x_axis}', data=df).fit()
+
+    X = df[[x_axis]].values
+    y = df[y_axis].values
+    spline = LinearGAM(s(0, n_splines=20), lam=[lam], fit_intercept=False).fit(X, y)
+
+    loglik_lin = _calculate_gaussian_loglik(y_true=y, y_pred=lin.predict(df))
+    loglik_spline = _calculate_gaussian_loglik(y_true=y, y_pred=spline.predict(X))
+    D_true = 2 * (loglik_spline - loglik_lin)
+
+    yhat0 = lin.params['Intercept'] + lin.params[x_axis] * df[x_axis]
+    resid = df[y_axis] - yhat0
+
+    def _weights(shape): return np.random.choice([-1, 1], size=shape)
+    
+    D_bootstraps = []
+    for b in range(n_boots):
+        y_star = yhat0 + _weights(shape=n) * resid
+        df_b = df.copy()
+        df_b['y_star'] = y_star
+
+        lin_b = smf.ols(f'y_star ~ {x_axis}', data=df_b).fit()
+        loglik_lin_b = _calculate_gaussian_loglik(y_true=y_star, y_pred=lin_b.predict(df_b))
+
+        X_b = df_b[[x_axis]].values
+        spline_b = LinearGAM(s(0, n_splines=20), lam=[lam], fit_intercept=False).fit(X_b, y_star)
+        loglik_spline_b = _calculate_gaussian_loglik(y_true=y_star, y_pred=spline_b.predict(X_b))
+
+        D_b = 2 * (loglik_spline_b - loglik_lin_b)
+        D_bootstraps.append(D_b)
+
+    boot_res = pd.DataFrame({
+        'D_bootstrap': D_bootstraps
+    })
+    boot_res['D_true'] = D_true
+    boot_res['reject_linear'] = boot_res['D_bootstrap'] > D_true
+    return boot_res
+
+
+@dg.asset(
+    deps=[TableNamesResource().names.world.figures.world_size_vs_growth()],
+    group_name="si_figure_data_prep",
+    io_manager_key="postgres_io_manager"
+    )
+def world_linearity_test_size_vs_growth(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> dg.MaterializeResult:
+    # We do this only for the main analysis id because it takes too long to run for all analysis ids
+    context.log.info("Running linearity test for size vs growth")
+    df = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_size_vs_growth()} WHERE analysis_id = {MAIN_ANALYSIS_ID}", con=postgres.get_engine())
+    n_boots = 100
+    lam = constants['PENALTY_SIZE_GROWTH_CURVE']
+    test_results = df.groupby(['analysis_id', 'country', 'year']).apply(lambda x: _test_linearity_of_size_growth_curve(df=x, x_axis='log_population', y_axis='log_growth', n_boots=n_boots, lam=lam)).reset_index()
+    test_results = test_results.rename(columns={'level_3': 'n_boot'})
+    return test_results
+
+
+def _measure_distortion_rank_size_curve(df: pd.DataFrame, x_axis: str, y_axis: str):
+    df = df[[x_axis, y_axis]].copy()
+    lin = smf.ols(f'{y_axis} ~ {x_axis}', data=df).fit()
+    return np.max(np.abs(lin.resid))
+
+
+@dg.asset(
+    deps=[TableNamesResource().names.world.figures.world_rank_vs_size()],
+    group_name="si_figure_data_prep",
+    io_manager_key="postgres_io_manager"
+)
+def world_linearity_test_rank_vs_size(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> dg.MaterializeResult:
+    context.log.info("Measuring distortion for rank size curve")
+    df = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_rank_vs_size()}", con=postgres.get_engine())
+    test_results = df.groupby(['analysis_id', 'country', 'year']).apply(lambda x: _measure_distortion_rank_size_curve(df=x, x_axis='log_rank', y_axis='log_population')).reset_index().rename(columns={0: 'max_resid'})
+    return test_results
