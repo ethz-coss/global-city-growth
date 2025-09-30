@@ -1,0 +1,133 @@
+datasets:
+  - id: census_place_project_histid_crosswalk
+    scope: usa.census_place_project
+    original_source: https://doi.org/10.1016/j.eeh.2022.101477
+    project_source: # Zenodo DOI
+    license: "CC-BY-4.0"
+    params:
+      years: [1850, 1860, 1870, 1880, 1900, 1910, 1920, 1930, 1940]
+    files:
+      template: "usa/census_place_project/histid_place_crosswalk_{year}.csv"
+
+  - id: census_place_project_place_component_crosswalk
+    scope: usa.census_place_project
+    original_source: https://doi.org/10.1016/j.eeh.2022.101477
+    project_source: # Zenodo DOI
+    license: "CC-BY-4.0"
+    files:
+      list:
+        - "usa/census_place_project/place_component_crosswalk.csv"
+
+  - id: nhgis_place_points
+    scope: usa.nhgis
+    original_source: https://www.nhgis.org/
+    project_source: https://www.nhgis.org/
+    license: "IPUMS NHGIS — redistribution restricted"
+    params:
+      years: [1900, 1910, 1920, 1930, 1940, 1950, 1960, 1970, 1980, 1990, 2000, 2010]
+    files:
+      template: "usa/nhgis/geo/nhgis0016_shapefile_tlgnis_us_place_point_{year}/US_place_point_{year}.shp"
+
+  - id: nhgis_place_population_1990_2020
+    scope: usa.nhgis
+    original_source: https://www.nhgis.org/
+    project_source: https://www.nhgis.org/
+    license: "IPUMS NHGIS — redistribution restricted"
+    files:
+      list:
+        - "usa/nhgis/pop/nhgis0018_ts_geog2010_place.csv"
+
+  - id: ipums_usa_full_count
+    scope: usa.ipums_full_count
+    original_source: https://usa.ipums.org/
+    project_source: https://usa.ipums.org/
+    license: "IPUMS USA — redistribution restricted"
+    params:
+      years: [1850, 1860, 1870, 1880, 1900, 1910, 1920, 1930, 1940]
+    files:
+      template: "usa/ipums_full_count/ipums_full_count_{year}.csv"
+
+  - id: usa_state_geom
+    scope: usa.misc
+    original_source: https://www.census.gov/geographies/mapping-files/time-series/geo/carto-boundary-file.html
+    project_source: # Zenodo DOI
+    license: "Public Domain"
+    files:
+      list:
+        - "usa/misc/States_shapefile.shp"
+
+  - id: ghsl_pop
+    scope: world.ghsl
+    original_source: https://human-settlement.emergency.copernicus.eu/download.php?ds=pop
+    project_source: # Zenodo DOI
+    license: "CC-BY-4.0"
+    version: "R2023A"
+    params:
+      years: [1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015, 2020, 2025]
+    files:
+      template: "world/ghsl/pop/GHS_POP_E{year}_GLOBE_R2023A_54009_1000_V1_0.tif"
+
+  - id: ghsl_smod
+    scope: world.ghsl
+    original_source: https://human-settlement.emergency.copernicus.eu/download.php?ds=smod 
+    project_source: # Zenodo DOI
+    license: "CC-BY-4.0"
+    version: "R2023A"
+    params:
+      years: [1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015, 2020, 2025]
+    files:
+      template: "world/ghsl/smod/GHS_SMOD_E{year}_GLOBE_R2023A_54009_1000_V2_0.tif"
+
+  - id: cshapes_borders
+    scope: world.cshapes_border
+    original_source: https://cshapes.org/
+    project_source: # Zenodo DOI
+    license: "CC-BY-NC-SA"
+    version: "2.0"
+    files:
+      list:
+        - "world/cshapes/CShapes-2.0.shp"
+
+  - id: cshapes_crosswalk_iso
+    scope: world.cshapes_border
+    original_source: # Zenodo DOI
+    project_source: # Zenodo DOI
+    license: "CC-BY"
+    files:
+      list:
+        - "world/cshapes/c_shapes_to_world_bank_codes.csv"
+
+  - id: owid_urbanization
+    scope: world.owid
+    original_source: https://ourworldindata.org/grapher/urban-population-share-2050
+    project_source: # Zenodo DOI
+    license: "CC-BY-4.0"
+    files:
+      list:
+        - "world/owid/urban-population-share-2050.csv"
+
+  - id: owid_population
+    scope: world.owid
+    original_source: https://ourworldindata.org/grapher/population-long-run-with-projections
+    project_source: # Zenodo DOI
+    license: "CC-BY-4.0"
+    files:
+      list:
+        - "world/owid/population-long-run-with-projections.csv"
+
+  - id: owid_countries_with_regions
+    scope: world.owid
+    original_source: # Zenodo DOI
+    project_source: # Zenodo DOI
+    license: "CC-BY-4.0"
+    files:
+      list:
+        - "world/owid/countries_with_regions.csv"
+
+  - id: analysis_parameters
+    scope: other
+    original_source: # Zenodo DOI
+    project_source: # Zenodo DOI
+    files:
+      list:
+        - "other/analysis_parameters.csv"

@@ -94,7 +94,7 @@ def usa_nhgis_census_place_geom_all_years_raw(context: dg.AssetExecutionContext,
     group_name="usa_raw",
     io_manager_key="postgres_io_manager"
 )
-def usa_hist_census_place_geom_raw(context: dg.AssetExecutionContext, postgres: PostgresResource, storage: StorageResource, tables: TableNamesResource):
+def usa_hist_census_place_geom_raw(context: dg.AssetExecutionContext, storage: StorageResource):
     context.log.info(f"Copying census place geom from hist to postgres")
     census_place_geom_df = pd.read_csv(storage.paths.usa.census_place_project.hist_census_place_geom())
     return census_place_geom_df
