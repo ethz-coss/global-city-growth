@@ -1,0 +1,21 @@
+- id: raw_data
+  source: zenodo
+  url: https://zenodo.org/record/7619080/files/raw_data.zip
+  description: All raw data used in the Global City Growth project that are redistributable.
+  files:
+    raw_data.zip
+  download_dir: ""
+
+- id: ipums_usa_full_count
+  source: ipums
+  url: https://usa.ipums.org
+  description: IPUMS USA Full Count data 1850-1940
+  extract_definitions:
+    samples: [usa1850c, usa1860c, usa1870c, usa1880e, usa1900m, usa1910m, usa1920c, usa1930d, usa1940b]
+    variables: ['YEAR', 'HISTID', 'HIK']
+    data_format: csv
+  download_dir: "data_temp/ipums_full_count"
+
+
+
+
