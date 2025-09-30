@@ -11,9 +11,10 @@ import seaborn as sns
 
 from ....resources.resources import PostgresResource, TableNamesResource
 from ..figure_style import style_axes, style_config, annotate_letter_label
-from ..figure_io import materialize_image, MAIN_ANALYSIS_ID, save_figure
+from ..figure_io import materialize_image, MAIN_ANALYSIS_ID, save_figure, read_pandas, save_latex_table, materialize_table
 from ..figure_stats import fit_penalized_b_spline, size_growth_slope_by_year_with_cis
 from ...constants import constants
+from ..tables import make_table_2
 
 def _plot_size_growth_curve_usa_by_analysis_id(fig: plt.Figure, ax: plt.Axes, show_legend: bool, title: str, df_size_vs_growth_normalized: pd.DataFrame, df_average_growth: pd.DataFrame, map_analysis_id_to_urban_threshold: Dict[int, int])-> Tuple[plt.Figure, plt.Axes]:
     x_axis = 'log_population'
@@ -174,29 +175,20 @@ def si_figure_usa_robustness(context: dg.AssetExecutionContext, postgres: Postgr
 
 
 @dg.asset(
-    deps=[TableNamesResource().names.other.analysis_parameters()],
+    deps=[TableNamesResource().names.other.analysis_parameters(), TableNamesResource().names.world.figures.world_size_growth_slopes_historical_urbanization()],
     group_name="supplementary_information"
 )
-def world_robustness_tables(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> dg.MaterializeResult:
+def si_tables_world_robustness(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> dg.MaterializeResult:
     context.log.info("Creating world robustness tables")
     params = pd.read_sql(f"SELECT * FROM {tables.names.other.analysis_parameters()}", con=postgres.get_engine())
     analysis_ids = params[params['robustness_for_dataset'] == 'world']['analysis_id'].tolist()
 
     for analysis_id in analysis_ids:
         table_file_name = f'table_2_robustness_{analysis_id}.txt'
-        table_path = os.path.join(table_si_dir, table_file_name)
+        world_size_growth_slopes_urbanization = read_pandas(engine=postgres.get_engine(), table=tables.names.world.figures.world_size_growth_slopes_historical_urbanization(), analysis_id=analysis_id)
+        latex_table = make_table_2(df_size_growth_slopes=world_size_growth_slopes_urbanization)
 
-        context.log.info(f"Creating table for analysis id {analysis_id}")
-        world_size_growth_slopes_urbanization = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_size_growth_slopes_urbanization()} WHERE analysis_id = {analysis_id}", con=postgres.get_engine())
-        world_rank_size_slopes_urbanization = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_rank_size_slopes_urbanization()} WHERE analysis_id = {analysis_id}", con=postgres.get_engine())  
-        latex_table = make_table_2(df_size_growth_slopes=world_size_growth_slopes_urbanization, df_rank_size_slopes=world_rank_size_slopes_urbanization)
-
-        with open(table_path, 'w') as f:
-            f.write(latex_table)
-
-    return dg.MaterializeResult(
-        metadata={
-            "path": str(table_si_dir),
-            "num_records_processed": len(analysis_ids),
-        }
-    )
+        save_latex_table(table=latex_table, table_file_name=table_file_name, si=True)
+       
+       
+    return materialize_table(table_file_name='table_2_robustness.txt')

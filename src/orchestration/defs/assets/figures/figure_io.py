@@ -33,8 +33,18 @@ def save_figure(fig: plt.Figure, figure_file_name: str, dpi: int = 300, si: bool
     plt.close(fig)
 
 
-def save_table(df: pd.DataFrame, table_file_name: str, si: bool = False) -> None:
-    pass
+def save_latex_table(table: str, table_file_name: str, si: bool = False) -> None:
+    path = os.path.join(table_dir if not si else table_si_dir, table_file_name)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, 'w') as f:
+        f.write(table)
+
+def materialize_table(table_file_name: str) -> dg.MaterializeResult:
+    return dg.MaterializeResult(
+        metadata={
+            "path": dg.MetadataValue.path(table_file_name),
+        }
+    )
 
 
 def materialize_image(figure_file_name: str, si: bool = False) -> dg.MaterializeResult:

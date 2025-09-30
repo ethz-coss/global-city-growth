@@ -13,6 +13,7 @@ import re
 
 
 from ...resources.resources import PostgresResource, TableNamesResource
+from .figure_io import read_pandas, save_latex_table, MAIN_ANALYSIS_ID, materialize_table
 from ..constants import constants
 
 
@@ -61,7 +62,7 @@ def _format_table_slopes_by_urbanization_for_latex(table: pd.DataFrame, x_label:
 
     return out
 
-def _get_latex_from_formatted_table_slopes_by_urbanization(table: pd.DataFrame, y_label_1: str, y_label_2: str) -> str:
+def _get_latex_from_formatted_table_slopes_by_urbanization(table: pd.DataFrame, y_label) -> str:
     m = table.shape[1]
     latex = table.to_latex(
         index=False,
@@ -75,7 +76,7 @@ def _get_latex_from_formatted_table_slopes_by_urbanization(table: pd.DataFrame, 
     header_line = (
         r"\\[-1.8ex]\hline"
         r"\hline \\[-1.8ex]"
-        f"Independent \\textbackslash \ Dependent& \multicolumn{{{m // 2}}}{{c}}{{{y_label_1}}} & \multicolumn{{{m // 2}}}{{c}}{{{y_label_2}}} \\\\\n"
+        f"Independent \\textbackslash \ Dependent& \multicolumn{{{m}}}{{c}}{{{y_label}}} \\\\\n"
     )   
 
     footer_line = (
@@ -89,26 +90,16 @@ def _get_latex_from_formatted_table_slopes_by_urbanization(table: pd.DataFrame, 
     return latex
 
 
-def make_table_2(df_size_growth_slopes: pd.DataFrame, df_rank_size_slopes: pd.DataFrame) -> str:
-    x_axis_1 = 'urban_population_share'
-    y_axis_1 = 'size_growth_slope'
-    x_label_1 = 'Urban population share'
-    y_label_1 = 'Size-growth slope'
-   
-   
-    x_axis_2 = 'urban_population_share'
-    y_axis_2 = 'rank_size_slope'
-    x_label_2 = 'Urban population share'
-    y_label_2 = 'Zipf exponent'
+def make_table_2(df_size_growth_slopes: pd.DataFrame) -> str:
+    x_axis = 'urban_population_share'
+    y_axis = 'size_growth_slope'
+    x_label = 'Urban population share'
+    y_label = 'Size-growth slope'
 
-    table_1 = _make_table_slopes_by_urbanization(df=df_size_growth_slopes, x_axis=x_axis_1, y_axis=y_axis_1)
-    table_2 = _make_table_slopes_by_urbanization(df=df_rank_size_slopes, x_axis=x_axis_2, y_axis=y_axis_2)
 
-    table_1_formatted = _format_table_slopes_by_urbanization_for_latex(table=table_1, x_label=x_label_1)
-    table_2_formatted = _format_table_slopes_by_urbanization_for_latex(table=table_2, x_label=x_label_2)
-
-    table_formatted = pd.concat([table_1_formatted, table_2_formatted[[c for c in table_2_formatted.columns if c.startswith("col")]]], axis=1)
-    latex = _get_latex_from_formatted_table_slopes_by_urbanization(table=table_formatted, y_label_1=y_label_1, y_label_2=y_label_2)
+    table = _make_table_slopes_by_urbanization(df=df_size_growth_slopes, x_axis=x_axis, y_axis=y_axis)
+    table_formatted = _format_table_slopes_by_urbanization_for_latex(table=table, x_label=x_label)
+    latex = _get_latex_from_formatted_table_slopes_by_urbanization(table=table_formatted, y_label=y_label)
     return latex
 
 def _get_latex_from_formatted_table_dataset_summary(table: pd.DataFrame) -> str:
@@ -149,47 +140,25 @@ def _make_table_dataset_summary(df_usa_dataset_summary_table: pd.DataFrame, df_w
 def table_1(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> dg.MaterializeResult:
     context.log.info(f"Creating table 1")
     table_file_name = 'table_1.txt'
-    table_path = os.path.join(table_dir, table_file_name)
-
-    usa_dataset_summary_table = pd.read_sql(f"SELECT * FROM {tables.names.usa.figures.usa_dataset_summary_table()} WHERE analysis_id = {MAIN_ANALYSIS_ID}", con=postgres.get_engine())
-    world_dataset_summary_table = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_dataset_summary_table()} WHERE analysis_id = {MAIN_ANALYSIS_ID}", con=postgres.get_engine())
+    usa_dataset_summary_table = read_pandas(engine=postgres.get_engine(), table=tables.names.usa.figures.usa_dataset_summary_table(), analysis_id=MAIN_ANALYSIS_ID)
+    world_dataset_summary_table = read_pandas(engine=postgres.get_engine(), table=tables.names.world.figures.world_dataset_summary_table(), analysis_id=MAIN_ANALYSIS_ID)
     latex_table = _make_table_dataset_summary(df_usa_dataset_summary_table=usa_dataset_summary_table, df_world_dataset_summary_table=world_dataset_summary_table)
+    save_latex_table(table=latex_table, table_file_name=table_file_name)
 
-    with open(table_path, 'w') as f:
-        f.write(latex_table)
-
-    return dg.MaterializeResult(
-        metadata={
-            "path": dg.MetadataValue.path(table_path),
-            "num_records_processed": len(usa_dataset_summary_table),
-        }
-    )
+    return materialize_table(table_file_name=table_file_name)
 
 
 
 @dg.asset(
-    deps=[TableNamesResource().names.world.figures.world_size_growth_slopes_urbanization(), TableNamesResource().names.world.figures.world_rank_size_slopes_urbanization()],
+    deps=[TableNamesResource().names.world.figures.world_size_growth_slopes_historical_urbanization()],
     group_name="figures"
 )
 def table_2(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> dg.MaterializeResult:
     # Create a figure
     context.log.info(f"Creating table 2")
     table_file_name = 'table_2.txt'
-    table_path = os.path.join(table_dir, table_file_name)
 
-    world_size_growth_slopes_urbanization = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_size_growth_slopes_urbanization()} WHERE analysis_id = {MAIN_ANALYSIS_ID}", con=postgres.get_engine())
-    world_rank_size_slopes_urbanization = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_rank_size_slopes_urbanization()} WHERE analysis_id = {MAIN_ANALYSIS_ID}", con=postgres.get_engine())  
-    context.log.info(f"Number of records in world_rank_size_slopes_urbanization: {len(world_rank_size_slopes_urbanization[['country', 'year']].drop_duplicates())}")
-    context.log.info(f"Number of records in world_size_growth_slopes_urbanization: {len(world_size_growth_slopes_urbanization[['country', 'year']].drop_duplicates())}")
-    latex_table = make_table_2(df_size_growth_slopes=world_size_growth_slopes_urbanization, df_rank_size_slopes=world_rank_size_slopes_urbanization)
-
-    with open(table_path, 'w') as f:
-        f.write(latex_table)
-
-
-    return dg.MaterializeResult(
-        metadata={
-            "path": dg.MetadataValue.path(table_path),
-            "num_records_processed": len(world_size_growth_slopes_urbanization),
-        }
-    )
+    world_size_growth_slopes_urbanization = read_pandas(engine=postgres.get_engine(), table=tables.names.world.figures.world_size_growth_slopes_historical_urbanization(), analysis_id=MAIN_ANALYSIS_ID)
+    latex_table = make_table_2(df_size_growth_slopes=world_size_growth_slopes_urbanization)
+    save_latex_table(table=latex_table, table_file_name=table_file_name)
+    return materialize_table(table_file_name=table_file_name)

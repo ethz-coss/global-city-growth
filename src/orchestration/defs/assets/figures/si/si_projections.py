@@ -12,7 +12,7 @@ from ....resources.resources import PostgresResource, TableNamesResource
 
 def _plot_diagonal_correlation(fig, ax, df, x_axis, y_axis, title, x_axis_label, y_axis_label, diag_min, diag_max, alpha, annotation_font_size):
     diag = np.linspace(diag_min, diag_max, 100)
-    ax.plot(diag, diag, color='black', linestyle='--', linewidth=2, label='Diagonal')
+    ax.plot(diag, diag, color='black', linestyle='--', linewidth=2, label='Diagonal (45-degree line)')
     ax.scatter(df[x_axis], df[y_axis], color='grey', alpha=alpha)
     mean_error = np.mean(np.abs(df[y_axis] - df[x_axis]))
     ax.text(0.8, 0.05, f"Mean error: {mean_error:.3f}", ha='center', va='center', transform=ax.transAxes, fontsize=annotation_font_size)
@@ -56,13 +56,11 @@ def _plot_eq1_spline_vs_linear(fig: plt.Figure, ax_spline: plt.Axes, ax_linear: 
 
     _plot_diagonal_correlation(fig=fig, ax=ax_spline, df=df_spline_plot, x_axis=x_axis, y_axis=y_axis, title='Spline-based measurement', x_axis_label=x_axis_label_spline, y_axis_label=y_axis_label_spline, diag_min=diag_min, diag_max=diag_max, alpha=alpha, annotation_font_size=annotation_font_size)
     _plot_diagonal_correlation(fig=fig, ax=ax_linear, df=df_linear_plot, x_axis=x_axis, y_axis=y_axis, title='Linear-based measurement', x_axis_label=x_axis_label_linear, y_axis_label=y_axis_label_linear, diag_min=diag_min, diag_max=diag_max, alpha=alpha, annotation_font_size=annotation_font_size)
-    ax_spline.legend(fontsize=annotation_font_size, frameon=False, ncol=1, loc='upper left')
+    ax_spline.legend(fontsize=annotation_font_size, frameon=False, ncol=1, bbox_to_anchor=(0.825, 0.925))
     return fig, ax_spline, ax_linear
 
 
 def _plot_eq2_spline_vs_linear(fig: plt.Figure, ax_spline: plt.Axes, ax_linear: plt.Axes, df_spline: pd.DataFrame, df_linear: pd.DataFrame) -> Tuple[plt.Figure, plt.Axes]:
-    q_min, q_max = 0.01, 0.99
-
     x_axis = 'm_t_data'
     y_axis = 'm_t_proj'
 
@@ -74,12 +72,9 @@ def _plot_eq2_spline_vs_linear(fig: plt.Figure, ax_spline: plt.Axes, ax_linear: 
 
     annotation_font_size = style_config['label_font_size']
 
-    df_spline_plot = _filter_data_by_quantiles(df=df_spline, x_axis=x_axis, y_axis=y_axis, quantile_min=q_min, quantile_max=q_max) 
-    df_linear_plot = _filter_data_by_quantiles(df=df_linear, x_axis=x_axis, y_axis=y_axis, quantile_min=q_min, quantile_max=q_max)
-    diag_min, diag_max = _get_diag_bounds(df_linear=df_linear_plot, df_spline=df_spline_plot, x_axis=x_axis, y_axis=y_axis)
-
-    _plot_diagonal_correlation(fig=fig, ax=ax_spline, df=df_spline_plot, x_axis=x_axis, y_axis=y_axis, title='', x_axis_label=x_axis_label, y_axis_label=y_axis_label_spline, diag_min=diag_min, diag_max=diag_max, alpha=alpha, annotation_font_size=annotation_font_size )
-    _plot_diagonal_correlation(fig=fig, ax=ax_linear, df=df_linear_plot, x_axis=x_axis, y_axis=y_axis, title='', x_axis_label=x_axis_label, y_axis_label=y_axis_label_linear, diag_min=diag_min, diag_max=diag_max, alpha=alpha, annotation_font_size=annotation_font_size)
+    diag_min, diag_max = 0, 1
+    _plot_diagonal_correlation(fig=fig, ax=ax_spline, df=df_spline, x_axis=x_axis, y_axis=y_axis, title='', x_axis_label=x_axis_label, y_axis_label=y_axis_label_spline, diag_min=diag_min, diag_max=diag_max, alpha=alpha, annotation_font_size=annotation_font_size )
+    _plot_diagonal_correlation(fig=fig, ax=ax_linear, df=df_linear, x_axis=x_axis, y_axis=y_axis, title='', x_axis_label=x_axis_label, y_axis_label=y_axis_label_linear, diag_min=diag_min, diag_max=diag_max, alpha=alpha, annotation_font_size=annotation_font_size)
     return fig, ax_spline, ax_linear
 
 def _plot_projection_vs_historical_share_population_cities_above_1m(fig: plt.Figure, ax: plt.Axes, df: pd.DataFrame, is_country_plot: bool) -> Tuple[plt.Figure, plt.Axes]:
@@ -101,7 +96,7 @@ def _plot_projection_vs_historical_share_population_cities_above_1m(fig: plt.Fig
     diag_min, diag_max = 0, 1
     _plot_diagonal_correlation(fig=fig, ax=ax, df=df, x_axis=x_axis, y_axis=y_axis, title=title, x_axis_label=x_axis_label, y_axis_label=y_axis_label, diag_min=diag_min, diag_max=diag_max, alpha=alpha, annotation_font_size=annotation_font_size)
     if is_country_plot:
-        ax.legend(fontsize=annotation_font_size, frameon=False, ncol=1, loc='upper left')
+        ax.legend(fontsize=annotation_font_size, frameon=False, ncol=1, bbox_to_anchor=(0.83, 0.95))
     return fig, ax
 
 
