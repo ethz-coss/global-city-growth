@@ -192,7 +192,7 @@ def raw_data_zenodo(context: dg.AssetExecutionContext, storage: StorageResource)
     # TODO: remove when Zenodo is published
     ZENODO_ACCESS_TOKEN = 'faOt2P8QYRHkl1i68SnG961MZO6tN4kXtnSWqgimYaAQTnetiG2uBjSxv9fV'
     size = _download_raw_data_zenodo(context=context, storage=storage, download_url=download_url, access_token=ZENODO_ACCESS_TOKEN)
-    return dg.Output(metadata={"size": size})
+    return dg.Output(value=size, metadata={"size": size})
 
 @dg.asset(
     group_name="download",
@@ -209,7 +209,7 @@ def ipums_usa_full_count_downloaded(context: dg.AssetExecutionContext, storage: 
         size = _download_ipums_full_count_year(context=context, storage=storage, ipums_api_client=ipums_api_client, year=year, sample_id=sample, variables=variables, data_format=data_format)
         total_size += size
 
-    return dg.Output(metadata={"size": total_size})
+    return dg.Output(value=total_size, metadata={"size": total_size})
 
 @dg.asset(
     group_name="download",
@@ -220,7 +220,7 @@ def nhgis_place_population_1990_2020_downloaded(context: dg.AssetExecutionContex
     data_catalog = _load_data_catalog(path=storage.data_catalog_path)
     table_name, years, geog_level = _get_inputs_nhgis_place_population_1990_2020(data_catalog=data_catalog)
     size = _download_nhgis_1990_2020_place_population(context=context, storage=storage, ipums_api_client=ipums_api_client, table_name=table_name, years=years, geog_level=geog_level)
-    return dg.Output(metadata={"size": size})
+    return dg.Output(value=size, metadata={"size": size})
 
 @dg.asset(
     group_name="download",
@@ -239,4 +239,4 @@ def nhgis_place_geom_1900_2010_downloaded(context: dg.AssetExecutionContext, sto
         size = _download_nhgis_1900_2010_place_geom_year(context=context, storage=storage, ipums_api_client=ipums_api_client, year=year, shapefile_name=shapefile_name)
         total_size += size
 
-    return dg.Output(metadata={"size": total_size})
+    return dg.Output(value=total_size, metadata={"size": total_size})

@@ -38,10 +38,16 @@ def _load_table_into_duckdb(duckdb: DuckDBResource, table_name: str, file_path: 
     kinds={'duckdb'},
     partitions_def=ipums_historical_years_partitions,
     group_name="ipums_full_count_bronze",
-    pool="duckdb_write"
+    pool="duckdb_write",
+    metadata={
+        "dagster/column_schema": dg.TableSchema([
+            dg.TableColumn(name="histid", type="STR", description="Consistent historical data person identifier for the IPUMS full count data. This key is unique to each person-year combination. It can be used to match on one person years, but not to track individuals across years"),
+            dg.TableColumn(name="hik", type="STR", description="Historical identification key for the IPUMS full count data. This key is unique to each person. It can be used to match people across years. It is computed via the linking procedure."),
+        ])
+    }
 )
 def ipums_full_count_table_raw(context: dg.AssetExecutionContext, duckdb: DuckDBResource, storage: StorageResource, tables: TableNamesResource):
-    """An asset for the full count census data for a given year (raw)."""
+    """IPUMS full count data for a given year (raw)."""
     year = context.partition_key
     table_name = tables.names.usa.ipums_full_count.ipums_full_count_table_raw(year)
     file_path = storage.paths.usa.ipums_full_count.ipums_full_count(year)
@@ -55,10 +61,16 @@ def ipums_full_count_table_raw(context: dg.AssetExecutionContext, duckdb: DuckDB
     kinds={'duckdb'},
     partitions_def=ipums_historical_years_partitions,
     group_name="ipums_full_count_silver",
-    pool="duckdb_write"
+    pool="duckdb_write",
+    metadata={
+        "dagster/column_schema": dg.TableSchema([
+            dg.TableColumn(name="histid", type="STR", description="Consistent historical data person identifier for the IPUMS full count data. This key is unique to each person-year combination. It can be used to match on one person years, but not to track individuals across years"),
+            dg.TableColumn(name="hik", type="STR", description="Historical identification key for the IPUMS full count data. This key is unique to each person. It can be used to match people across years. It is computed via the linking procedure."),
+        ])
+    }
 )
 def ipums_full_count_table_clean(context: dg.AssetExecutionContext, duckdb: DuckDBResource, tables: TableNamesResource):
-    """An asset for the full count census data for a given year (clean)."""
+    """IPUMS full count data for a given year (clean)."""
     year = context.partition_key
     raw_table_name = tables.names.usa.ipums_full_count.ipums_full_count_table_raw(year)
     clean_table_name = tables.names.usa.ipums_full_count.ipums_full_count_table_clean(year)
@@ -84,10 +96,16 @@ def ipums_full_count_table_clean(context: dg.AssetExecutionContext, duckdb: Duck
     kinds={'duckdb'},
     partitions_def=ipums_historical_years_partitions,
     group_name="ipums_full_count_bronze",
-    pool="duckdb_write"
+    pool="duckdb_write",
+    metadata={
+        "dagster/column_schema": dg.TableSchema([
+            dg.TableColumn(name="histid", type="STR", description="Consistent historical data person identifier for the IPUMS full count data. This key is unique to each person-year combination. It can be used to match on one person years, but not to track individuals across years"),
+            dg.TableColumn(name="cpp_placeid", type="INT", description="The Census Place Project ID of the census place"),
+        ])
+    }
 )
 def crosswalk_hist_id_to_hist_census_place_table_raw(context: dg.AssetExecutionContext, duckdb: DuckDBResource, storage: StorageResource, tables: TableNamesResource):
-    """An asset for the crosswalk between full count census hist_id and census place id for a given year (raw)."""
+    """Crosswalk between full count census hist_id and census place id for a given year (raw)."""
     year = context.partition_key
     table_name = tables.names.usa.ipums_full_count.crosswalk_hist_id_to_hist_census_place_table_raw(year)
     file_path = storage.paths.usa.census_place_project.crosswalk_hist_id_to_hist_census_place(year)
@@ -102,10 +120,16 @@ def crosswalk_hist_id_to_hist_census_place_table_raw(context: dg.AssetExecutionC
     kinds={'duckdb'},
     partitions_def=ipums_historical_years_partitions,
     group_name="ipums_full_count_silver",
-    pool="duckdb_write"
+    pool="duckdb_write",
+    metadata={
+        "dagster/column_schema": dg.TableSchema([
+            dg.TableColumn(name="histid", type="STR", description="Consistent historical data person identifier for the IPUMS full count data. This key is unique to each person-year combination. It can be used to match on one person years, but not to track individuals across years"),
+            dg.TableColumn(name="census_place_id", type="INT", description="The Census Place Project ID of the census place"),
+        ])
+    }
 )
 def crosswalk_hist_id_to_hist_census_place_table_clean(context: dg.AssetExecutionContext, duckdb: DuckDBResource, tables: TableNamesResource):
-    """An asset for the crosswalk between full count census hist_id and census place id for a given year (clean)."""
+    """Crosswalk between full count census hist_id and census place id for a given year (clean)."""
     year = context.partition_key
     raw_table_name = tables.names.usa.ipums_full_count.crosswalk_hist_id_to_hist_census_place_table_raw(year)
     clean_table_name = tables.names.usa.ipums_full_count.crosswalk_hist_id_to_hist_census_place_table_clean(year)
@@ -116,7 +140,7 @@ def crosswalk_hist_id_to_hist_census_place_table_clean(context: dg.AssetExecutio
     DROP TABLE IF EXISTS {clean_table_name};
     CREATE TABLE {clean_table_name} AS
     SELECT  UPPER(histid) AS histid,
-            ANY_VALUE(cpp_placeid) AS census_place_id
+            ANY_VALUE(cpp_placeid) AS 
     FROM { raw_table_name }
     GROUP BY UPPER(histid)
     """
@@ -129,10 +153,17 @@ def crosswalk_hist_id_to_hist_census_place_table_clean(context: dg.AssetExecutio
     kinds={'duckdb'},
     partitions_def=ipums_historical_years_partitions,
     group_name="ipums_full_count_silver",
-    pool="duckdb_write"
+    pool="duckdb_write",
+    metadata={
+        "dagster/column_schema": dg.TableSchema([
+            dg.TableColumn(name="histid", type="STR", description="Consistent historical data person identifier for the IPUMS full count data. This key is unique to each person-year combination. It can be used to match on one person years, but not to track individuals across years"),
+            dg.TableColumn(name="hik", type="STR", description="Historical identification key for the IPUMS full count data. This key is unique to each person. It can be used to match people across years. It is computed via the linking procedure."),
+            dg.TableColumn(name="census_place_id", type="INT", description="The Census Place Project ID of the census place"),
+        ])
+    }
 )  
 def ipums_full_count_census_with_census_place_id(context: dg.AssetExecutionContext, duckdb: DuckDBResource, tables: TableNamesResource):
-    """An asset for the full count census data with census place id for a given year."""
+    """IPUMS full count data with census place id for a given year."""
     year = context.partition_key
     ipums_full_count_table_name = tables.names.usa.ipums_full_count.ipums_full_count_table_clean(year)
     crosswalk_hist_id_to_hist_census_place_table_name = tables.names.usa.ipums_full_count.crosswalk_hist_id_to_hist_census_place_table_clean(year)
@@ -160,10 +191,18 @@ def ipums_full_count_census_with_census_place_id(context: dg.AssetExecutionConte
     deps=[ipums_full_count_census_with_census_place_id],
     kinds={'duckdb'},
     group_name="ipums_full_count_silver",
-    pool="duckdb_write"
+    pool="duckdb_write",
+    metadata={
+        "dagster/column_schema": dg.TableSchema([
+            dg.TableColumn(name="histid", type="STR", description="Consistent historical data person identifier for the IPUMS full count data. This key is unique to each person-year combination. It can be used to match on one person years, but not to track individuals across years"),
+            dg.TableColumn(name="hik", type="STR", description="Historical identification key for the IPUMS full count data. This key is unique to each person. It can be used to match people across years. It is computed via the linking procedure."),
+            dg.TableColumn(name="census_place_id", type="INT", description="The Census Place Project ID of the census place"),
+            dg.TableColumn(name="year", type="INT"),
+        ])
+    }
 )
 def ipums_full_count_census_with_census_place_id_all_years(context: dg.AssetExecutionContext, duckdb: DuckDBResource, tables: TableNamesResource):
-    """An asset for the full count census data with census place id for all years."""
+    """IPUMS full count data with census place id for all years."""
     union_table_name = tables.names.usa.ipums_full_count.ipums_full_count_census_with_census_place_id_all_years()
 
     context.log.info(f"Joining IPUMS full count data with census place id for all years")
@@ -203,10 +242,19 @@ def ipums_full_count_census_with_census_place_id_all_years(context: dg.AssetExec
     deps=[ipums_full_count_census_with_census_place_id_all_years],
     kinds={'duckdb'},
     group_name="ipums_full_count_silver",
-    pool="duckdb_write"
+    pool="duckdb_write",
+    metadata={
+        "dagster/column_schema": dg.TableSchema([
+            dg.TableColumn(name="hik", type="STR", description="Historical identification key for the IPUMS full count data. This key is unique to each person. It can be used to match people across years. It is computed via the linking procedure."),
+            dg.TableColumn(name="census_place_origin", type="INT", description="The Census Place Project ID of the census place where the person was living in the origin year"),
+            dg.TableColumn(name="year_origin", type="INT"),
+            dg.TableColumn(name="census_place_destination", type="INT", description="The Census Place Project ID of the census place where the person was living in the destination year"),
+            dg.TableColumn(name="year_destination", type="INT"),
+        ])
+    }
 )
 def ipums_full_count_individual_migration(context: dg.AssetExecutionContext, duckdb: DuckDBResource, tables: TableNamesResource):
-    """An asset for the individual migration data for all years."""
+    """ Individual migration data for all years. Using the census linking (hik) we track linked individual across years and observe if they have changed census place"""
     ipums_full_count_census_with_census_place_id_all_years_table_name = tables.names.usa.ipums_full_count.ipums_full_count_census_with_census_place_id_all_years()
     table_name = tables.names.usa.ipums_full_count.ipums_full_count_individual_migration()
 
@@ -266,10 +314,17 @@ def ipums_full_count_individual_migration(context: dg.AssetExecutionContext, duc
     deps=[ipums_full_count_census_with_census_place_id_all_years],
     kinds={'duckdb'},
     group_name="ipums_full_count_gold",
-    pool="duckdb_write"
+    pool="duckdb_write",
+    metadata={
+        "dagster/column_schema": dg.TableSchema([
+            dg.TableColumn(name="census_place_id", type="INT", description="The Census Place Project ID of the census place"),
+            dg.TableColumn(name="year", type="INT"),
+            dg.TableColumn(name="population", type="INT"),
+        ])
+    }
 )
 def census_place_population(context: dg.AssetExecutionContext, duckdb: DuckDBResource, tables: TableNamesResource):
-    """An asset for the census place population for all years."""
+    """Population of census places for all years"""
     census_place_population_table_name = tables.names.usa.ipums_full_count.census_place_population()
     ipums_full_count_census_with_census_place_id_all_years_table_name = tables.names.usa.ipums_full_count.ipums_full_count_census_with_census_place_id_all_years()
 
@@ -294,10 +349,18 @@ def census_place_population(context: dg.AssetExecutionContext, duckdb: DuckDBRes
     deps=[ipums_full_count_individual_migration],
     kinds={'duckdb'},
     group_name="ipums_full_count_gold",
-    pool="duckdb_write"
+    pool="duckdb_write",
+    metadata={
+        "dagster/column_schema": dg.TableSchema([
+            dg.TableColumn(name="census_place_origin", type="INT", description="The Census Place Project ID of the census place where the person was living in the origin year"),
+            dg.TableColumn(name="census_place_destination", type="INT", description="The Census Place Project ID of the census place where the person was living in the destination year"),
+            dg.TableColumn(name="year_origin", type="INT"),
+            dg.TableColumn(name="year_destination", type="INT"),
+        ])
+    }
 )
 def census_place_migration(context: dg.AssetExecutionContext, duckdb: DuckDBResource, tables: TableNamesResource):
-    """An asset for the census place migration for all years."""
+    """Migration between census places for all years"""
     ipums_full_count_individual_migration_table_name = tables.names.usa.ipums_full_count.ipums_full_count_individual_migration()
     census_place_migration_table_name = tables.names.usa.ipums_full_count.census_place_migration()
 
