@@ -3,16 +3,153 @@ sources:
     schema: public
     tables:
       - name: usa_nhgis_census_place_population_1990_2020_raw
+        description: "Population data of census places from NHGIS before staging"
+        columns:
+          - name: GISJOIN
+            description: "A unique identifier allowing to join the population data with the geometry data"
+          - name: DATAYEAR
+            description: "The year of the population data"
+          - name: CL8AA
+            description: "The population of the census place standardized to 2010 census places"
+
       - name: usa_nhgis_census_place_geom_all_years_raw
+        description: "Geometry data of census places from NHGIS (all years between 1900 and 2010) before staging"
+        columns:
+          - name: GISJOIN
+            description: "A unique identifier allowing to join the population data with the geometry data"
+          - name: YEAR
+            description: "The year of the geometry data"
+          - name: NHGISPLACE
+            description: "The NHGIS ID of the census place"
+          - name: PLACE
+            description: "The name of the census place"
+          - name: geometry
+            description: "A point describing the location of the census place"
 
   - name: ipums_full_count
     schema: public
     tables:
+      - name: crosswalk_hist_id_to_hist_census_place_table_raw
+        description: "Crosswalk between hist_id and census place id for a given year (raw)"
+        columns:
+          - name: histid
+            description: "Consistent historical data person identifier for the IPUMS full count data. This key is unique to each person-year combination. It can be used to match on one person years, but not to track individuals across years"
+          - name: cpp_placeid
+            description: "The Census Place Project ID of the census place"
+
+      - name: ipums_full_count_table_raw
+        description: "IPUMS full count data (raw)"
+        columns:
+          - name: histid
+            description: "Consistent historical data person identifier for the IPUMS full count data. This key is unique to each person-year combination. It can be used to match on one person years, but not to track individuals across years"
+          - name: hik
+            description: "Historical identification key for the IPUMS full count data. This key is unique to each person. It can be used to match people across years. It is computed via the linking procedure."
+
+      - name: crosswalk_hist_id_to_hist_census_place_table_clean
+        description: "Crosswalk between hist_id and census place id for a given year (cleaned)"
+        columns:
+          - name: histid
+            description: "Consistent historical data person identifier for the IPUMS full count data. This key is unique to each person-year combination. It can be used to match on one person years, but not to track individuals across years"
+          - name: cpp_placeid
+            description: "The Census Place Project ID of the census place
+
+      - name: ipums_full_count_table_clean
+        description: "IPUMS full count data (cleaned)"
+        columns:
+          - name: histid
+            description: "Consistent historical data person identifier for the IPUMS full count data. This key is unique to each person-year combination. It can be used to match on one person years, but not to track individuals across years"
+          - name: hik
+            description: "Historical identification key for the IPUMS full count data. This key is unique to each person. It can be used to match people across years. It is computed via the linking procedure."
+
+      - name: ipums_full_count_census_with_census_place_id
+        description: "IPUMS full count data with census place id for a given year"
+        columns:
+          - name: histid
+            description: "Consistent historical data person identifier for the IPUMS full count data. This key is unique to each person-year combination. It can be used to match on one person years, but not to track individuals across years"
+          - name: hik
+            description: "Historical identification key for the IPUMS full count data. This key is unique to each person. It can be used to match people across years. It is computed via the linking procedure."
+          - name: census_place_id
+            description: "The Census Place Project ID of the census place"
+
+      - name: ipums_full_count_census_with_census_place_id_all_years
+        description: "IPUMS full count data with census place id for all years"
+        columns:
+          - name: histid
+            description: "Consistent historical data person identifier for the IPUMS full count data. This key is unique to each person-year combination. It can be used to match on one person years, but not to track individuals across years"
+          - name: hik
+            description: "Historical identification key for the IPUMS full count data. This key is unique to each person. It can be used to match people across years. It is computed via the linking procedure."
+          - name: census_place_id
+            description: "The Census Place Project ID of the census place"
+          - name: year
+            description: "The year of the data"
+
+      - name: ipums_full_count_individual_migration
+        description: "Using the census linking (hik) we track linked individual across years and observe if they have changed census place"
+        columns:
+          - name: hik
+            description: "Historical identification key for the IPUMS full count data. This key is unique to each person. It can be used to match people across years. It is computed via the linking procedure."
+          - name: census_place_origin
+            description: "The Census Place Project ID of the census place where the person was living in the origin year"
+          - name: census_place_destination
+            description: "The Census Place Project ID of the census place where the person was living in the destination year"
+          - name: year_origin
+          - name: year_destination
+
+      - name: census_place_population
+        description: "Population of census places for all years"
+        columns:
+          - name: census_place_id
+            description: "The Census Place Project ID of the census place"
+          - name: year
+          - name: population
+
+      - name: census_place_migration
+        description: "Migration between census places for all years"
+        columns:
+          - name: census_place_origin
+            description: "The Census Place Project ID of the census place where the person was living in the origin year"
+          - name: census_place_destination
+            description: "The Census Place Project ID of the census place where the person was living in the destination year"
+          - name: year_origin
+          - name: year_destination
+
       - name: usa_hist_census_place_population
+        description: "Copy of the census_place_population table into postgres (from duckdb)"
+        columns:
+          - name: census_place_id
+            description: "The Census Place Project ID of the census place"
+          - name: year
+          - name: population
+
       - name: usa_hist_census_place_migration
+        description: "Copy of the census_place_migration table into postgres (from duckdb)"
+        columns:
+          - name: census_place_origin
+            description: "The Census Place Project ID of the census place where the person was living in the origin year"
+          - name: census_place_destination
+            description: "The Census Place Project ID of the census place where the person was living in the destination year"
+          - name: year_origin
+          - name: year_destination
+
       - name: usa_hist_census_place_geom_raw
+        description: "The geometry of the census places from the Census Place Project"
+        columns:
+          - name: id
+            description: "The Census Place Project ID of the census place"
+          - name: lat
+            description: "The latitude of the census place in EPSG:4326"
+          - name: lon
+            description: "The longitude of the census place in EPSG:4326"
 
   - name: misc
     schema: public
     tables:
       - name: usa_states_geom_raw
+        description: "The geometry of the states of the USA (raw)"
+        columns:
+          - name: State_Code
+            description: "The two letter code of the state (e.g. CA, NY)"
+          - name: State_Name
+            description: "The name of the state (e.g. California, New York)"
+          - name: geometry
+            description: "The geometry of the state"
