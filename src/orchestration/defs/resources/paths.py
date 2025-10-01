@@ -18,11 +18,14 @@ class CensusPlaceProjectPaths:
 class NhgisPaths:
     root: Path
 
+    def census_place_geom_folder(self, year: int) -> Path:
+        return self.root / "geo" / f"shapefile_tlgnis_us_place_point_{year}"
+
     def census_place_geom(self, year: int) -> Path:
-        return self.root / "geo" / f"nhgis0016_shapefile_tlgnis_us_place_point_{year}" / f"US_place_point_{year}.shp"
+        return self.census_place_geom_folder(year) / f"US_place_point_{year}.shp"
     
     def census_place_pop_1990_2020(self) -> Path:
-        return self.root / "pop" / "nhgis0018_ts_geog2010_place.csv"
+        return self.root / "pop" / "nhgis_place_population_1990_2020.csv"
 
 @dataclass(frozen=True)
 class IpumsFullCountPaths:
@@ -114,21 +117,28 @@ class OtherPaths:
 
     def analysis_parameters(self) -> Path:
         return self.root / "analysis_parameters.csv"
-    
 
+
+@dataclass(frozen=True)
+class DownloadPaths:
+    root: Path
     
+    def download(self) -> Path:
+        return self.root
 
 @dataclass(frozen=True)
 class DataPaths:
     usa: USAPaths
     world: WorldPaths
     other: OtherPaths
+    download: DownloadPaths
 
     @classmethod
     def from_root(cls, root: Path) -> "DataPaths":
         return cls(
             usa=USAPaths.from_root(root / "usa"),
             world=WorldPaths.from_root(root / "world"),
-            other=OtherPaths(root / "other")
+            other=OtherPaths(root / "other"),
+            download=DownloadPaths(root / "download")
         )
     

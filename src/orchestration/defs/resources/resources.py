@@ -12,14 +12,23 @@ import json
 from .paths import DataPaths
 from .tables import TableNames
 from ..assets.constants import constants
+from .ipums_api import IpumsAPIClient
 
 class StorageResource(ConfigurableResource):
     """A resource for accessing file system paths."""
-    data_root: str
+    root: str
 
     @property
     def paths(self) -> DataPaths:
-        return DataPaths.from_root(Path(self.data_root))
+        return DataPaths.from_root(Path(self.root))
+
+    @property
+    def data_root(self) -> Path:
+        return Path(self.root)
+
+    @property
+    def data_catalog_path(self) -> Path:
+        return Path('data_catalog.yml')
     
 class TableNamesResource(ConfigurableResource):
     """A resource for accessing tables."""
@@ -74,6 +83,14 @@ class PostgresPandasIOManager(ConfigurableIOManager):
         df = pd.read_sql(f"SELECT * FROM {table_name}", self.postgres.get_engine())
         return df
 
+
+class IpumsAPIClientResource(ConfigurableResource):
+    api_key: str
+    
+    def get_client(self) -> IpumsAPIClient:
+        return IpumsAPIClient(self.api_key)
+
+
 dbt_project = DbtProject(
   project_dir='src/warehouse'
 )
@@ -89,7 +106,7 @@ duckdb_resource = DuckDBResource(
 )
 
 storage_resource = StorageResource(
-    data_root=dg.EnvVar("DATA_ROOT_PATH")
+    root=dg.EnvVar("DATA_ROOT_PATH")
 )
 
 table_names_resource = TableNamesResource()
@@ -106,4 +123,8 @@ postgres_resource = PostgresResource(
 
 postgres_pandas_io_manager = PostgresPandasIOManager(
     postgres=postgres_resource
+)
+
+ipums_api_client = IpumsAPIClientResource(
+    api_key=dg.EnvVar("IPUMS_API_KEY")
 )

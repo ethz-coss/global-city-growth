@@ -6,5 +6,5 @@ venv/
 .git
 
 tmp/
-data/
+data*/
 .dagster_instance/

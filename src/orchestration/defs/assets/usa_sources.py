@@ -7,6 +7,7 @@ import geopandas as gpd
 
 from ..resources.resources import PostgresResource, StorageResource, TableNamesResource
 from .ipums_full_count import census_place_migration as census_place_migration_duckdb, census_place_population as census_place_population_duckdb
+from .download import nhgis_place_population_1990_2020_downloaded, raw_data_zenodo, nhgis_place_geom_1900_2010_downloaded
 
 
 
@@ -58,16 +59,18 @@ def usa_hist_census_place_migration(context: dg.AssetExecutionContext, duckdb: D
 
 
 @dg.asset(
+    deps=[nhgis_place_population_1990_2020_downloaded],
     kinds={'postgres'},
     group_name="usa_raw",
     io_manager_key="postgres_io_manager"
 )
-def usa_nhgis_census_place_population_1990_2020_raw(context: dg.AssetExecutionContext, postgres: PostgresResource, storage: StorageResource, tables: TableNamesResource):
+def usa_nhgis_census_place_population_1990_2020_raw(context: dg.AssetExecutionContext, storage: StorageResource):
     context.log.info(f"Copying census place population from nhgis to postgres")
     data = pd.read_csv(storage.paths.usa.nhgis.census_place_pop_1990_2020(), encoding='latin1')
     return data
 
 @dg.asset(
+    deps=[nhgis_place_geom_1900_2010_downloaded],
     kinds={'postgres'},
     group_name="usa_raw"
 )
@@ -90,6 +93,7 @@ def usa_nhgis_census_place_geom_all_years_raw(context: dg.AssetExecutionContext,
 
 
 @dg.asset(
+    deps=[raw_data_zenodo],
     kinds={'postgres'},
     group_name="usa_raw",
     io_manager_key="postgres_io_manager"
@@ -101,6 +105,7 @@ def usa_hist_census_place_geom_raw(context: dg.AssetExecutionContext, storage: S
 
 
 @dg.asset(
+    deps=[raw_data_zenodo],
     kinds={'postgres'},
     group_name="usa_raw"
 )

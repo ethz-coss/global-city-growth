@@ -7,6 +7,8 @@ from ..resources.resources import PostgresResource, StorageResource, TableNamesR
 from .constants import constants
 from ...utils import union_year_raster_tables_into_single_table
 
+from ..assets.download import raw_data_zenodo
+
 
 ghsl_years_partition = dg.StaticPartitionsDefinition([str(y) for y in constants['GHSL_RASTER_YEARS']])
 
@@ -25,6 +27,7 @@ def _load_ghsl_raster(context: dg.AssetExecutionContext, bash: dg.PipesSubproces
     return bash.run(command=cmd, context=context).get_results()
 
 @dg.asset(
+    deps=[raw_data_zenodo],
     kinds={'postgres'},
     partitions_def=ghsl_years_partition,
     group_name="world_raw"
@@ -37,6 +40,7 @@ def world_raster_ghsl_pop(context: dg.AssetExecutionContext, storage: StorageRes
     return _load_ghsl_raster(context=context, bash=bash, raster_path=ghsl_pop_raster_path, table_name=table_name)
 
 @dg.asset(
+    deps=[raw_data_zenodo],
     kinds={'postgres'},
     partitions_def=ghsl_years_partition,
     group_name="world_raw"
@@ -80,6 +84,7 @@ def world_raster_ghsl_smod_all_years(context: dg.AssetExecutionContext, postgres
     )
 
 @dg.asset(
+    deps=[raw_data_zenodo],
     kinds={'postgres'},
     group_name="world_raw"
 )
@@ -97,6 +102,7 @@ def world_country_borders_raw(context: dg.AssetExecutionContext, postgres: Postg
     )
 
 @dg.asset(
+    deps=[raw_data_zenodo],
     kinds={'postgres'},
     group_name="world_raw",
     io_manager_key="postgres_io_manager"
@@ -109,6 +115,7 @@ def world_crosswalk_cshapes_code_to_iso_code(context: dg.AssetExecutionContext, 
 
 
 @dg.asset(
+    deps=[raw_data_zenodo],
     kinds={'postgres'},
     group_name="world_raw",
     io_manager_key="postgres_io_manager"
@@ -122,6 +129,7 @@ def world_urbanization_raw(context: dg.AssetExecutionContext, storage: StorageRe
 
 
 @dg.asset(
+    deps=[raw_data_zenodo],
     kinds={'postgres'},
     group_name="world_raw",
     io_manager_key="postgres_io_manager"
@@ -135,6 +143,7 @@ def world_country_region(context: dg.AssetExecutionContext, storage: StorageReso
 
 
 @dg.asset(
+    deps=[raw_data_zenodo],
     kinds={'postgres'},
     group_name="world_raw",
     io_manager_key="postgres_io_manager"

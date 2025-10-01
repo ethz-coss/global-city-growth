@@ -6,6 +6,7 @@ import os
 
 from ..resources.resources import StorageResource, TableNamesResource
 from .constants import constants
+from .download import ipums_usa_full_count_downloaded, raw_data_zenodo
 
 IPUMS_HISTORICAL_YEARS = constants["IPUMS_HISTORICAL_YEARS"]
 ipums_historical_years_partitions = dg.StaticPartitionsDefinition([str(y) for y in IPUMS_HISTORICAL_YEARS])
@@ -33,6 +34,7 @@ def _load_table_into_duckdb(duckdb: DuckDBResource, table_name: str, file_path: 
 
 # Define the demographic data asset
 @dg.asset(
+    deps=[ipums_usa_full_count_downloaded],
     kinds={'duckdb'},
     partitions_def=ipums_historical_years_partitions,
     group_name="ipums_full_count_bronze",
@@ -78,6 +80,7 @@ def ipums_full_count_table_clean(context: dg.AssetExecutionContext, duckdb: Duck
 
 # Define the geographic data asset
 @dg.asset(
+    deps=[raw_data_zenodo],
     kinds={'duckdb'},
     partitions_def=ipums_historical_years_partitions,
     group_name="ipums_full_count_bronze",

@@ -17,8 +17,7 @@ warehouse/target/
 .ipynb_checkpoints
 
 tmp/
-data/
-data_temp/
+data*/
 /figures/
 
 .dagster_instance/

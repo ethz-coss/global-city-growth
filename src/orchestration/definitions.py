@@ -1,5 +1,6 @@
 from dagster import Definitions, in_process_executor
 
+from .defs.assets.download import raw_data_zenodo, ipums_usa_full_count_downloaded, nhgis_place_population_1990_2020_downloaded, nhgis_place_geom_1900_2010_downloaded
 from .defs.assets.ipums_full_count import ipums_full_count_table_raw, crosswalk_hist_id_to_hist_census_place_table_raw, ipums_full_count_table_clean, crosswalk_hist_id_to_hist_census_place_table_clean, ipums_full_count_census_with_census_place_id, ipums_full_count_census_with_census_place_id_all_years, census_place_population, ipums_full_count_individual_migration, census_place_migration
 from .defs.assets.usa_sources import usa_hist_census_place_population, usa_hist_census_place_migration, usa_nhgis_census_place_population_1990_2020_raw, usa_nhgis_census_place_geom_all_years_raw, usa_hist_census_place_geom_raw, usa_states_geom_raw
 from .defs.assets.usa import usa_crosswalk_nhgis_census_place_to_connected_component, usa_raster_census_place_convolved_year, usa_raster_census_place_convolved_all_years, usa_crosswalk_component_id_to_cluster_id
@@ -15,11 +16,17 @@ from .defs.assets.figures.si.si_figure_data_prep import world_size_growth_slopes
 from .defs.assets.figures.si.si_projections import si_figure_equation_correlation, si_figure_projection_vs_historical_share_population_cities_above_1m
 from .defs.assets.figures.si.si_linear_rigidity import si_figure_linear_rigidity
 from .defs.assets.figures.si.si_robustness import si_figure_usa_robustness, si_tables_world_robustness
-from .defs.resources.resources import duckdb_resource, storage_resource, postgres_resource, dbt_resource, table_names_resource, pipes_subprocess_resource, postgres_pandas_io_manager
+from .defs.resources.resources import duckdb_resource, storage_resource, postgres_resource, dbt_resource, table_names_resource, pipes_subprocess_resource, postgres_pandas_io_manager, ipums_api_client
 
 
 defs = Definitions(
     assets=[
+        # Download
+        raw_data_zenodo,
+        ipums_usa_full_count_downloaded,
+        nhgis_place_population_1990_2020_downloaded,
+        nhgis_place_geom_1900_2010_downloaded,
+
         # USA
         ## IPUMS Full Count
         ipums_full_count_table_raw,
@@ -103,7 +110,8 @@ defs = Definitions(
         "dbt": dbt_resource,
         "tables": table_names_resource,
         "bash": pipes_subprocess_resource,
-        "postgres_io_manager": postgres_pandas_io_manager
+        "postgres_io_manager": postgres_pandas_io_manager,
+        "ipums_api_client": ipums_api_client
     },
     executor=in_process_executor
 )
