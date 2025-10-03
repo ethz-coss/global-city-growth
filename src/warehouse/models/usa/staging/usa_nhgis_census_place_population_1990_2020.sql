@@ -13,8 +13,8 @@ nhgis_census_place_2010 AS (
 --- From 1990 to 2020 the census offers the population standardized to 2010 census places. This is why we fix the year to 2010 below.
 nhgis_census_place_pop_1990_2020 AS (
     SELECT  census_place_id,
-            year,
-            population
+            CAST(year AS INT) AS year,
+            CAST(population AS FLOAT) AS population
     FROM pop_1990_2020 
     INNER JOIN nhgis_census_place_2010 
     USING (gisjoin)

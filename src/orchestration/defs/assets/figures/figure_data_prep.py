@@ -11,17 +11,6 @@ from ..constants import constants
 from .figure_stats import get_mean_derivative_penalized_b_spline, get_ols_slope
 
 @dg.asset(
-    kinds={'postgres'},
-    group_name="figure_data_prep",
-    io_manager_key="postgres_io_manager"
-)
-def analysis_parameters(context: dg.AssetExecutionContext, storage: StorageResource) -> pd.DataFrame:
-    analysis_parameters_path = storage.paths.other.analysis_parameters()
-    context.log.info(f"Copying countries with region and subregion from {analysis_parameters_path}")
-    analysis_parameters_df = pd.read_csv(analysis_parameters_path)
-    return analysis_parameters_df
-
-@dg.asset(
     deps=[TableNamesResource().names.world.figures.world_size_vs_growth()],
     kinds={'postgres'},
     group_name="figure_data_prep",

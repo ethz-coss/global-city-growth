@@ -1,5 +1,0 @@
-sources:
-  - name: other
-    schema: public
-    tables:
-      - name: analysis_parameters

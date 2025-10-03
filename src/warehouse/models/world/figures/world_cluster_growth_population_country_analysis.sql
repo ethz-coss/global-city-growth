@@ -6,7 +6,7 @@
         world_city_population_threshold,
         world_country_min_num_cities,
         world_country_exclude
-    FROM {{ source('other', 'analysis_parameters') }}
+    FROM {{ ref('analysis_parameters') }}
 {% endset %}
 
 {% set analysis_parameters = run_query(get_analysis_parameters_query) %}

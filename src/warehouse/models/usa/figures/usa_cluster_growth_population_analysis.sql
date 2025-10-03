@@ -4,7 +4,7 @@
         analysis_id,
         usa_urban_threshold,
         usa_city_population_threshold
-    FROM {{ source('other', 'analysis_parameters') }}
+    FROM {{ ref('analysis_parameters') }}
 {% endset %}
 
 {% set analysis_parameters = run_query(get_analysis_parameters_query) %}

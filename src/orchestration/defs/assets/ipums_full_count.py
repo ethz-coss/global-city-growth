@@ -37,7 +37,7 @@ def _load_table_into_duckdb(duckdb: DuckDBResource, table_name: str, file_path: 
     deps=[ipums_usa_full_count_downloaded],
     kinds={'duckdb'},
     partitions_def=ipums_historical_years_partitions,
-    group_name="ipums_full_count_bronze",
+    group_name="ipums_full_count_staging",
     pool="duckdb_write",
     metadata={
         "dagster/column_schema": dg.TableSchema([
@@ -46,21 +46,21 @@ def _load_table_into_duckdb(duckdb: DuckDBResource, table_name: str, file_path: 
         ])
     }
 )
-def ipums_full_count_table_raw(context: dg.AssetExecutionContext, duckdb: DuckDBResource, storage: StorageResource, tables: TableNamesResource):
+def ipums_full_count_raw(context: dg.AssetExecutionContext, duckdb: DuckDBResource, storage: StorageResource, tables: TableNamesResource):
     """IPUMS full count data for a given year (raw)."""
     year = context.partition_key
-    table_name = tables.names.usa.ipums_full_count.ipums_full_count_table_raw(year)
+    table_name = tables.names.usa.ipums_full_count.ipums_full_count_raw(year)
     file_path = storage.paths.usa.ipums_full_count.ipums_full_count(year)
 
     context.log.info(f"Loading IPUMS full count data for {year} into table {table_name}")
     num_rows = _load_table_into_duckdb(duckdb, table_name, file_path)
-    context.add_output_metadata({"num_rows": num_rows, "table": table_name})
+    return dg.Output(value=table_name, metadata={"num_rows": num_rows, "table": table_name})
 
 @dg.asset(
-    deps=[ipums_full_count_table_raw],
+    deps=[ipums_full_count_raw],
     kinds={'duckdb'},
     partitions_def=ipums_historical_years_partitions,
-    group_name="ipums_full_count_silver",
+    group_name="ipums_full_count_intermediate",
     pool="duckdb_write",
     metadata={
         "dagster/column_schema": dg.TableSchema([
@@ -69,11 +69,11 @@ def ipums_full_count_table_raw(context: dg.AssetExecutionContext, duckdb: DuckDB
         ])
     }
 )
-def ipums_full_count_table_clean(context: dg.AssetExecutionContext, duckdb: DuckDBResource, tables: TableNamesResource):
+def ipums_full_count_clean(context: dg.AssetExecutionContext, duckdb: DuckDBResource, tables: TableNamesResource):
     """IPUMS full count data for a given year (clean)."""
     year = context.partition_key
-    raw_table_name = tables.names.usa.ipums_full_count.ipums_full_count_table_raw(year)
-    clean_table_name = tables.names.usa.ipums_full_count.ipums_full_count_table_clean(year)
+    raw_table_name = tables.names.usa.ipums_full_count.ipums_full_count_raw(year)
+    clean_table_name = tables.names.usa.ipums_full_count.ipums_full_count_clean(year)
 
     context.log.info(f"Cleaning IPUMS full count data for {year} into table {clean_table_name}")
 
@@ -81,13 +81,13 @@ def ipums_full_count_table_clean(context: dg.AssetExecutionContext, duckdb: Duck
     DROP TABLE IF EXISTS {clean_table_name};
     CREATE TABLE {clean_table_name} AS
     SELECT  UPPER(histid) AS histid,
-            NULLIF(ANY_VALUE(hik), '                     ') AS hik
+            NULLIF(TRIM(ANY_VALUE(hik)), '') AS hik
     FROM { raw_table_name }
     GROUP BY UPPER(histid)
     """
 
     num_rows = _execute_sql_query_and_return_num_rows(duckdb=duckdb, sql_query=sql_query, table_name=clean_table_name)
-    context.add_output_metadata({"num_rows": num_rows, "table": clean_table_name})
+    return dg.Output(value=clean_table_name, metadata={"num_rows": num_rows, "table": clean_table_name})
     
 
 # Define the geographic data asset
@@ -95,7 +95,7 @@ def ipums_full_count_table_clean(context: dg.AssetExecutionContext, duckdb: Duck
     deps=[raw_data_zenodo],
     kinds={'duckdb'},
     partitions_def=ipums_historical_years_partitions,
-    group_name="ipums_full_count_bronze",
+    group_name="ipums_full_count_staging",
     pool="duckdb_write",
     metadata={
         "dagster/column_schema": dg.TableSchema([
@@ -104,22 +104,22 @@ def ipums_full_count_table_clean(context: dg.AssetExecutionContext, duckdb: Duck
         ])
     }
 )
-def crosswalk_hist_id_to_hist_census_place_table_raw(context: dg.AssetExecutionContext, duckdb: DuckDBResource, storage: StorageResource, tables: TableNamesResource):
+def crosswalk_hist_id_to_hist_census_place_raw(context: dg.AssetExecutionContext, duckdb: DuckDBResource, storage: StorageResource, tables: TableNamesResource):
     """Crosswalk between full count census hist_id and census place id for a given year (raw)."""
     year = context.partition_key
-    table_name = tables.names.usa.ipums_full_count.crosswalk_hist_id_to_hist_census_place_table_raw(year)
+    table_name = tables.names.usa.ipums_full_count.crosswalk_hist_id_to_hist_census_place_raw(year)
     file_path = storage.paths.usa.census_place_project.crosswalk_hist_id_to_hist_census_place(year)
 
     context.log.info(f"Loading crosswalk data for {year} into table {table_name}")
     num_rows = _load_table_into_duckdb(duckdb, table_name, file_path)
-    context.add_output_metadata({"num_rows": num_rows, "table": table_name})
+    return dg.Output(value=table_name, metadata={"num_rows": num_rows, "table": table_name})
 
 
 @dg.asset(
-    deps=[crosswalk_hist_id_to_hist_census_place_table_raw],
+    deps=[crosswalk_hist_id_to_hist_census_place_raw],
     kinds={'duckdb'},
     partitions_def=ipums_historical_years_partitions,
-    group_name="ipums_full_count_silver",
+    group_name="ipums_full_count_intermediate",
     pool="duckdb_write",
     metadata={
         "dagster/column_schema": dg.TableSchema([
@@ -128,11 +128,11 @@ def crosswalk_hist_id_to_hist_census_place_table_raw(context: dg.AssetExecutionC
         ])
     }
 )
-def crosswalk_hist_id_to_hist_census_place_table_clean(context: dg.AssetExecutionContext, duckdb: DuckDBResource, tables: TableNamesResource):
+def crosswalk_hist_id_to_hist_census_place_clean(context: dg.AssetExecutionContext, duckdb: DuckDBResource, tables: TableNamesResource):
     """Crosswalk between full count census hist_id and census place id for a given year (clean)."""
     year = context.partition_key
-    raw_table_name = tables.names.usa.ipums_full_count.crosswalk_hist_id_to_hist_census_place_table_raw(year)
-    clean_table_name = tables.names.usa.ipums_full_count.crosswalk_hist_id_to_hist_census_place_table_clean(year)
+    raw_table_name = tables.names.usa.ipums_full_count.crosswalk_hist_id_to_hist_census_place_raw(year)
+    clean_table_name = tables.names.usa.ipums_full_count.crosswalk_hist_id_to_hist_census_place_clean(year)
 
     context.log.info(f"Cleaning crosswalk data for {year} into table {clean_table_name}")
 
@@ -140,19 +140,19 @@ def crosswalk_hist_id_to_hist_census_place_table_clean(context: dg.AssetExecutio
     DROP TABLE IF EXISTS {clean_table_name};
     CREATE TABLE {clean_table_name} AS
     SELECT  UPPER(histid) AS histid,
-            ANY_VALUE(cpp_placeid) AS 
+            ANY_VALUE(cpp_placeid) AS census_place_id
     FROM { raw_table_name }
     GROUP BY UPPER(histid)
     """
 
     num_rows = _execute_sql_query_and_return_num_rows(duckdb=duckdb, sql_query=sql_query, table_name=clean_table_name)
-    context.add_output_metadata({"num_rows": num_rows, "table": clean_table_name})
+    return dg.Output(value=clean_table_name, metadata={"num_rows": num_rows, "table": clean_table_name})
 
 @dg.asset(
-    deps=[ipums_full_count_table_clean, crosswalk_hist_id_to_hist_census_place_table_clean],
+    deps=[ipums_full_count_clean, crosswalk_hist_id_to_hist_census_place_clean],
     kinds={'duckdb'},
     partitions_def=ipums_historical_years_partitions,
-    group_name="ipums_full_count_silver",
+    group_name="ipums_full_count_intermediate",
     pool="duckdb_write",
     metadata={
         "dagster/column_schema": dg.TableSchema([
@@ -162,12 +162,12 @@ def crosswalk_hist_id_to_hist_census_place_table_clean(context: dg.AssetExecutio
         ])
     }
 )  
-def ipums_full_count_census_with_census_place_id(context: dg.AssetExecutionContext, duckdb: DuckDBResource, tables: TableNamesResource):
+def ipums_full_count_census_place_id(context: dg.AssetExecutionContext, duckdb: DuckDBResource, tables: TableNamesResource):
     """IPUMS full count data with census place id for a given year."""
     year = context.partition_key
-    ipums_full_count_table_name = tables.names.usa.ipums_full_count.ipums_full_count_table_clean(year)
-    crosswalk_hist_id_to_hist_census_place_table_name = tables.names.usa.ipums_full_count.crosswalk_hist_id_to_hist_census_place_table_clean(year)
-    table_name = tables.names.usa.ipums_full_count.ipums_full_count_census_with_census_place_id(year)
+    ipums_full_count_table_name = tables.names.usa.ipums_full_count.ipums_full_count_clean(year)
+    crosswalk_hist_id_to_hist_census_place_table_name = tables.names.usa.ipums_full_count.crosswalk_hist_id_to_hist_census_place_clean(year)
+    table_name = tables.names.usa.ipums_full_count.ipums_full_count_census_place_id(year)
 
     context.log.info(f"Joining IPUMS full count data with census place id for {year}")
 
@@ -184,13 +184,13 @@ def ipums_full_count_census_with_census_place_id(context: dg.AssetExecutionConte
     """
 
     num_rows = _execute_sql_query_and_return_num_rows(duckdb=duckdb, sql_query=sql_query, table_name=table_name)
-    context.add_output_metadata({"num_rows": num_rows, "table": table_name})
+    return dg.Output(value=table_name, metadata={"num_rows": num_rows, "table": table_name})
     
 
 @dg.asset(
-    deps=[ipums_full_count_census_with_census_place_id],
+    deps=[ipums_full_count_census_place_id],
     kinds={'duckdb'},
-    group_name="ipums_full_count_silver",
+    group_name="ipums_full_count_intermediate",
     pool="duckdb_write",
     metadata={
         "dagster/column_schema": dg.TableSchema([
@@ -201,9 +201,9 @@ def ipums_full_count_census_with_census_place_id(context: dg.AssetExecutionConte
         ])
     }
 )
-def ipums_full_count_census_with_census_place_id_all_years(context: dg.AssetExecutionContext, duckdb: DuckDBResource, tables: TableNamesResource):
+def ipums_full_count_census_place_id_all_years(context: dg.AssetExecutionContext, duckdb: DuckDBResource, tables: TableNamesResource):
     """IPUMS full count data with census place id for all years."""
-    union_table_name = tables.names.usa.ipums_full_count.ipums_full_count_census_with_census_place_id_all_years()
+    union_table_name = tables.names.usa.ipums_full_count.ipums_full_count_census_place_id_all_years()
 
     context.log.info(f"Joining IPUMS full count data with census place id for all years")
 
@@ -222,26 +222,26 @@ def ipums_full_count_census_with_census_place_id_all_years(context: dg.AssetExec
     {% endfor %}
     """
 
-    tables = [
+    table_list = [
         {
-            "name": tables.names.usa.ipums_full_count.ipums_full_count_census_with_census_place_id(year),
+            "name": tables.names.usa.ipums_full_count.ipums_full_count_census_place_id(year),
             "year": year
         }
         for year in IPUMS_HISTORICAL_YEARS
     ]
 
     template = jinja2.Template(sql_query_template)
-    sql_query = template.render(tables=tables, union_table_name=union_table_name)
+    sql_query = template.render(tables=table_list, union_table_name=union_table_name)
 
     context.log.info(f"Query: {sql_query}")
 
     num_rows = _execute_sql_query_and_return_num_rows(duckdb=duckdb, sql_query=sql_query, table_name=union_table_name)
-    context.add_output_metadata({"num_rows": num_rows, "table": union_table_name})
+    return dg.Output(value=union_table_name, metadata={"num_rows": num_rows, "table": union_table_name})
 
 @dg.asset(
-    deps=[ipums_full_count_census_with_census_place_id_all_years],
+    deps=[ipums_full_count_census_place_id_all_years],
     kinds={'duckdb'},
-    group_name="ipums_full_count_silver",
+    group_name="ipums_full_count_intermediate",
     pool="duckdb_write",
     metadata={
         "dagster/column_schema": dg.TableSchema([
@@ -255,7 +255,7 @@ def ipums_full_count_census_with_census_place_id_all_years(context: dg.AssetExec
 )
 def ipums_full_count_individual_migration(context: dg.AssetExecutionContext, duckdb: DuckDBResource, tables: TableNamesResource):
     """ Individual migration data for all years. Using the census linking (hik) we track linked individual across years and observe if they have changed census place"""
-    ipums_full_count_census_with_census_place_id_all_years_table_name = tables.names.usa.ipums_full_count.ipums_full_count_census_with_census_place_id_all_years()
+    ipums_full_count_census_with_census_place_id_all_years_table_name = tables.names.usa.ipums_full_count.ipums_full_count_census_place_id_all_years()
     table_name = tables.names.usa.ipums_full_count.ipums_full_count_individual_migration()
 
     context.log.info(f"Calculating individual migration data for all years")
@@ -307,13 +307,13 @@ def ipums_full_count_individual_migration(context: dg.AssetExecutionContext, duc
     context.log.info(f"Query: {sql_query}")
 
     num_rows = _execute_sql_query_and_return_num_rows(duckdb=duckdb, sql_query=sql_query, table_name=table_name)
-    context.add_output_metadata({"num_rows": num_rows, "table": table_name})
+    return dg.Output(value=table_name, metadata={"num_rows": num_rows, "table": table_name})
     
     
 @dg.asset(
-    deps=[ipums_full_count_census_with_census_place_id_all_years],
+    deps=[ipums_full_count_census_place_id_all_years],
     kinds={'duckdb'},
-    group_name="ipums_full_count_gold",
+    group_name="ipums_full_count_final",
     pool="duckdb_write",
     metadata={
         "dagster/column_schema": dg.TableSchema([
@@ -326,7 +326,7 @@ def ipums_full_count_individual_migration(context: dg.AssetExecutionContext, duc
 def census_place_population(context: dg.AssetExecutionContext, duckdb: DuckDBResource, tables: TableNamesResource):
     """Population of census places for all years"""
     census_place_population_table_name = tables.names.usa.ipums_full_count.census_place_population()
-    ipums_full_count_census_with_census_place_id_all_years_table_name = tables.names.usa.ipums_full_count.ipums_full_count_census_with_census_place_id_all_years()
+    ipums_full_count_census_with_census_place_id_all_years_table_name = tables.names.usa.ipums_full_count.ipums_full_count_census_place_id_all_years()
 
     context.log.info(f"Calculating census place population for all years")
 
@@ -348,7 +348,7 @@ def census_place_population(context: dg.AssetExecutionContext, duckdb: DuckDBRes
 @dg.asset(
     deps=[ipums_full_count_individual_migration],
     kinds={'duckdb'},
-    group_name="ipums_full_count_gold",
+    group_name="ipums_full_count_final",
     pool="duckdb_write",
     metadata={
         "dagster/column_schema": dg.TableSchema([

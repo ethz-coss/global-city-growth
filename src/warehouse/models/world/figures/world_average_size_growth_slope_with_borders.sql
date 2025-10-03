@@ -6,7 +6,7 @@ WITH country_borders AS (
 ),
 analysis_ids AS (
     SELECT DISTINCT analysis_id
-    FROM {{ source('other', 'analysis_parameters') }}
+    FROM {{ ref('analysis_parameters') }}
 ),
 country_borders_crossjoined_with_analysis_ids AS (
     SELECT country, analysis_id, geom

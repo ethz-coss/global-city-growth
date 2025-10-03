@@ -109,15 +109,6 @@ class WorldPaths:
             cshapes_border=CShapesBorderPaths(root / "cshapes"),
             owid=OWIDPaths(root / "owid")
         )
-    
-
-@dataclass(frozen=True)
-class OtherPaths:
-    root: Path
-
-    def analysis_parameters(self) -> Path:
-        return self.root / "analysis_parameters.csv"
-
 
 @dataclass(frozen=True)
 class DownloadPaths:
@@ -130,7 +121,6 @@ class DownloadPaths:
 class DataPaths:
     usa: USAPaths
     world: WorldPaths
-    other: OtherPaths
     download: DownloadPaths
 
     @classmethod
@@ -138,7 +128,6 @@ class DataPaths:
         return cls(
             usa=USAPaths.from_root(root / "usa"),
             world=WorldPaths.from_root(root / "world"),
-            other=OtherPaths(root / "other"),
             download=DownloadPaths(root / "download")
         )
     

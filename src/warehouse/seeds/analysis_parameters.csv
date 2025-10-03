@@ -1,0 +1,11 @@
+analysis_id,description,world_urban_threshold,world_city_population_threshold,world_country_min_num_cities,world_country_exclude,usa_urban_threshold,usa_city_population_threshold,robustness_for_dataset
+1,main text analysis,21,5000,50,"'MMR','NPL'",50,5000,
+2,robustness: degree of urbanization = 22,22,5000,50,"'MMR','NPL'",50,5000,world
+3,robustness: degree of urbanization = 23,23,5000,50,"'MMR','NPL'",50,5000,world
+4,"robustness: city population threshold = 10,000",21,10000,50,"'MMR','NPL'",50,5000,world
+5,"robustness: city population threshold = 100,000",21,100000,50,"'MMR','NPL'",50,5000,world
+6,robustness: do notexclude MMR and NPL,21,5000,50,'SGP',50,5000,world
+7,robustness: minimum number of cities = 30,21,5000,30,"'MMR','NPL'",50,5000,world
+8,robustness: minimum number of cities = 100,21,5000,100,"'MMR','NPL'",50,5000,world
+9,robustness: usa urban threshold = 100,21,5000,50,"'MMR','NPL'",100,5000,usa
+10,robustness: usa city population threshold = 200,21,5000,50,"'MMR','NPL'",200,5000,usa

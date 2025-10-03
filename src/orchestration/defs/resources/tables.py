@@ -5,23 +5,23 @@ from pathlib import Path
 
 @dataclass(frozen=True)
 class IpumsFullCount:
-    def ipums_full_count_table_raw(self, year: int) -> str:
-        return f"ipums_full_count_raw_{year}" # TODO: change name to ipums_full_count_table_{year}_raw
+    def ipums_full_count_raw(self, year: int) -> str:
+        return f"ipums_full_count_{year}_raw" # TODO: change name to ipums_full_count_table_{year}_raw
     
-    def ipums_full_count_table_clean(self, year: int) -> str:
-        return f"ipums_full_count_clean_{year}"
+    def ipums_full_count_clean(self, year: int) -> str:
+        return f"ipums_full_count_{year}_clean" # TODO: change name to ipums_full_count_table_clean_{year}
     
-    def crosswalk_hist_id_to_hist_census_place_table_raw(self, year: int) -> str:
-        return f"crosswalk_hist_id_to_hist_census_place_raw_{year}" # TODO: change name to crosswalk_hist_id_to_hist_census_place_table_{year}_raw
+    def crosswalk_hist_id_to_hist_census_place_raw(self, year: int) -> str:
+        return f"crosswalk_hist_id_to_hist_census_place_{year}_raw"
     
-    def crosswalk_hist_id_to_hist_census_place_table_clean(self, year: int) -> str:
-        return f"crosswalk_hist_id_to_hist_census_place_clean_{year}"
+    def crosswalk_hist_id_to_hist_census_place_clean(self, year: int) -> str:
+        return f"crosswalk_hist_id_to_hist_census_place_{year}_clean"
     
-    def ipums_full_count_census_with_census_place_id(self, year: int) -> str:
-        return f"ipums_full_count_census_with_census_place_id_{year}"
+    def ipums_full_count_census_place_id(self, year: int) -> str:
+        return f"ipums_full_count_census_place_id_{year}"
     
-    def ipums_full_count_census_with_census_place_id_all_years(self) -> str:
-        return f"ipums_full_count_census_with_census_place_id_all_years"
+    def ipums_full_count_census_place_id_all_years(self) -> str:
+        return f"ipums_full_count_census_place_id_all_years"
     
     def ipums_full_count_individual_migration(self) -> str:
         return f"ipums_full_count_individual_migration"

@@ -1,23 +1,24 @@
-from dagster import Definitions, in_process_executor
+from dagster import Definitions, in_process_executor, AssetSelection, define_asset_job
 
 from .defs.assets.download import raw_data_zenodo, ipums_usa_full_count_downloaded, nhgis_place_population_1990_2020_downloaded, nhgis_place_geom_1900_2010_downloaded
-from .defs.assets.ipums_full_count import ipums_full_count_table_raw, crosswalk_hist_id_to_hist_census_place_table_raw, ipums_full_count_table_clean, crosswalk_hist_id_to_hist_census_place_table_clean, ipums_full_count_census_with_census_place_id, ipums_full_count_census_with_census_place_id_all_years, census_place_population, ipums_full_count_individual_migration, census_place_migration
+from .defs.assets.ipums_full_count import ipums_full_count_raw, crosswalk_hist_id_to_hist_census_place_raw, ipums_full_count_clean, crosswalk_hist_id_to_hist_census_place_clean, ipums_full_count_census_place_id, ipums_full_count_census_place_id_all_years, census_place_population, ipums_full_count_individual_migration, census_place_migration
 from .defs.assets.usa_sources import usa_hist_census_place_population, usa_hist_census_place_migration, usa_nhgis_census_place_population_1990_2020_raw, usa_nhgis_census_place_geom_all_years_raw, usa_hist_census_place_geom_raw, usa_states_geom_raw
 from .defs.assets.usa import usa_crosswalk_nhgis_census_place_to_connected_component, usa_raster_census_place_convolved_year, usa_raster_census_place_convolved_all_years, usa_crosswalk_component_id_to_cluster_id
 from .defs.assets.world_sources import world_raster_ghsl_pop, world_raster_ghsl_smod, world_country_borders_raw, world_urbanization_raw, world_crosswalk_cshapes_code_to_iso_code, world_raster_ghsl_pop_all_years, world_raster_ghsl_smod_all_years, world_country_region, world_population_raw
 from .defs.assets.world import world_crosswalk_component_id_to_cluster_id
-from .defs.assets.figures.figure_data_prep import analysis_parameters, world_size_growth_slopes_historical, world_rank_size_slopes_historical, world_region_regression_with_urbanization_controls, world_size_growth_slopes_projections, usa_rank_size_slopes
+from .defs.assets.figures.figure_data_prep import world_size_growth_slopes_historical, world_rank_size_slopes_historical, world_region_regression_with_urbanization_controls, world_size_growth_slopes_projections, usa_rank_size_slopes
 from .defs.assets.figures.figure_1 import figure_1_map, figure_1_plots
 from .defs.assets.figures.figure_2 import figure_2
 from .defs.assets.figures.figure_3 import figure_3
 from .defs.assets.figures.tables import table_1, table_2
-from .defs.assets.dbt import dbt_warehouse, my_example_asset, incremental_example_table
+from .defs.assets.dbt import dbt_warehouse
 from .defs.assets.figures.si.si_figure_data_prep import world_size_growth_slopes_ols, world_rank_size_slopes_ols, world_linearity_test_rank_vs_size, world_linearity_test_size_vs_growth
 from .defs.assets.figures.si.si_projections import si_figure_equation_correlation, si_figure_projection_vs_historical_share_population_cities_above_1m
 from .defs.assets.figures.si.si_linear_rigidity import si_figure_linear_rigidity
 from .defs.assets.figures.si.si_robustness import si_figure_usa_robustness, si_tables_world_robustness
 from .defs.resources.resources import duckdb_resource, storage_resource, postgres_resource, dbt_resource, table_names_resource, pipes_subprocess_resource, postgres_pandas_io_manager, ipums_api_client
 
+all_job = define_asset_job("all_job", selection=AssetSelection.all())
 
 defs = Definitions(
     assets=[
@@ -29,12 +30,12 @@ defs = Definitions(
 
         # USA
         ## IPUMS Full Count
-        ipums_full_count_table_raw,
-        crosswalk_hist_id_to_hist_census_place_table_raw,
-        ipums_full_count_table_clean,
-        crosswalk_hist_id_to_hist_census_place_table_clean,
-        ipums_full_count_census_with_census_place_id,
-        ipums_full_count_census_with_census_place_id_all_years,
+        ipums_full_count_raw,
+        crosswalk_hist_id_to_hist_census_place_raw,
+        ipums_full_count_clean,
+        crosswalk_hist_id_to_hist_census_place_clean,
+        ipums_full_count_census_place_id,
+        ipums_full_count_census_place_id_all_years,
         ipums_full_count_individual_migration,
         census_place_population,
         census_place_migration,
@@ -71,11 +72,8 @@ defs = Definitions(
         # Shared
         ## DBT
         dbt_warehouse,
-        my_example_asset,
-        incremental_example_table,
 
         ## Figure Data Prep
-        analysis_parameters,
         world_size_growth_slopes_historical,
         world_rank_size_slopes_historical,
         world_region_regression_with_urbanization_controls,
@@ -115,15 +113,3 @@ defs = Definitions(
     },
     executor=in_process_executor
 )
-
-"""
-## Tables
-table_1,
-table_2,
-## Supplementary Information
-world_linearity_test_size_vs_growth,
-world_linearity_test_rank_size_curve,
-figure_si_linear_rigidity,
-world_robustness_tables,
-usa_robustness_figure,
-"""
