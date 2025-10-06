@@ -98,7 +98,6 @@ def _plot_size_growth_curve_usa_by_epoch(fig: plt.Figure, ax: plt.Axes, df_size_
         color = colors[i]
         plot_spline_with_ci(ax=ax, x=x, y=average_log_growth_e + y, ci_low=average_log_growth_e + ci_low, ci_high=average_log_growth_e + ci_high, color=color, label=e)
 
-    ax.set_ylim(-0.03, 0.28)
     style_axes(ax=ax, xlabel=x_axis_label, ylabel=y_axis_label, title=title, legend_loc='upper right')
 
     # Inset plot
@@ -132,11 +131,11 @@ def _plot_region_regression_with_urbanization_controls(fig: plt.Figure, ax: plt.
 
     ax.bar(index - bar_width/2, df['coeff_no_control'], bar_width,
                 yerr=no_control_error, capsize=5,
-                label='Without Urbanization Control', color='skyblue', ecolor='gray')
+                label='Without control', color='skyblue', ecolor='gray')
 
     ax.bar(index + bar_width/2, df['coeff_with_control'], bar_width,
                 yerr=with_control_error, capsize=5,
-                label='With Urbanization Control', color='lightcoral', ecolor='gray')
+                label='With control', color='lightcoral', ecolor='gray')
 
     ax.axhline(0, color='grey', linewidth=0.8, linestyle='--')
     ax.annotate('Global average', 
@@ -148,7 +147,7 @@ def _plot_region_regression_with_urbanization_controls(fig: plt.Figure, ax: plt.
     ax.set_xticks(index)
     ax.set_xticklabels(df.index, rotation=0, ha="center")
     style_axes(ax=ax, xlabel='', ylabel='Deviation of region size-growth slope\nfrom global average')
-    ax.legend(fontsize=inset_label_font_size, loc='upper center', frameon=False) # here we want a smaller legend font so we style it ourselves
+    ax.legend(fontsize=inset_label_font_size, loc='upper center', frameon=False, title='Urban population share control') # here we want a smaller legend font so we style it ourselves
     return fig, ax
 
 @dg.asset(

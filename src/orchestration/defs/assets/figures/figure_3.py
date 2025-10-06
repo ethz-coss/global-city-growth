@@ -78,7 +78,7 @@ def _plot_rank_size_slope_change_usa_kor(fig: plt.Figure, ax: plt.Axes, df_usa: 
     y_axis_inset_label = r'$\alpha_{t} \ / \ \alpha_{t_0} - 1$'
     year_base, year_middle, year_end = 1975, 2000, 2025
 
-    ax_inset = fig.add_axes([0.64, 0.74, 0.1, 0.1])
+    ax_inset = fig.add_axes([0.62, 0.75, 0.1, 0.1])
     _plot_rank_size_slope_change_curves(fig=fig, ax=ax_inset, year_base=year_base, year_middle=year_middle, year_end=year_end, df=df_kor, x_axis=x_axis, y_axis=y_axis, colors=colors, linewidth=1, markersize=2)
     ax_inset.yaxis.set_major_formatter(mtick.PercentFormatter(1.0, decimals=0))
     style_inset_axes(ax=ax_inset, xlabel=x_axis_inset_label, ylabel=y_axis_inset_label, title=inset_title)

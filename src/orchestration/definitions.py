@@ -18,7 +18,7 @@ from .defs.assets.figures.si.si_linear_rigidity import si_figure_linear_rigidity
 from .defs.assets.figures.si.si_robustness import si_figure_usa_robustness, si_tables_world_robustness
 from .defs.resources.resources import duckdb_resource, storage_resource, postgres_resource, dbt_resource, table_names_resource, pipes_subprocess_resource, postgres_pandas_io_manager, ipums_api_client
 
-all_job = define_asset_job("all_job", selection=AssetSelection.all())
+# job_all = define_asset_job("all_job", selection=AssetSelection.all())
 
 defs = Definitions(
     assets=[

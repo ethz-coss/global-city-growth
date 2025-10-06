@@ -30,7 +30,7 @@ disappearing_places_migration_continuation_candidates AS (
                 distance,
                 RANK() OVER (PARTITION BY disappearing_place_id ORDER BY migration_probability DESC, distance ASC) AS rank
         FROM candidates
-        WHERE distance < 50000
+        WHERE distance < 30000
     )
     SELECT  disappearing_place_id, 
             continuation_candidate_id
@@ -85,8 +85,7 @@ edges_migration_and_distance AS (
     FROM (
         SELECT  census_place_origin, 
                 census_place_destination, 
-                CASE WHEN migration_probability > 0.3 AND distance < 50000 THEN 1
-                     WHEN migration_probability > 0.5 THEN 1
+                CASE WHEN migration_probability > 0.5 AND distance < 30000 THEN 1
                 ELSE 0
                 END as edge
         FROM migration_and_distance

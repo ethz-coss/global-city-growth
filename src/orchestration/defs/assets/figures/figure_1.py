@@ -249,7 +249,7 @@ def figure_1_plots(context: dg.AssetExecutionContext, postgres: PostgresResource
     ax1 = fig.add_subplot(gs[0, 0])
     ax2 = fig.add_subplot(gs[0, 1])  
 
-    nboots = 10
+    nboots = 1000
     engine = postgres.get_engine()
     world_average_growth_rate_group = read_pandas(engine=engine, table=tables.names.world.figures.world_average_growth_group(), analysis_id=MAIN_ANALYSIS_ID)
     _plot_average_growth_rates_group_barchart_by_region(fig=fig, ax=ax1, df=world_average_growth_rate_group, nboots=nboots)
