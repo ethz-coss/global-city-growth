@@ -126,67 +126,20 @@ def _plot_world_map_with_colorbar(fig: plt.Figure, ax: plt.Axes, gdf: gpd.GeoDat
     ax_inset2.set_ylim(0.02, 0.09)
     return fig, ax
 
-
-def _cluster_bootstrap(data: pd.DataFrame, value_col: str, cluster_col: str, nboots: int) -> Tuple[float, float, float]:
-    unique_clusters = data[cluster_col].unique()
-    n_clusters = len(unique_clusters)
-    bootstrap_means = []
-    for i in range(nboots):
-        sampled_cluster_ids = np.random.choice(unique_clusters, size=n_clusters, replace=True)
-        bootstrap_sample = pd.concat([data[data[cluster_col] == c] for c in sampled_cluster_ids])
-        bootstrap_means.append(np.mean(bootstrap_sample[value_col]))
-    return np.median(bootstrap_means), np.percentile(bootstrap_means, 2.5), np.percentile(bootstrap_means, 97.5)
-
-def _get_average_growth_rates_group_with_cis(average_growth_rates_group: pd.DataFrame, region_col: str, group_col: str, nboots: int) -> pd.DataFrame:
-    regions = sorted(average_growth_rates_group[region_col].unique().tolist())
-    groups = sorted(average_growth_rates_group[group_col].unique().tolist())
-    average_growth_rates_group_with_cis = []
-
-    for r in regions:
-        for g in groups:
-            average_growth_rates_group_region_df = average_growth_rates_group[(average_growth_rates_group[group_col] == g) & (average_growth_rates_group[region_col] == r)][['country', 'year', 'log_average_growth_group_demeaned']].copy().dropna()
-            estimator = lambda x: x['log_average_growth_group_demeaned'].mean()
-            # mean_value, ci_low, ci_high = clustered_boostrap_ci(estimator=estimator, df=average_growth_rates_group_region_df, cluster_col='country', nboots=nboots)
-            mean_value, ci_low, ci_high = _cluster_bootstrap(data=average_growth_rates_group_region_df, value_col='log_average_growth_group_demeaned', cluster_col='country', nboots=nboots)
-            average_growth_rates_group_with_cis.append({
-                'region': r,
-                'group': g,
-                'mean': mean_value,
-                'ci_low': ci_low,
-                'ci_high': ci_high
-            })
-
-    average_growth_rates_group_with_cis = pd.DataFrame(average_growth_rates_group_with_cis)
-    return average_growth_rates_group_with_cis
-
-def _plot_average_growth_rates_group_barchart_by_region(fig: plt.Figure, ax: plt.Axes, df: pd.DataFrame, nboots: int) -> Tuple[plt.Figure, plt.Axes]:
-    y_axis_label = 'Growth advantage over national average \n' + r'($\log(g_{\text{group}} \ / \ g_{\text{national}})$)'
-
+def _plot_average_growth_rates_group_barchart_by_region(fig: plt.Figure, ax: plt.Axes, df: pd.DataFrame) -> Tuple[plt.Figure, plt.Axes]:
     region_col = 'region'
-    group_col = 'group'
+    x_axis = 'city_group'
+    y_axis = 'log_average_growth_group_demeaned'
+    weights = 'num_cities'
+
+    y_axis_label = 'Growth advantage over national average \n' + r'$\log(g_{\text{group}}) - \log(g_{\text{national}})$'
+
 
     group_to_label = {
-        'largest_city': 'Largest city',
-        'above_5M': 'Population\nabove 5M',
         'above_1M': 'Population\nabove 1M',
         'below_1M': 'Population\nbelow 1M',
     }
-
-    world_average_growth_rate_group_with_cis = _get_average_growth_rates_group_with_cis(average_growth_rates_group=df, nboots=nboots, region_col=region_col, group_col=group_col)
-
-    regions = sorted(world_average_growth_rate_group_with_cis[region_col].unique().tolist())  
-    for i, r in enumerate(regions):
-        for j, g in enumerate(group_to_label.keys()):
-            average_growth_rates_group_region_with_cis = world_average_growth_rate_group_with_cis[(world_average_growth_rate_group_with_cis[region_col] == r) & (world_average_growth_rate_group_with_cis[group_col] == g)]
-            mean_value, ci_low, ci_high = average_growth_rates_group_region_with_cis['mean'].values[0], average_growth_rates_group_region_with_cis['ci_low'].values[0], average_growth_rates_group_region_with_cis['ci_high'].values[0]
-            color = region_colors[r]
-
-            ax.bar(j + i * 0.2, mean_value, width=0.16, color=to_rgba(color, 0.2), edgecolor=color, linewidth=2)
-            ax.plot([j + i * 0.2, j + i * 0.2], [ci_low, ci_high], color=color, linewidth=2)
-
-    ax.axhline(0, color='grey', linewidth=2)
-    ax.set_xticks(np.arange(len(group_to_label.keys())) + 0.2)
-    ax.set_xticklabels(group_to_label.values())
+    sns.barplot(data=df, x=x_axis, y=y_axis, ax=ax, weights=weights, errorbar=('ci', 95), dodge=True, orient='v', hue=region_col, palette=region_colors, fill=True, saturation=1, formatter=lambda x: group_to_label[x], legend=False, err_kws={'linewidth': 1.5, 'alpha': 0.8})
     style_axes(ax=ax, xlabel='', ylabel=y_axis_label, title='Growth advantage')
     return fig, ax
 
@@ -249,10 +202,9 @@ def figure_1_plots(context: dg.AssetExecutionContext, postgres: PostgresResource
     ax1 = fig.add_subplot(gs[0, 0])
     ax2 = fig.add_subplot(gs[0, 1])  
 
-    nboots = 1000
     engine = postgres.get_engine()
     world_average_growth_rate_group = read_pandas(engine=engine, table=tables.names.world.figures.world_average_growth_group(), analysis_id=MAIN_ANALYSIS_ID)
-    _plot_average_growth_rates_group_barchart_by_region(fig=fig, ax=ax1, df=world_average_growth_rate_group, nboots=nboots)
+    _plot_average_growth_rates_group_barchart_by_region(fig=fig, ax=ax1, df=world_average_growth_rate_group)
 
     world_size_vs_growth_normalized = read_pandas(engine=engine, table=tables.names.world.figures.world_size_vs_growth_normalized(), analysis_id=MAIN_ANALYSIS_ID)
     world_average_growth = read_pandas(engine=engine, table=tables.names.world.figures.world_average_growth(), analysis_id=MAIN_ANALYSIS_ID)

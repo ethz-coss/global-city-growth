@@ -122,6 +122,8 @@ def world_crosswalk_cshapes_code_to_iso_code(context: dg.AssetExecutionContext, 
 )
 def world_urbanization_raw(context: dg.AssetExecutionContext, storage: StorageResource):
     urbanization_path = storage.paths.world.owid.urbanization()
+    from pathlib import Path
+    urbanization_path = Path("data/world/owid/world_urbanization_clean.csv")
     context.log.info(f"Copying urbanization from {urbanization_path}")
     urbanization_df = pd.read_csv(urbanization_path)
     return urbanization_df

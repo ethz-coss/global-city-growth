@@ -118,8 +118,8 @@ def _get_data_for_equation_2(postgres: PostgresResource, table_world_population_
     SELECT  country, 
             year, 
             analysis_id, 
-            h.population_share_cities_above_one_million AS m_t_data, 
-            p.population_share_cities_above_one_million AS m_t_proj
+            h.urban_population_share_cities_above_one_million AS m_t_data, 
+            p.urban_population_share_cities_above_one_million AS m_t_proj
     FROM {table_world_population_share_cities_above_1m_historical} h
     JOIN {table_world_population_share_cities_above_1m_projections} p
     USING (analysis_id, country, year)
@@ -128,18 +128,22 @@ def _get_data_for_equation_2(postgres: PostgresResource, table_world_population_
     return pd.read_sql(q, con=postgres.get_engine())
 
 
-def _get_data_for_projection_vs_historical_share_population_cities_above_1m(postgres: PostgresResource, table_world_population_share_cities_above_1m_historical: str, table_world_population_share_cities_above_1m_projections: str) -> pd.DataFrame:
+def _get_data_for_projection_vs_historical_share_population_cities_above_1m(postgres: PostgresResource, table_world_population_share_cities_above_1m_historical: str, table_world_population_share_cities_above_1m_projections: str, table_world_urban_population: str, table_world_regions: str) -> pd.DataFrame:
     q = f"""
     SELECT  country, 
             year, 
             analysis_id, 
-            h.region,
-            h.urban_population,
-            h.population_share_cities_above_one_million AS m_t_data, 
-            p.population_share_cities_above_one_million AS m_t_proj
+            u.urban_population,
+            r.region2 AS region,
+            h.urban_population_share_cities_above_one_million AS m_t_data, 
+            p.urban_population_share_cities_above_one_million AS m_t_proj
     FROM {table_world_population_share_cities_above_1m_historical} h
     JOIN {table_world_population_share_cities_above_1m_projections} p
     USING (analysis_id, country, year)
+    JOIN {table_world_urban_population} u
+    USING (country, year)
+    JOIN {table_world_regions} r
+    USING (country)
     WHERE analysis_id = {MAIN_ANALYSIS_ID}
     """ 
     df_country = pd.read_sql(q, con=postgres.get_engine())
@@ -152,7 +156,7 @@ def _get_data_for_projection_vs_historical_share_population_cities_above_1m(post
     return df_country, df_region   
 
 @dg.asset(
-    deps=[TableNamesResource().names.world.figures.world_rank_size_slopes_decade_change(), TableNamesResource().names.world.figures.world_size_growth_slopes_historical(), TableNamesResource().names.world.si.world_rank_size_slopes_ols_decade_change(), TableNamesResource().names.world.si.world_size_growth_slopes_ols(), TableNamesResource().names.world.figures.world_population_share_cities_above_1m_historical(), TableNamesResource().names.world.figures.world_population_share_cities_above_1m_projections(), TableNamesResource().names.world.si.world_population_share_cities_above_1m_projections_ols()],
+    deps=[TableNamesResource().names.world.figures.world_rank_size_slopes_decade_change_by_urbanization_group(), TableNamesResource().names.world.figures.world_size_growth_slopes_historical(), TableNamesResource().names.world.si.world_rank_size_slopes_ols_decade_change(), TableNamesResource().names.world.si.world_size_growth_slopes_ols(), TableNamesResource().names.world.figures.world_population_share_cities_above_1m_historical(), TableNamesResource().names.world.figures.world_population_share_cities_above_1m_projections(), TableNamesResource().names.world.si.world_population_share_cities_above_1m_projections_ols()],
     group_name="supplementary_information"
 )
 def si_figure_equation_correlation(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> dg.MaterializeResult:
@@ -161,7 +165,7 @@ def si_figure_equation_correlation(context: dg.AssetExecutionContext, postgres: 
     fig, axes = plt.subplots(2, 2, figsize=(10, 10), gridspec_kw={'wspace': 0.25, 'hspace': 0.25})
     ax1, ax2, ax3, ax4 = axes.flatten()
 
-    df_spline = _get_data_for_equation_1(postgres=postgres, table_rank_size_slopes_decade_change=tables.names.world.figures.world_rank_size_slopes_decade_change(), table_size_growth_slopes=tables.names.world.figures.world_size_growth_slopes_historical())
+    df_spline = _get_data_for_equation_1(postgres=postgres, table_rank_size_slopes_decade_change=tables.names.world.figures.world_rank_size_slopes_decade_change_by_urbanization_group(), table_size_growth_slopes=tables.names.world.figures.world_size_growth_slopes_historical())
     df_linear = _get_data_for_equation_1(postgres=postgres, table_rank_size_slopes_decade_change=tables.names.world.si.world_rank_size_slopes_ols_decade_change(), table_size_growth_slopes=tables.names.world.si.world_size_growth_slopes_ols())
     _plot_eq1_spline_vs_linear(fig=fig, ax_spline=ax1, ax_linear=ax2, df_spline=df_spline, df_linear=df_linear)
 
@@ -176,7 +180,7 @@ def si_figure_equation_correlation(context: dg.AssetExecutionContext, postgres: 
 
 
 @dg.asset(
-    deps=[TableNamesResource().names.world.figures.world_population_share_cities_above_1m_historical(), TableNamesResource().names.world.figures.world_population_share_cities_above_1m_projections()],
+    deps=[TableNamesResource().names.world.figures.world_population_share_cities_above_1m_historical(), TableNamesResource().names.world.figures.world_population_share_cities_above_1m_projections(), TableNamesResource().names.world.si.world_urban_population(), TableNamesResource().names.world.sources.world_country_region()],
     group_name="supplementary_information"
 )
 def si_figure_projection_vs_historical_share_population_cities_above_1m(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> dg.MaterializeResult:
@@ -186,7 +190,7 @@ def si_figure_projection_vs_historical_share_population_cities_above_1m(context:
     fig, axes = plt.subplots(1, 2, figsize=(10, 5), gridspec_kw={'wspace': 0.25})
     ax1, ax2 = axes.flatten()
     
-    df_country, df_region = _get_data_for_projection_vs_historical_share_population_cities_above_1m(postgres=postgres, table_world_population_share_cities_above_1m_historical=tables.names.world.figures.world_population_share_cities_above_1m_historical(), table_world_population_share_cities_above_1m_projections=tables.names.world.figures.world_population_share_cities_above_1m_projections())
+    df_country, df_region = _get_data_for_projection_vs_historical_share_population_cities_above_1m(postgres=postgres, table_world_population_share_cities_above_1m_historical=tables.names.world.figures.world_population_share_cities_above_1m_historical(), table_world_population_share_cities_above_1m_projections=tables.names.world.figures.world_population_share_cities_above_1m_projections(), table_world_urban_population=tables.names.world.si.world_urban_population(), table_world_regions=tables.names.world.sources.world_country_region())
 
     _plot_projection_vs_historical_share_population_cities_above_1m(fig=fig, ax=ax1, df=df_country, is_country_plot=True)
     _plot_projection_vs_historical_share_population_cities_above_1m(fig=fig, ax=ax2, df=df_region, is_country_plot=False)

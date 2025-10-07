@@ -25,27 +25,14 @@ prep_data AS (
             5 * POWER(10, 3) AS x_min
     FROM urban_population_and_rank_size_slopes
 ),
-population_share_cities_above_one_million AS (
+pop_share_cities_above_one_million AS (
     SELECT  country, 
             year, 
             analysis_id,
-            (POWER(x_max, 1-alpha) - POWER(z, 1-alpha)) / (POWER(x_max, 1-alpha) - POWER(x_min, 1-alpha)) AS population_share_cities_above_one_million
+            (POWER(x_max, 1-alpha) - POWER(z, 1-alpha)) / (POWER(x_max, 1-alpha) - POWER(x_min, 1-alpha)) AS urban_population_share_cities_above_one_million
     FROM prep_data
-),
-population_share_cities_above_one_million_with_region AS (
-    SELECT  country, 
-            year, 
-            analysis_id, 
-            region2 AS region,
-            urban_population,
-            population_share_cities_above_one_million
-    FROM population_share_cities_above_one_million
-    JOIN {{ source('owid', 'world_country_region') }}
-    USING (country)
-    JOIN {{ ref('world_urban_population') }}
-    USING (country, year)
 )
 SELECT *
-FROM population_share_cities_above_one_million_with_region
+FROM pop_share_cities_above_one_million
 ORDER BY analysis_id, country, year
 {% endmacro %}

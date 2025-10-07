@@ -1,4 +1,4 @@
-# src/orchestration/defs/assets/figures/figure_4.py
+# src/orchestration/defs/assets/figures/figure_3.py
 from re import A
 import dagster as dg
 import pandas as pd
@@ -10,10 +10,6 @@ import os
 import numpy as np
 from typing import Tuple, Dict, List
 from matplotlib import ticker as mtick
-from typing import Callable
-
-from sqlalchemy.sql import true
-
 
 from ...resources.resources import PostgresResource, TableNamesResource
 from .figure_style import style_axes, annotate_letter_label, plot_spline_with_ci, style_inset_axes, style_config, region_colors, apply_figure_theme
@@ -23,37 +19,43 @@ from ..constants import constants
 
 
 
-def _plot_rank_size_slope_change_by_urbanization_group(fig: plt.Figure, ax: plt.Axes, df: pd.DataFrame) -> Tuple[plt.Figure, plt.Axes]:
-    x_axis = 'year_since_1975'
+def _plot_rank_size_slope_change_by_urbanization_group(fig: plt.Figure, ax: plt.Axes, df: pd.DataFrame, base_year: int, plot_legend: bool, title: str) -> Tuple[plt.Figure, plt.Axes]:
+    x_axis = f'year_since_{base_year}'
     y_axis = 'rank_size_slope_change'
+    group_col = 'urban_population_share_group'
 
-    x_axis_label = 'Time since 1975'
-    y_axis_label = 'Change in concentration since 1975\n' + r'$(\alpha_{t} \ / \ \alpha_{1975} - 1)$'
+    x_axis_label = f'Time since {base_year}'
+
+    alpha_label = r'$(\alpha_t \ / \ \alpha_{1975} - 1)$' if base_year == 1975 else r'$(\alpha_t \ / \ \alpha_{2025} - 1)$'
+    y_axis_label = f'Change in concentration since {base_year}\n' + alpha_label
     label_font_size = style_config['label_font_size']
 
     colors = [px.colors.qualitative.Plotly[4], px.colors.qualitative.Plotly[6]]
+    x_bins = np.arange(5, 55, 10)
 
-    lam = constants['PENALTY_SLOPE_SPLINE']
-
-    groups = sorted(df['urban_population_share_group'].unique())
-    
+    groups = df[group_col].unique().tolist()
     for i, g in enumerate(groups):
-        df_g = df[df['urban_population_share_group'] == g]
-        x, y, ci_low, ci_high = fit_penalized_b_spline(df=df_g, xaxis=x_axis, yaxis=y_axis, lam=lam)
-        plot_spline_with_ci(ax=ax, x=x, y=y, ci_low=ci_low, ci_high=ci_high, color=colors[i], label=f'{g}%')
+        df_g = df[df[group_col] == g]
+        sns.regplot(data=df_g, x=x_axis, y=y_axis, ax=ax, ci=95, fit_reg=False, x_bins=x_bins, color=colors[i], line_kws={'linewidth': 1.5})
 
+
+    if plot_legend:
+        ax.scatter([None], [None], marker='o', color=colors[0], label='Late (0-60%)')
+        ax.scatter([None], [None], marker='o', color=colors[1], label='Early (60-100%)')
+        ax.scatter([None], [None], marker='o', color='grey', label='All (0-100%)')
+        ax.legend(loc='upper center', fontsize=label_font_size, frameon=False, title='Urban population share 1975', title_fontsize=label_font_size, ncol=1)
+        
     ax.yaxis.set_major_formatter(mtick.PercentFormatter(1.0, decimals=0))
-    ax.set_ylim(-0.02, 0.22)
-    ax.legend(loc='upper center', fontsize=label_font_size, frameon=False, title='Urban population share 1975', title_fontsize=label_font_size, ncol=2)
-    style_axes(ax=ax, xlabel=x_axis_label, ylabel=y_axis_label)
+    style_axes(ax=ax, xlabel=x_axis_label, ylabel=y_axis_label, title=title)
+    ax.set_ylim(-0.019, 0.21)
     return fig, ax
 
 
 def _plot_rank_size_slope_change_curves(fig: plt.Figure, ax: plt.Axes, year_base: int, year_middle: int, year_end: int, df: pd.DataFrame, x_axis: str, y_axis: str, colors: List[str], linewidth: int, markersize: int) -> None:
     df_early = df[(df['year_base'] == year_base) & (df['year'] <= year_middle) & (df['year'] >= year_base)].copy()
     df_late = df[(df['year_base'] == year_middle) & (df['year'] >= year_middle) & (df['year'] <= year_end)].copy()
-    ax.plot(df_early[x_axis] - year_base, df_early[y_axis], label=f'{year_base}-{year_middle}', color=colors[0], marker='o', linewidth=linewidth, markersize=markersize)
-    ax.plot(df_late[x_axis] - year_middle, df_late[y_axis], label=f'{year_middle}-{year_end}', color=colors[1], marker='o', linewidth=linewidth, markersize=markersize)
+    ax.plot(df_early[x_axis] - year_base, df_early[y_axis], label=f'{year_base}-{year_middle}', color=colors[0], marker='o', linewidth=linewidth, markersize=markersize, linestyle='--')
+    ax.plot(df_late[x_axis] - year_middle, df_late[y_axis], label=f'{year_middle}-{year_end}', color=colors[1], marker='o', linewidth=linewidth, markersize=markersize, linestyle='--')
     return fig, ax
 
 def _plot_rank_size_slope_change_usa_kor(fig: plt.Figure, ax: plt.Axes, df_usa: pd.DataFrame, df_kor: pd.DataFrame) -> Tuple[plt.Figure, plt.Axes]:
@@ -78,80 +80,45 @@ def _plot_rank_size_slope_change_usa_kor(fig: plt.Figure, ax: plt.Axes, df_usa: 
     y_axis_inset_label = r'$\alpha_{t} \ / \ \alpha_{t_0} - 1$'
     year_base, year_middle, year_end = 1975, 2000, 2025
 
-    ax_inset = fig.add_axes([0.62, 0.75, 0.1, 0.1])
+    ax_inset = fig.add_axes([0.63, 0.75, 0.1, 0.1])
     _plot_rank_size_slope_change_curves(fig=fig, ax=ax_inset, year_base=year_base, year_middle=year_middle, year_end=year_end, df=df_kor, x_axis=x_axis, y_axis=y_axis, colors=colors, linewidth=1, markersize=2)
     ax_inset.yaxis.set_major_formatter(mtick.PercentFormatter(1.0, decimals=0))
     style_inset_axes(ax=ax_inset, xlabel=x_axis_inset_label, ylabel=y_axis_inset_label, title=inset_title)
     return fig, ax
 
 
-def _plot_rank_size_slope_decade_change_by_region(fig: plt.Figure, ax: plt.Axes, df: pd.DataFrame) -> Tuple[plt.Figure, plt.Axes]:
-    region_col = 'region'
-
+def _plot_urban_population_share_in_cities_above_one_million_by_urbanization_group(fig: plt.Figure, ax: plt.Axes, df: pd.DataFrame) -> Tuple[plt.Figure, plt.Axes]:
     x_axis = 'year'
-    y_axis = 'rank_size_slope_decade_change'
+    y_axis = 'urban_population_share_cities_above_one_million'
+    group_col = 'urban_population_share_group'
 
     x_axis_label = 'Year'
-    y_axis_label = 'Change in concentration over one decade\n' + r'$(\alpha_{t + 10} \ / \ \alpha_{t} - 1)$'
+    y_axis_label = 'Share of urban population in cities above 1M'
     label_font_size = style_config['label_font_size']
+    
+    x_bins = [1975, 2000, 2025, 2050, 2075]
+    df_plot = df[df['year'].isin(x_bins)]
+    df_plot_world = df_plot.copy()
+    df_plot_world[group_col] = 'World'
+    df_plot_all = pd.concat([df_plot, df_plot_world], axis=0)
 
-    lam = constants['PENALTY_SLOPE_SPLINE']
+    colors = [px.colors.qualitative.Plotly[4], px.colors.qualitative.Plotly[6], 'grey']
+    sns.barplot(data=df_plot_all, x=x_axis, y=y_axis, ax=ax,errorbar=('ci', 95), dodge=True, orient='v', hue=group_col, palette=colors, fill=True, saturation=1, legend=False, err_kws={'linewidth': 1.5, 'alpha': 0.8}, native_scale=True)
 
-    regions = sorted(df[region_col].unique())
-    for r in regions:
-        df_r = df[df[region_col] == r]
-        x, y, ci_low, ci_high = fit_penalized_b_spline(df=df_r, xaxis=x_axis, yaxis=y_axis, lam=lam)
-        color = region_colors[r]
-        plot_spline_with_ci(ax=ax, x=x, y=y, ci_low=ci_low, ci_high=ci_high, color=color, label=r, alpha_fill=0.1)
-
-    h = 0.05
-    ax.plot([2017.5, 2017.5], [-0.005, 0.054], color='grey', linewidth=1, linestyle='--')
-    ax.annotate('Forecast', [2035, h], fontsize=label_font_size, ha='center')
-    ax.annotate('Data', [1996, h], fontsize=label_font_size, ha='center')
-    ax.yaxis.set_major_formatter(mtick.PercentFormatter(1.0, decimals=0))
-    ax.legend(fontsize=label_font_size, frameon=False, ncol=2, loc='upper right')
-    style_axes(ax=ax, xlabel=x_axis_label, ylabel=y_axis_label)
-    return fig, ax
-
-def _plot_urban_population_share_in_cities_above_one_million_by_region(fig: plt.Figure, ax: plt.Axes, df: pd.DataFrame, nboots: int) -> Tuple[plt.Figure, plt.Axes]:
-    region_col = 'region'
-
-    x_axis = 'year'
-    y_axis = 'population_share_cities_above_one_million'
-
-    x_axis_label = 'Year'
-    y_axis_label = 'Urban population share in cities above 1M'
-    label_font_size = style_config['label_font_size']
-
-    estimator_func = lambda x: np.sum(x['population_share_cities_above_one_million'] * x['urban_population']) / np.sum(x['urban_population'])
-
-    df_r_grouped = df.groupby([region_col, x_axis]).apply(estimator_func).reset_index().rename(columns={0: y_axis})
-    regions = sorted(df_r_grouped[region_col].unique())
-    for r in regions:
-        df_r = df_r_grouped[df_r_grouped[region_col] == r]
-        x, y = df_r[x_axis], df_r[y_axis]
-        color = region_colors[r]
-        ax.plot(x, y, color=color, marker='o', linewidth=2, markersize=5)
-
-    world_mean = df.groupby(x_axis).apply(estimator_func).reset_index().rename(columns={0: y_axis})
-    x, y = world_mean[x_axis], world_mean[y_axis]
-    ax.plot(x, y, color='grey', marker='o', linewidth=2, markersize=5)
-    ax.plot([None], [None], color='grey', label='World', linewidth=2)
-
-    ax.plot([2027.5, 2027.5], [0.17, 0.53], color='grey', linewidth=1, linestyle='--')
-    ax.annotate('Forecast', [2045, 0.18], fontsize=label_font_size, ha='center')
-    ax.annotate('Data', [2000, 0.18], fontsize=label_font_size, ha='center')
+    h = 0.57
+    ax.plot([2037.5, 2037.5], [0, h], color='grey', linewidth=1, linestyle='--')
+    ax.annotate('Projections', [2062.5, h], fontsize=label_font_size, ha='center')
+    ax.annotate('Data', [2000, h], fontsize=label_font_size, ha='center')
     
     style_axes(ax=ax, xlabel=x_axis_label, ylabel=y_axis_label)
     ax.legend(fontsize=label_font_size, frameon=False, ncol=2, loc='lower left')
     ax.yaxis.set_major_formatter(mtick.PercentFormatter(1.0, decimals=0))
-    ax.set_ylim(0.1, 0.55)
+    ax.set_xticks(x_bins)
     return fig, ax
 
 
-
 @dg.asset(
-    deps=[TableNamesResource().names.world.figures.world_rank_size_slopes_change_by_urbanization_group(), TableNamesResource().names.usa.figures.usa_rank_size_slopes_change(), TableNamesResource().names.world.figures.world_rank_size_slopes_change(), TableNamesResource().names.world.figures.world_rank_size_slopes_decade_change(), TableNamesResource().names.world.figures.world_population_share_cities_above_1m()],
+    deps=[TableNamesResource().names.world.figures.world_rank_size_slopes_change_1975_2025(), TableNamesResource().names.world.figures.world_rank_size_slopes_change_2025_2075(), TableNamesResource().names.usa.figures.usa_rank_size_slopes_change(), TableNamesResource().names.world.figures.world_rank_size_slopes_change(), TableNamesResource().names.world.figures.world_rank_size_slopes_decade_change_by_urbanization_group(), TableNamesResource().names.world.figures.world_population_share_cities_above_1m()],
     group_name="figures"
 )
 def figure_3(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> dg.MaterializeResult:
@@ -160,25 +127,23 @@ def figure_3(context: dg.AssetExecutionContext, postgres: PostgresResource, tabl
     apply_figure_theme()
     figure_file_name = 'figure_3.png'
 
-    fig, axes = plt.subplots(2, 2, figsize=(10, 10), gridspec_kw={'hspace': 0.2, 'wspace': 0.25})
+    fig, axes = plt.subplots(2, 2, figsize=(10, 10), gridspec_kw={'hspace': 0.25, 'wspace': 0.3})
     ax1, ax2, ax3, ax4 = axes.flatten()
 
     engine = postgres.get_engine()
 
-    world_rank_size_slopes_change_by_urbanization_group = read_pandas(engine=engine, table=tables.names.world.figures.world_rank_size_slopes_change_by_urbanization_group(), analysis_id=MAIN_ANALYSIS_ID, where="year <= 2025")
-    _plot_rank_size_slope_change_by_urbanization_group(fig=fig, ax=ax1, df=world_rank_size_slopes_change_by_urbanization_group)
+    world_rank_size_slopes_change_1975_2025 = read_pandas(engine=engine, table=tables.names.world.figures.world_rank_size_slopes_change_1975_2025(), analysis_id=MAIN_ANALYSIS_ID)
+    _plot_rank_size_slope_change_by_urbanization_group(fig=fig, ax=ax1, df=world_rank_size_slopes_change_1975_2025, base_year=1975, plot_legend=False, title='Data')
 
     usa_rank_size_slopes_change = read_pandas(engine=engine, table=tables.names.usa.figures.usa_rank_size_slopes_change(), analysis_id=MAIN_ANALYSIS_ID)
     kor_rank_size_slopes_change = read_pandas(engine=engine, table=tables.names.world.figures.world_rank_size_slopes_change(), analysis_id=MAIN_ANALYSIS_ID, where="country = 'KOR'")
     _plot_rank_size_slope_change_usa_kor(fig=fig, ax=ax2, df_usa=usa_rank_size_slopes_change, df_kor=kor_rank_size_slopes_change)
 
+    world_rank_size_slopes_change_2025_2075 = read_pandas(engine=engine, table=tables.names.world.figures.world_rank_size_slopes_change_2025_2075(), analysis_id=MAIN_ANALYSIS_ID)
+    _plot_rank_size_slope_change_by_urbanization_group(fig=fig, ax=ax3, df=world_rank_size_slopes_change_2025_2075, base_year=2025, plot_legend=True, title='Projections')
 
-    world_rank_size_slopes_decade_change = read_pandas(engine=engine, table=tables.names.world.figures.world_rank_size_slopes_decade_change(), analysis_id=MAIN_ANALYSIS_ID)
-    _plot_rank_size_slope_decade_change_by_region(fig=fig, ax=ax3, df=world_rank_size_slopes_decade_change)
-
-    nboots = 100
-    world_population_share_cities_above_1m = read_pandas(engine=engine, table=tables.names.world.figures.world_population_share_cities_above_1m(), analysis_id=MAIN_ANALYSIS_ID)
-    _plot_urban_population_share_in_cities_above_one_million_by_region(fig=fig, ax=ax4, df=world_population_share_cities_above_1m, nboots=nboots)
+    world_population_share_cities_above_1m = read_pandas(engine=engine, table=tables.names.world.figures.world_population_share_cities_above_1m(), analysis_id=MAIN_ANALYSIS_ID, where="year <= 2075")
+    _plot_urban_population_share_in_cities_above_one_million_by_urbanization_group(fig=fig, ax=ax4, df=world_population_share_cities_above_1m)
 
     annotate_letter_label(axes=[ax1, ax2, ax3, ax4], left_side=[True, True, True, True])
     save_figure(fig=fig, figure_file_name=figure_file_name)

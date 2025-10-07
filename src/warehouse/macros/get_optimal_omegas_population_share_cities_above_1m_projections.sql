@@ -26,29 +26,29 @@ prep_data AS (
             5 * POWER(10, 3) AS x_min
     FROM urban_population_and_rank_size_slopes
 ),
-population_share_cities_above_one_million_estimate AS (
+urban_population_share_cities_above_one_million_estimate AS (
     SELECT  country, 
             year, 
             analysis_id,
             omega,
-            (POWER(x_max, 1-alpha) - POWER(z, 1-alpha)) / (POWER(x_max, 1-alpha) - POWER(x_min, 1-alpha)) AS population_share_cities_above_one_million_estimate
+            (POWER(x_max, 1-alpha) - POWER(z, 1-alpha)) / (POWER(x_max, 1-alpha) - POWER(x_min, 1-alpha)) AS urban_population_share_cities_above_one_million_estimate
     FROM prep_data
 ),
-population_share_cities_above_one_million_real AS (
+urban_population_share_cities_above_one_million_real AS (
     SELECT  country, 
             year, 
-            analysis_id, 
-            SUM(CASE WHEN log_population >= 6 THEN POWER(10, log_population) ELSE 0 END) / SUM(POWER(10, log_population)) AS population_share_cities_above_one_million_real
-    FROM world_rank_vs_size
-    GROUP BY country, year, analysis_id
+            analysis_id,
+            urban_population_share_cities_above_one_million AS urban_population_share_cities_above_one_million_real
+    FROM {{ ref('world_population_share_cities_above_1m_historical') }}
+    CROSS JOIN candidate_omegas
 ),
 distance_estimate_real AS (
     SELECT  country, 
             analysis_id,
             omega,
-            MAX(ABS(population_share_cities_above_one_million_estimate - population_share_cities_above_one_million_real)) AS distance
-    FROM population_share_cities_above_one_million_estimate
-    JOIN population_share_cities_above_one_million_real
+            AVG(ABS(urban_population_share_cities_above_one_million_estimate - urban_population_share_cities_above_one_million_real)) AS distance
+    FROM urban_population_share_cities_above_one_million_estimate
+    JOIN urban_population_share_cities_above_one_million_real
     USING (country, year, analysis_id)
     GROUP BY country, analysis_id, omega
 ),

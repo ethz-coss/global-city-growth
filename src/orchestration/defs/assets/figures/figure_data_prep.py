@@ -45,9 +45,11 @@ def world_rank_size_slopes_historical(context: dg.AssetExecutionContext, postgre
 
 
 def _get_projections_for_world_size_growth_slopes(df_size_growth_slopes: pd.DataFrame, df_urbanization_projections: pd.DataFrame) -> pd.DataFrame:
-    size_growth_reg = smf.ols('size_growth_slope ~ urban_population_share', data=df_size_growth_slopes).fit()
-    predictions = size_growth_reg.predict(df_urbanization_projections)
-    return df_urbanization_projections.assign(size_growth_slope=predictions)[['country', 'year', 'size_growth_slope']]
+    size_growth_reg = smf.ols('size_growth_slope ~ urban_population_share + C(country) - 1', data=df_size_growth_slopes).fit()
+    countries_analysis_id = df_size_growth_slopes['country'].unique()
+    df_urbanization_projections_analysis_id = df_urbanization_projections[df_urbanization_projections['country'].isin(countries_analysis_id)].copy()
+    predictions = size_growth_reg.predict(df_urbanization_projections_analysis_id)
+    return df_urbanization_projections_analysis_id.assign(size_growth_slope=predictions)[['country', 'year', 'size_growth_slope']]
 
 @dg.asset(
     deps=[TableNamesResource().names.world.figures.world_size_growth_slopes_historical_urbanization(), TableNamesResource().names.world.figures.world_urbanization()],

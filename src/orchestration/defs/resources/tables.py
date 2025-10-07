@@ -148,7 +148,7 @@ class WorldTransformations:
 class WorldFigures:
     def world_urbanization(self) -> str:
         return "world_urbanization"
-    
+
     def world_average_growth(self) -> str:
         return "world_average_growth"
 
@@ -181,15 +181,18 @@ class WorldFigures:
 
     def world_rank_size_slopes(self) -> str:
         return "world_rank_size_slopes"
-
-    def world_rank_size_slopes_change_by_urbanization_group(self) -> str:
-        return "world_rank_size_slopes_change_by_urbanization_group"
     
     def world_rank_size_slopes_change(self) -> str:
         return "world_rank_size_slopes_change"
+
+    def world_rank_size_slopes_change_1975_2025(self) -> str:
+        return "world_rank_size_slopes_change_1975_2025"
+
+    def world_rank_size_slopes_change_2025_2075(self) -> str:
+        return "world_rank_size_slopes_change_2025_2075"
     
-    def world_rank_size_slopes_decade_change(self) -> str:
-        return "world_rank_size_slopes_decade_change"
+    def world_rank_size_slopes_decade_change_by_urbanization_group(self) -> str:
+        return "world_rank_size_slopes_decade_change_by_urbanization_group"
     
     def world_dataset_summary_table(self) -> str:
         return "world_dataset_summary_table"
@@ -223,6 +226,9 @@ class WorldSupplementaryInformation:
 
     def world_population_share_cities_above_1m_projections_ols(self) -> str:
         return "world_population_share_cities_above_1m_projections_ols"
+
+    def world_urban_population(self) -> str:
+        return "world_urban_population"
 
 @dataclass(frozen=True)
 class World:
