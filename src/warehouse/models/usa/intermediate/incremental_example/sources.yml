@@ -1,5 +1,0 @@
-sources:
-  - name: incremental_example
-    schema: public
-    tables:
-      - name: my_example_asset
