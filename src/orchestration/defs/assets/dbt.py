@@ -12,6 +12,8 @@ class CustomizedDagsterDbtTranslator(DagsterDbtTranslator):
     def get_group_name(self, dbt_resource_props):
         if "analysis_parameters" in dbt_resource_props["fqn"]:
             return "figure_data_prep"
+        if "world_paper_stats" in dbt_resource_props["fqn"]:
+            return "paper_stats"
         
         gname = "_".join(dbt_resource_props["fqn"][1:-1])
         if 'figures' in gname and 'si_figures' not in gname:

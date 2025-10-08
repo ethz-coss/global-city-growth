@@ -151,15 +151,15 @@ class WorldFigures:
 
     def world_average_growth(self) -> str:
         return "world_average_growth"
-
-    def world_average_growth_group(self) -> str:
-        return "world_average_growth_group"
     
     def world_size_vs_growth(self) -> str:
         return "world_size_vs_growth"
 
     def world_size_vs_growth_normalized(self) -> str:
         return "world_size_vs_growth_normalized"
+
+    def world_size_vs_growth_normalized_by_group(self) -> str:
+        return "world_size_vs_growth_normalized_by_group"
 
     def world_size_growth_slopes(self) -> str:
         return "world_size_growth_slopes"
@@ -191,8 +191,8 @@ class WorldFigures:
     def world_rank_size_slopes_change_2025_2075(self) -> str:
         return "world_rank_size_slopes_change_2025_2075"
     
-    def world_rank_size_slopes_decade_change_by_urbanization_group(self) -> str:
-        return "world_rank_size_slopes_decade_change_by_urbanization_group"
+    def world_rank_size_slopes_decade_change(self) -> str:
+        return "world_rank_size_slopes_decade_change"
     
     def world_dataset_summary_table(self) -> str:
         return "world_dataset_summary_table"

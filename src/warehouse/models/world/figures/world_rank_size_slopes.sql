@@ -20,9 +20,12 @@ world_rank_size_slopes_with_projections_and_region AS (
             analysis_id, 
             rank_size_slope, 
             is_projection,
-            region2 AS region    
+            region2 AS region,
+            urban_population_share_group
     FROM world_rank_size_slopes_with_projections
     JOIN {{ source('owid', 'world_country_region') }}
+    USING (country)
+    JOIN {{ ref('world_urbanization_groups') }}
     USING (country)
 )
 SELECT *

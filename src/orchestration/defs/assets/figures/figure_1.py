@@ -126,21 +126,30 @@ def _plot_world_map_with_colorbar(fig: plt.Figure, ax: plt.Axes, gdf: gpd.GeoDat
     ax_inset2.set_ylim(0.02, 0.09)
     return fig, ax
 
-def _plot_average_growth_rates_group_barchart_by_region(fig: plt.Figure, ax: plt.Axes, df: pd.DataFrame) -> Tuple[plt.Figure, plt.Axes]:
+def _plot_growth_rates_group_barchart_by_region(fig: plt.Figure, ax: plt.Axes, df: pd.DataFrame) -> Tuple[plt.Figure, plt.Axes]:
     region_col = 'region'
     x_axis = 'city_group'
-    y_axis = 'log_average_growth_group_demeaned'
-    weights = 'num_cities'
+    y_axis = 'normalized_growth'
+    weights = 'population'
 
-    y_axis_label = 'Growth advantage over national average \n' + r'$\log(g_{\text{group}}) - \log(g_{\text{national}})$'
+    y_axis_label = 'Growth advantage over national average \n' + r'$g_{\text{group}} \ / \ g_{\text{national}} - 1$'
 
+    group_to_order = {
+        'above_1m': 1,
+        'below_1m': 2,
+        'largest_city': 0,
+    }
+    df['city_group_ordered'] = df['city_group'].map(group_to_order)
+    df = df.sort_values(by=['city_group_ordered', 'region'])
 
     group_to_label = {
-        'above_1M': 'Population\nabove 1M',
-        'below_1M': 'Population\nbelow 1M',
+        'above_1m': 'Population\nabove 1M',
+        'below_1m': 'Population\nbelow 1M',
+        'largest_city': 'Largest city',
     }
     sns.barplot(data=df, x=x_axis, y=y_axis, ax=ax, weights=weights, errorbar=('ci', 95), dodge=True, orient='v', hue=region_col, palette=region_colors, fill=True, saturation=1, formatter=lambda x: group_to_label[x], legend=False, err_kws={'linewidth': 1.5, 'alpha': 0.8})
     style_axes(ax=ax, xlabel='', ylabel=y_axis_label, title='Growth advantage')
+    ax.set_xlabel('')
     return fig, ax
 
 def _plot_growth_size_curve_by_region(fig: plt.Figure, ax: plt.Axes, df_size_vs_growth_normalized: pd.DataFrame, df_average_growth: pd.DataFrame) -> Tuple[plt.Figure, plt.Axes]:
@@ -188,7 +197,7 @@ def figure_1_map(context: dg.AssetExecutionContext, postgres: PostgresResource, 
 
 
 @dg.asset(
-    deps=[TableNamesResource().names.world.figures.world_average_growth_group(), TableNamesResource().names.world.figures.world_size_vs_growth_normalized(), TableNamesResource().names.world.figures.world_average_growth()],
+    deps=[TableNamesResource().names.world.figures.world_size_vs_growth_normalized_by_group(), TableNamesResource().names.world.figures.world_size_vs_growth_normalized(), TableNamesResource().names.world.figures.world_average_growth()],
     group_name="figures"
 )
 def figure_1_plots(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> dg.MaterializeResult:
@@ -203,8 +212,8 @@ def figure_1_plots(context: dg.AssetExecutionContext, postgres: PostgresResource
     ax2 = fig.add_subplot(gs[0, 1])  
 
     engine = postgres.get_engine()
-    world_average_growth_rate_group = read_pandas(engine=engine, table=tables.names.world.figures.world_average_growth_group(), analysis_id=MAIN_ANALYSIS_ID)
-    _plot_average_growth_rates_group_barchart_by_region(fig=fig, ax=ax1, df=world_average_growth_rate_group)
+    world_size_vs_growth_normalized_by_group = read_pandas(engine=engine, table=tables.names.world.figures.world_size_vs_growth_normalized_by_group(), analysis_id=MAIN_ANALYSIS_ID)
+    _plot_growth_rates_group_barchart_by_region(fig=fig, ax=ax1, df=world_size_vs_growth_normalized_by_group)
 
     world_size_vs_growth_normalized = read_pandas(engine=engine, table=tables.names.world.figures.world_size_vs_growth_normalized(), analysis_id=MAIN_ANALYSIS_ID)
     world_average_growth = read_pandas(engine=engine, table=tables.names.world.figures.world_average_growth(), analysis_id=MAIN_ANALYSIS_ID)

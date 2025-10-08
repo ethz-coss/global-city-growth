@@ -37,19 +37,19 @@ share_of_urban_population_living_in_cities_above_1m_late_2075 AS (
 ),
 average_growth_rate_of_chinese_cities_below_1m_1975_2025 AS (
     SELECT  'Average growth rate of Chinese cities of less than 1M in 1975-2025' AS description,
-            POWER(10, AVG(log_average_growth_group)) AS value
-    FROM {{ ref('world_average_growth_group') }}
+            SUM(POWER(10, log_growth) * POWER(10, log_population)) / SUM(POWER(10, log_population)) AS value
+    FROM {{ ref('world_size_vs_growth') }}
     WHERE country = 'CHN'
-    AND city_group = 'below_1M'
+    AND log_population < 6
     AND year >= 1975 AND year <= 2015
     AND analysis_id = {{ analysis_id }}
 ),
 average_growth_rate_of_chinese_cities_above_1m_1975_2025 AS (
     SELECT  'Average growth rate of Chinese cities of above 1M in 1975-2025' AS description,
-            POWER(10, AVG(log_average_growth_group)) AS value
-    FROM {{ ref('world_average_growth_group') }}
+            SUM(POWER(10, log_growth) * POWER(10, log_population)) / SUM(POWER(10, log_population)) AS value
+    FROM {{ ref('world_size_vs_growth') }}
     WHERE country = 'CHN'
-    AND city_group = 'above_1M'
+    AND log_population >= 6
     AND year >= 1975 AND year <= 2015
     AND analysis_id = {{ analysis_id }}
 ),
@@ -76,28 +76,28 @@ median_size_growth_slope_world_1975_2025 AS (
 ),
 growth_rate_of_cities_above_1m_deameaned_africa_1975_2025 AS (
     SELECT  'Growth rate of cities above 1M deameaned Africa in 1975-2025' AS description,
-            POWER(10, SUM(log_average_growth_group_demeaned * num_cities) / SUM(num_cities)) AS value
-    FROM {{ ref('world_average_growth_group') }}
+            SUM(normalized_growth * population) / SUM(population) AS value
+    FROM {{ ref('world_size_vs_growth_normalized_by_group') }}
     WHERE region = 'Africa'
-    AND city_group = 'above_1M'
+    AND city_group = 'above_1m'
     AND year >= 1975 AND year <= 2025
     AND analysis_id = {{ analysis_id }}
 ),
 growth_rate_of_cities_above_1m_deameaned_americas_1975_2025 AS (
     SELECT  'Growth rate of cities above 1M deameaned Americas in 1975-2025' AS description,
-            POWER(10, SUM(log_average_growth_group_demeaned * num_cities) / SUM(num_cities)) AS value
-    FROM {{ ref('world_average_growth_group') }}
+            SUM(normalized_growth * population) / SUM(population) AS value
+    FROM {{ ref('world_size_vs_growth_normalized_by_group') }}
     WHERE region = 'Americas'
-    AND city_group = 'above_1M'
+    AND city_group = 'above_1m'
     AND year >= 1975 AND year <= 2025
     AND analysis_id = {{ analysis_id }}
 ),
 growth_rate_of_cities_above_1m_deameaned_asia_1975_2025 AS (
     SELECT  'Growth rate of cities above 1M deameaned Asia in 1975-2025' AS description,
-            POWER(10, SUM(log_average_growth_group_demeaned * num_cities) / SUM(num_cities)) AS value
-    FROM {{ ref('world_average_growth_group') }}
+            SUM(normalized_growth * population) / SUM(population) AS value
+    FROM {{ ref('world_size_vs_growth_normalized_by_group') }}
     WHERE region = 'Asia' 
-    AND city_group = 'above_1M'
+    AND city_group = 'above_1m'
     AND year >= 1975 AND year <= 2025
     AND analysis_id = {{ analysis_id }}
 ),
