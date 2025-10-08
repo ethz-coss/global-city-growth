@@ -86,13 +86,6 @@ Here is detailed list of all datasets used in this project, including those prov
     * **License:** CC-BY-NC-SA
     * **Files:** `world/cshapes/CShapes-2.0.shp`
 
-* **CShapes to ISO Crosswalk**
-    * **Status**: Included in this repository.
-    * **Original Source**: Handmade by the author of this repository. 
-    * **Description:** A crosswalk file mapping CShapes codes to World Bank country codes.
-    * **License:** CC-BY
-    * **Files:** `world/cshapes/c_shapes_to_world_bank_codes.csv`
-
 * **Our World in Data (OWID)**
     * **Status**: Included in this repository
     * **Description:** Population with projections
@@ -112,6 +105,17 @@ Here is detailed list of all datasets used in this project, including those prov
     * **License:** CC-BY-4.0
     * **Files:**
         * `world/misc/urban-population-share-with-projections.csv`
+
+* **Handmade**
+    * **Status**: Included in this repository
+    * **Description:** Crosswalk file mapping CShapes codes to World Bank country codes and crosswalk file mapping countries to regions (Asia, Africa, Americas and Europe)
+    * **Original Source:** Handmade by the author of this repository
+    * **License:** CC-BY-4.0
+    * **Files:**
+        * `world/cshapes/c_shapes_to_world_bank_codes.csv`
+        * `world/misc/countries_with_regions.csv`
+
+
 
 ## Folder Structure
 

@@ -34,5 +34,5 @@ def upload_readme_to_zenodo(access_token: str):
 
 if __name__ == "__main__":
     ZENODO_ACCESS_TOKEN = 'faOt2P8QYRHkl1i68SnG961MZO6tN4kXtnSWqgimYaAQTnetiG2uBjSxv9fV'
-    upload_raw_data_to_zenodo(ZENODO_ACCESS_TOKEN)
+    upload_readme_to_zenodo(ZENODO_ACCESS_TOKEN)
     # upload_readme_to_zenodo(ZENODO_ACCESS_TOKEN)
