@@ -64,8 +64,8 @@ def ipums_full_count_raw(context: dg.AssetExecutionContext, duckdb: DuckDBResour
     pool="duckdb_write",
     metadata={
         "dagster/column_schema": dg.TableSchema([
-            dg.TableColumn(name="histid", type="STR", description="Consistent historical data person identifier for the IPUMS full count data. This key is unique to each person-year combination. It can be used to match on one person years, but not to track individuals across years"),
-            dg.TableColumn(name="hik", type="STR", description="Historical identification key for the IPUMS full count data. This key is unique to each person. It can be used to match people across years. It is computed via the linking procedure."),
+            dg.TableColumn(name="histid", type="STR", description="see ipums_full_count_raw"),
+            dg.TableColumn(name="hik", type="STR", description="see ipums_full_count_raw"),
         ])
     }
 )
@@ -123,8 +123,8 @@ def crosswalk_hist_id_to_hist_census_place_raw(context: dg.AssetExecutionContext
     pool="duckdb_write",
     metadata={
         "dagster/column_schema": dg.TableSchema([
-            dg.TableColumn(name="histid", type="STR", description="Consistent historical data person identifier for the IPUMS full count data. This key is unique to each person-year combination. It can be used to match on one person years, but not to track individuals across years"),
-            dg.TableColumn(name="census_place_id", type="INT", description="The Census Place Project ID of the census place"),
+            dg.TableColumn(name="histid", type="STR", description="see crosswalk_hist_id_to_hist_census_place_raw"),
+            dg.TableColumn(name="census_place_id", type="INT", description="see crosswalk_hist_id_to_hist_census_place_raw"),
         ])
     }
 )
@@ -156,9 +156,9 @@ def crosswalk_hist_id_to_hist_census_place_clean(context: dg.AssetExecutionConte
     pool="duckdb_write",
     metadata={
         "dagster/column_schema": dg.TableSchema([
-            dg.TableColumn(name="histid", type="STR", description="Consistent historical data person identifier for the IPUMS full count data. This key is unique to each person-year combination. It can be used to match on one person years, but not to track individuals across years"),
-            dg.TableColumn(name="hik", type="STR", description="Historical identification key for the IPUMS full count data. This key is unique to each person. It can be used to match people across years. It is computed via the linking procedure."),
-            dg.TableColumn(name="census_place_id", type="INT", description="The Census Place Project ID of the census place"),
+            dg.TableColumn(name="histid", type="STR", description="see ipums_full_count_raw"),
+            dg.TableColumn(name="hik", type="STR", description="see ipums_full_count_raw"),
+            dg.TableColumn(name="census_place_id", type="INT", description="see crosswalk_hist_id_to_hist_census_place_raw"),
         ])
     }
 )  
@@ -194,9 +194,9 @@ def ipums_full_count_census_place_id(context: dg.AssetExecutionContext, duckdb: 
     pool="duckdb_write",
     metadata={
         "dagster/column_schema": dg.TableSchema([
-            dg.TableColumn(name="histid", type="STR", description="Consistent historical data person identifier for the IPUMS full count data. This key is unique to each person-year combination. It can be used to match on one person years, but not to track individuals across years"),
-            dg.TableColumn(name="hik", type="STR", description="Historical identification key for the IPUMS full count data. This key is unique to each person. It can be used to match people across years. It is computed via the linking procedure."),
-            dg.TableColumn(name="census_place_id", type="INT", description="The Census Place Project ID of the census place"),
+            dg.TableColumn(name="histid", type="STR", description="see ipums_full_count_raw"),
+            dg.TableColumn(name="hik", type="STR", description="see ipums_full_count_raw"),
+            dg.TableColumn(name="census_place_id", type="INT", description="see crosswalk_hist_id_to_hist_census_place_raw"),
             dg.TableColumn(name="year", type="INT"),
         ])
     }
@@ -245,7 +245,7 @@ def ipums_full_count_census_place_id_all_years(context: dg.AssetExecutionContext
     pool="duckdb_write",
     metadata={
         "dagster/column_schema": dg.TableSchema([
-            dg.TableColumn(name="hik", type="STR", description="Historical identification key for the IPUMS full count data. This key is unique to each person. It can be used to match people across years. It is computed via the linking procedure."),
+            dg.TableColumn(name="hik", type="STR", description="see ipums_full_count_raw"),
             dg.TableColumn(name="census_place_origin", type="INT", description="The Census Place Project ID of the census place where the person was living in the origin year"),
             dg.TableColumn(name="year_origin", type="INT"),
             dg.TableColumn(name="census_place_destination", type="INT", description="The Census Place Project ID of the census place where the person was living in the destination year"),
@@ -317,7 +317,7 @@ def ipums_full_count_individual_migration(context: dg.AssetExecutionContext, duc
     pool="duckdb_write",
     metadata={
         "dagster/column_schema": dg.TableSchema([
-            dg.TableColumn(name="census_place_id", type="INT", description="The Census Place Project ID of the census place"),
+            dg.TableColumn(name="census_place_id", type="INT", description="see crosswalk_hist_id_to_hist_census_place_raw"),
             dg.TableColumn(name="year", type="INT"),
             dg.TableColumn(name="population", type="INT"),
         ])
@@ -352,8 +352,8 @@ def census_place_population(context: dg.AssetExecutionContext, duckdb: DuckDBRes
     pool="duckdb_write",
     metadata={
         "dagster/column_schema": dg.TableSchema([
-            dg.TableColumn(name="census_place_origin", type="INT", description="The Census Place Project ID of the census place where the person was living in the origin year"),
-            dg.TableColumn(name="census_place_destination", type="INT", description="The Census Place Project ID of the census place where the person was living in the destination year"),
+            dg.TableColumn(name="census_place_origin", type="INT", description="see ipums_full_count_individual_migration"),
+            dg.TableColumn(name="census_place_destination", type="INT", description="see ipums_full_count_individual_migration"),
             dg.TableColumn(name="year_origin", type="INT"),
             dg.TableColumn(name="year_destination", type="INT"),
         ])
