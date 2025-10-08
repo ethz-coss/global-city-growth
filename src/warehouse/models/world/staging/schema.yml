@@ -5,39 +5,28 @@ models:
       - name: country
         description: "The world bank code of the country"
       - name: year
-        description: "The year of the population"
       - name: population
         description: "The population of the country"
       - name: projection
         description: "Whether the population is a projection or not"
 
   - name: world_country_borders
-    description: "As for world_country_borders_raw, but with the geometry set EPSG:4326"
+    description: "see world_country_borders_raw"
     columns:
       - name: cntry_name
-        description: "The name of the country"
       - name: gwcode
-        description: "The country code from CShapes"
       - name: gwsyear
-        description: "The start year of the country borders"
       - name: gwsmonth
-        description: "The start month of the country borders"
       - name: gwsday
-        description: "The start day of the country borders"
       - name: gweyear
-        description: "The end year of the country borders"
       - name: gwemonth
-        description: "The end month of the country borders"
       - name: gweday
-        description: "The end day of the country borders"
       - name: geometry
-        description: "The geometry of the country borders in EPSG:4326"
+        description: "The geometry of the country borders is set to EPSG:4326. In the original table it is EPSG:4326 but its not set."
 
   - name: world_urbanization
-    description: "The urbanization of the world from https://doi.org/10.6084/m9.figshare.c.5521821"
+    description: "see world_urbanization_raw"
     columns:
       - name: country
-        description: "The world bank code of the country"
       - name: year
       - name: urban_population_share
-        description: "The urban population share of the country"

@@ -1,0 +1,271 @@
+models:
+  - name: world_urbanization_groups
+    description: "The urban population share groups of the countries. There are two groups: 0-60% and 60-100% based on the urban population share of the country in 1975."
+    columns:
+      - name: country
+        description: "The country code from world bank"
+      - name: urban_population_share_group
+        description: "The urban population share group of the country: '0-60%' or '60-100%'"
+
+  - name: world_cluster_growth_population_country_analysis
+    description: "For our final analysis, we build different analysis datasets based on the specs in analysis parameters. These datasets are essentially refined version of our based dataset world_cluster_growth_population_country under different analysis parameters, like the urban threshold, the city population threshold, the country min number of cities, and the countries to exclude. This tables joins all these datasets together and indexes them by analysis_id."
+    columns:
+      - name: cluster_id
+        description: "see world_cluster_growth_geom"
+      - name: y1
+        description: "see world_cluster_growth_geom"
+      - name: y2
+        description: "see world_cluster_growth_geom"
+      - name: urban_threshold
+        description: "see world_cluster_base_geom"
+      - name: population_y1
+        description: "see world_cluster_growth_population"
+      - name: population_y2
+        description: "see world_cluster_growth_population"
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: analysis_id
+        description: "The ID of the analysis"
+
+  - name: world_dataset_summary_table
+    description: "A summary table of the world dataset used for the analysis."
+    columns:
+      - name: analysis_id
+        description: "see world_cluster_growth_population_country_analysis"
+      - name: num_cities
+        description: "The number of cities in the dataset"
+      - name: num_countries
+        description: "The number of countries in the dataset"
+      - name: num_years
+        description: "The number of years in the dataset"
+      - name: min_year
+        description: "The earliest year in the dataset"
+      - name: max_year
+        description: "The latest year in the dataset"
+
+  - name: world_paper_stats:
+    description: "A table of statistics used in the paper."
+    columns:
+      - description
+        description: "The description of the statistic computed"
+      - value
+        description: "The value of the statistic computed"
+
+  - name: world_average_growth
+    description: "The log10 average growth of the population of the cities within countries over one decade. This average growth is weighted by the population of the cities."
+    columns:
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: year
+        description: "The start year of the decade."
+      - name: analysis_id
+        description: "see world_cluster_growth_population_country_analysis"
+      - name: log_average_growth
+        description: "The log10 of the average growth of the population of the country across years"
+      - name: region
+        description: "see world_country_region"
+
+  - name: world_size_vs_growth
+    description: "The log-size of cluster at the start of a decade and the log-growth of the clusters over a decade."
+    columns:
+      - name: cluster_id
+        description: "see world_cluster_growth_geom"
+      - name: year
+        description: "The start year of the decade."
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: log_population
+        description: "The log10 of the population of the cluster growth at the start of the decade"
+      - name: log_growth
+        description: "The log10 of the growth of the population growth of the cluster between the start of the decade and the end of the decade"
+      - name: analysis_id
+        description: "see world_cluster_growth_population_country_analysis"
+
+  - name: world_size_vs_growth_normalized
+    description: "We normalize the growth of the population of the clusters by the average growth of the population of the country."
+    columns:
+      - name: cluster_id
+        description: "see world_cluster_growth_geom"
+      - name: year
+        description: "see world_size_vs_growth"
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: analysis_id
+        description: "see world_cluster_growth_population_country_analysis"
+      - name: log_population
+        description: "see world_size_vs_growth"
+      - name: normalized_log_growth
+        description: "The log10 of the growth of the population of the cluster growth at the start of the decade, normalized by the average growth of the population of the country"
+      - name: region
+        description: "see world_country_region"
+
+  - name: world_size_vs_growth_normalized_by_group
+    description: "We take the world_size_vs_growth_normalized table and we add a column to indicate the group of the city: 'above_1m', 'below_1m', or 'largest_city'. The 'largest_city' group is the city with the largest population in the country in the given year. We also exponentiate the population and growth columns to get the actual population and growth, so we can compute weighted average of growth by city population. Note that the groups are not mutually exclusive, so some cities may belong to multiple groups."
+    columns:
+      - name: cluster_id
+        description: "see world_cluster_growth_geom"
+      - name: year
+        description: "see world_size_vs_growth"
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: analysis_id
+        description: "see world_cluster_growth_population_country_analysis"
+      - name: log_population
+        description: "see world_size_vs_growth"
+      - name: normalized_log_growth
+        description: "see world_size_vs_growth_normalized"
+      - name: region
+        description: "see world_country_region"
+      - name: city_group
+        description: "The group of the city: 'above_1m', 'below_1m', or 'largest_city'"
+
+  - name: world_average_size_growth_slope_with_borders
+    description: "The average size growth slope of the countries across the period of observation, with borders. This is used to plot a map of the world with the average size growth slope by countries."
+    columns:
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: size_growth_slope
+        description: "The average slope of the size-growth slope across the observation period (see world_size_growth_slopes_historical for a definition of size-growth slope)"
+      - name: geom
+        description: "The geometry of the country borders in 2019 in the Mollweide projection (EPSG:54009)"
+
+  - name: world_size_growth_slopes_historical_urbanization
+    description: "The slopes of the log-size vs log-growth curve on historical data, with urban population share data."
+    columns:
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: year
+        description: "see world_size_growth_slopes_historical"
+      - name: analysis_id
+        description: "see world_cluster_growth_population_country_analysis"
+      - name: size_growth_slope
+        description: "see world_size_growth_slopes_historical"
+      - name: urban_population_share
+        description: "see world_urbanization"
+
+  - name: world_rank_size_slopes_projections
+    description: "The slopes of the log-rank vs log-size projected forward in time. The projection are based on an equation relating rank-size slopes and size-growth slopes: a_{t+10} = a_t * (1 + b_{t}) where a_t is the rank-size slope in year t and b_t is the size growth slope in year t."
+    columns:
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: year
+      - name: analysis_id
+        description: "see world_cluster_growth_population_country_analysis"
+      - name: rank_size_slope
+        description: "The average slope of the log-rank vs log-size curve calculated with out projection method"
+
+  - name: world_rank_size_slopes
+    description: "The union of rank-size slopes from historical data and projections."
+    columns:
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: year
+      - name: analysis_id
+        description: "see world_cluster_growth_population_country_analysis"
+      - name: rank_size_slope
+        description: "see world_rank_size_slopes_historical or world_rank_size_slopes_projections"
+      - name: is_projection
+        description: "Whether the rank-size slope is a projection or not"
+      - name: region
+        description: "see world_country_region"
+      - name: urban_population_share_group
+        description: "see world_urbanization_groups"
+
+  - name: world_rank_size_slopes_change
+    description: "The change in the rank-size slope between a base year and a given year."
+    columns:
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: year
+      - name: year_base
+        description: "The base year from which we measure the change in the rank-size slope"
+      - name: analysis_id
+        description: "see world_cluster_growth_population_country_analysis"
+      - name: rank_size_slope_change
+        description: "The change in the rank-size slope between the base year and the given year"
+
+  - name: world_rank_size_slopes_change_1975_2025
+    description: "The change in the rank-size slope between 1975 and 2025, with base year 1975."
+    columns:
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: year
+      - name: year_since_1975
+        description: "The number of years since 1975"
+      - name: analysis_id
+        description: "see world_cluster_growth_population_country_analysis"
+      - name: region
+        description: "see world_country_region"
+      - name: rank_size_slope_change
+        description: "The change in the rank-size slope between 1975 and 2025 with base year 1975"
+      - name: urban_population_share_group
+        description: "see world_urbanization_groups"
+  
+  - name: world_rank_size_slopes_change_2025_2075
+    description: "The projected change in the rank-size slope between 2025 and 2075, with base year 2025."
+    columns:
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: year
+      - name: year_since_2025
+        description: "The number of years since 2025"
+      - name: analysis_id
+      - name: region
+        description: "see world_country_region"
+      - name: rank_size_slope_change
+        description: "The change in the rank-size slope between 2025 and 2075 with base year 2025"
+      - name: urban_population_share_group
+        description: "see world_urbanization_groups"
+
+  - name: world_rank_size_slopes_decade_change
+    description: "The change in the rank-size slope between a decade and the next decade."
+    columns:
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: year
+        description: "This start year of the decade"
+      - name: analysis_id
+        description: "see world_cluster_growth_population_country_analysis"
+      - name: region
+        description: "see world_country_region"
+      - name: rank_size_slope_decade_change
+        description: "The change in the rank-size slope between the start end end of the decade"
+      - name: urban_population_share_group
+        description: "see world_urbanization_groups"
+
+  - name: world_population_share_cities_above_1m_historical
+    description: "The urban (note urban not total!) population share of cities above 1 million. This is computed from the population data by summing the total population and that of cities above 1 million."
+    columns:
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: year
+      - name: analysis_id
+        description: "see world_cluster_growth_population_country_analysis"
+      - name: urban_population_share_cities_above_one_million
+        description: "The urban population share of cities above 1 million"
+
+  - name: world_population_share_cities_above_1m_projections
+    description: "The urban population share of cities above 1 million projected into the future. The projections are based on a simple equation relating the shares to the rank-size slopes: s = (x_max^{1-alpha} - z^{1-alpha}) / (x_max^{1-alpha} - x_min^{1-alpha}) where x_max, x_min are upper and lower bounds of the urban population, z is 1 million, and alpha is the zipf exponent (1 / rank_size_slope). To compute these projections we set x_min = 5000, z = 1 million, and alpha = 1 / rank_size_slope. We set x_max = omega * urban_population, where omega is a free parameter. We tune omega in the marcro get_optimal_omegas_population_share_cities_above_1m_projections."
+    columns:
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: year
+      - name: analysis_id
+        description: "see world_cluster_growth_population_country_analysis"
+      - name: urban_population_share_cities_above_one_million
+        description: "The urban population share of cities above 1 million projected with the above method."
+
+  - name: world_population_share_cities_above_1m
+    description: "The union of the historical and projected data. Historical data is before 2025 (2025 included), and projections are after 2025 (2025 excluded)."
+    columns:
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: year
+      - name: analysis_id
+        description: "see world_cluster_growth_population_country_analysis"
+      - name: urban_population_share_cities_above_one_million
+        description: "The urban population share of cities above 1 million"
+      - name: urban_population
+        description: "see world_urban_population"
+      - name: urban_population_share_group
+        description: "see world_urbanization_groups"

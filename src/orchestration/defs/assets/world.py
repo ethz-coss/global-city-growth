@@ -13,10 +13,10 @@ from .constants import constants
     metadata={
         "dagster/column_schema": dg.TableSchema([
             dg.TableColumn(name="component_id", type="INT", description="The ID of the connected component"),
-            dg.TableColumn(name="cluster_id", type="INT", description="The ID of the cluster"),
-            dg.TableColumn(name="y1", type="INT", description="The startpoint of the cluster growth"),
-            dg.TableColumn(name="y2", type="INT", description="The endpoint of the cluster growth"),
-            dg.TableColumn(name="urban_threshold", type="INT", description="The degree-of-urbanization threshold used to classify the pixels as urban or not"),
+            dg.TableColumn(name="cluster_id", type="INT", description="See world_cluster_growth_geom"),
+            dg.TableColumn(name="y1", type="INT", description="See world_cluster_growth_geom"),
+            dg.TableColumn(name="y2", type="INT", description="See world_cluster_growth_geom"),
+            dg.TableColumn(name="urban_threshold", type="INT", description="see world_cluster_base_geom"),
         ])
     }
 

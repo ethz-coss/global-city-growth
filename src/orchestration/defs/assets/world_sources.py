@@ -204,7 +204,7 @@ def world_urbanization_raw(context: dg.AssetExecutionContext, storage: StorageRe
         "dagster/column_schema": dg.TableSchema([
             dg.TableColumn(name="country", type="string", description="The world bank code of the country"),
             dg.TableColumn(name="region1", type="string", description="The first region of the country (large)"),
-            dg.TableColumn(name="region2", type="string", description="The second region of the country (small)"),
+            dg.TableColumn(name="region2", type="string", description="The second region of the country (small). This second region is the one used throughout the analysis."),
         ])
     }
 )

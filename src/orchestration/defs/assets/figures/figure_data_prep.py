@@ -14,9 +14,18 @@ from .figure_stats import get_mean_derivative_penalized_b_spline, get_ols_slope
     deps=[TableNamesResource().names.world.figures.world_size_vs_growth()],
     kinds={'postgres'},
     group_name="figure_data_prep",
-    io_manager_key="postgres_io_manager"
+    io_manager_key="postgres_io_manager",
+    metadata={
+        "dagster/column_schema": dg.TableSchema([
+            dg.TableColumn(name="analysis_id", type="string", description="see world_cluster_growth_population_country_analysis"),
+            dg.TableColumn(name="country", type="string", description="see world_cluster_growth_geocoding"),
+            dg.TableColumn(name="year", type="int", description="The start year of the decade"),
+            dg.TableColumn(name="size_growth_slope", type="float", description="The average slope of the log-size vs log-growth curve, where log-size is the log population of the city at the start of the decade, and log-growth is the log growth of the city population between the start and end of the decade."),
+        ])
+    } 
 )
 def world_size_growth_slopes_historical(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource)  -> pd.DataFrame:
+    """The slopes of the log-size vs log-growth curve on historical data"""
     context.log.info("Calculating world size growth slopes")
     xaxis = 'log_population'
     yaxis = 'log_growth'
@@ -30,9 +39,19 @@ def world_size_growth_slopes_historical(context: dg.AssetExecutionContext, postg
     deps=[TableNamesResource().names.world.figures.world_rank_vs_size()],
     kinds={'postgres'},
     group_name="figure_data_prep",
-    io_manager_key="postgres_io_manager"
+    io_manager_key="postgres_io_manager",
+    metadata={
+        "dagster/column_schema": dg.TableSchema([
+            dg.TableColumn(name="analysis_id", type="string", description="see world_cluster_growth_population_country_analysis"),
+            dg.TableColumn(name="country", type="string", description="see world_cluster_growth_geocoding"),
+            dg.TableColumn(name="year", type="int", description="The year of the observation"),
+            dg.TableColumn(name="rank_size_slope", type="float", description="The average slope of the log-rank vs log-size curve, where log-rank is the log rank of the city in a given year (1 = largest city), and log-size is the log population of the city in that same year."),
+        ])
+    }
 )
 def world_rank_size_slopes_historical(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> pd.DataFrame:
+    """The slopes of the log-rank vs log-size curve on historical data"""
+
     context.log.info("Calculating world rank size slopes")
     xaxis = 'log_rank'
     yaxis = 'log_population'
@@ -55,9 +74,19 @@ def _get_projections_for_world_size_growth_slopes(df_size_growth_slopes: pd.Data
     deps=[TableNamesResource().names.world.figures.world_size_growth_slopes_historical_urbanization(), TableNamesResource().names.world.figures.world_urbanization()],
     kinds={'postgres'},
     group_name="figure_data_prep",
-    io_manager_key="postgres_io_manager"
+    io_manager_key="postgres_io_manager",
+    metadata={
+        "dagster/column_schema": dg.TableSchema([
+            dg.TableColumn(name="analysis_id", type="string", description="see world_cluster_growth_population_country_analysis"),
+            dg.TableColumn(name="country", type="string", description="see world_cluster_growth_geocoding"),
+            dg.TableColumn(name="year", type="int"),
+            dg.TableColumn(name="size_growth_slope", type="float", description="The projection of the size growth slope based on the urban population share."),
+        ])
+    }
 )
 def world_size_growth_slopes_projections(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> pd.DataFrame:
+    """ Projections for the size growth slopes based on the urban population share. Given the relationship between the size growth slope and the urban population share from historical data, we project the size growth slope forward in time using projections of the urban population share. """
+
     context.log.info("Calculating world size growth slopes projections")
     q = f"""
     SELECT *
@@ -116,10 +145,25 @@ def _get_regression_results_for_region_regression_with_urbanization_controls(df:
     deps=[TableNamesResource().names.world.figures.world_size_growth_slopes_historical_urbanization(), TableNamesResource().names.world.sources.world_country_region()],
     kinds={'postgres'},
     group_name="figure_data_prep",
-    io_manager_key="postgres_io_manager"
+    io_manager_key="postgres_io_manager",
+    metadata={
+        "dagster/column_schema": dg.TableSchema([
+            dg.TableColumn(name="analysis_id", type="string", description="see world_cluster_growth_population_country_analysis"),
+            dg.TableColumn(name="region", type="string", description="see world_country_region"),
+            dg.TableColumn(name="coeff_no_control", type="float", description="The coefficient of the region without urbanization controls"),
+            dg.TableColumn(name="coeff_with_control", type="float", description="The coefficient of the region with urbanization controls"),
+            dg.TableColumn(name="ci_low_no_control", type="float", description="The lower confidence interval of the coefficient of the region without urbanization controls"),
+            dg.TableColumn(name="ci_high_no_control", type="float", description="The upper confidence interval of the coefficient of the region without urbanization controls"),
+            dg.TableColumn(name="ci_low_with_control", type="float", description="The lower confidence interval of the coefficient of the region with urbanization controls"),
+            dg.TableColumn(name="ci_high_with_control", type="float", description="The upper confidence interval of the coefficient of the region with urbanization controls"),
+        ])
+    }
 )
 def world_region_regression_with_urbanization_controls(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> pd.DataFrame:
     context.log.info("Calculating world region regression with urbanization controls")
+    """ 
+    We regress regional dummies against the size growth slopes of countries, with and without controls for the urban population share. We then save the coefficients and confidence intervals for the regional dummies of each region.
+    """
     
     q = f"""
     SELECT *
