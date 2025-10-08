@@ -73,9 +73,16 @@ def _convolve2d(image, kernel):
 @dg.asset(
     deps=[TableNamesResource().names.usa.transformations.usa_nhgis_census_place_equivalence_network()],
     kinds={'postgres'},
-    group_name="usa_intermediate_normalize_hist_data"
+    group_name="usa_intermediate_normalize_hist_data",
+    metadata={
+        "dagster/column_schema": dg.TableSchema([
+            dg.TableColumn(name="component_id", type="INT", description="The ID of the connected component"),
+            dg.TableColumn(name="census_place_id", type="INT", description="The NHGIS ID of the census place"),
+        ])
+    }
 )
 def usa_crosswalk_nhgis_census_place_to_connected_component(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource):
+    """Crosswalk from NHGIS census place to connected component of network of equivalent census places"""
     context.log.info(f"Creating crosswalk from NHGIS census place to connected component of equivalent census places")
 
     q = f"""

@@ -2,7 +2,7 @@
 --- 1. If a census place disappears from the data, we select a "continuation" place and link it to the census place that disappeared
 --- This continuation place is: (a) the census place that has the highest migration probability to the disappearing place in the year of disappearance; (b) the census place that is the nearest neighbor of the disappearing place
 --- 2. If two census places have a high migration probability, we link them.
---- The migration probability is considered high if it is higher than 0.3 and the distance between the places is less than 20000, or if it is higher than 0.5
+--- The migration probability is considered high if it is higher than 0.t and the distance between the places is less than 30000 meters
 --- 3. We link census place to themselves (because a place is always equivalent to itself)
 
 WITH disappearing_places AS (
