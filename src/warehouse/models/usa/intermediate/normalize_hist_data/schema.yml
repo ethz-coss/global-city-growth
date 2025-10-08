@@ -1,0 +1,33 @@
+models:
+  - name: usa_hist_census_place_geom
+    description: "The geometry of historical census places from the Census Place Project"
+    columns:
+      - name: id
+        description: "The Census Place Project ID of the census place"
+      - name: geom
+        description: "The geometry of the census place in EPSG:5070"
+  - name: usa_nhgis_census_place_geom
+    description: "The geometry of census places from NHGIS"
+    columns:
+      - name: census_place_id
+        description: "The NHGIS ID of the census place"
+      - name: census_place_name
+        description: "The name of the census place"
+      - name: geom
+        description: "The geometry of the census place in EPSG:5070"
+  - name: usa_nhgis_census_place_population_1990_2020
+    description: "The time series ofpopulation of census places from NHGIS"
+    columns:
+      - name: census_place_id
+        description: "The NHGIS ID of the census place"
+      - name: year
+      - name: population
+  - name: usa_states_geom
+    description: "The geometry of the states of the USA"
+    columns:
+      - name: state_code
+        description: "The two letter code of the state (e.g. CA, NY)"
+      - name: state_name
+        description: "The name of the state (e.g. California, New York)"
+      - name: geom
+        description: "The geometry of the state in EPSG:5070"
