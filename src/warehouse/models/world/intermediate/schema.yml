@@ -1,0 +1,107 @@
+models:
+  - name: world_cluster_base_geom
+    description: "The geometry of the base clusters. These clusters are created from the GHSL degree of urbanization raster. We use DBSCAN to cluster the urban pixels and then we union the pixels to get the cluster geometry."
+    columns:
+      - name: cluster_id
+        description: "The ID of the cluster. This is a concatenation of the year, pixel_threshold, and an integer. This integer is used to assign a unique deterministic cluster_id to each cluster_base. It is obtained by ordering the centroids of clusters from west to east and then from north to south."
+      - name: year
+      - name: urban_threshold
+        description: "The degree-of-urbanization threshold used to classify the pixels as urban or not"
+      - name: geom
+        description: "The geometry of the cluster in Coordinate reference system = EPSG:54009"
+
+  - name: world_cluster_base_matching
+    description: "Matching between cluster geometries across different years. We take pairs of years and match clusters that intersect with each other spatially. Clusters that do not intersect with each other are matched to themselves. This yields a bipartite graph."
+    columns:
+      - name: left_cluster_id
+        description: "The cluster ID of one endpoint of the edge"
+      - name: right_cluster_id
+        description: "The cluster ID of the other endpoint of the edge"
+      - name: y1
+        description: "The startpoint of the cluster growth"
+      - name: y2
+        description: "The endpoint of the cluster growth"
+      - name: urban_threshold
+        description: "The degree-of-urbanization threshold used to classify the pixels as urban or not"
+
+  - name: world_cluster_growth_geom
+    description: "The geometry of the cluster growth. A cluster growth is a connected component in the bipartite graph matching across years. It is used to assign stable boundaries to a cluster across years to compute the population growth. These stable boundaries are computed as the spatial union of the clusters in the connected component."
+    columns:
+      - name: cluster_id
+        description: "The ID of the cluster growth. This is a concatenation of y1, y2 (the years for which the cluster growth is computed), pixel_threshold, and an integer. This integer is used to assign a unique deterministic cluster_id to each cluster_growth. It is obtained by ordering the centroids of clusters from west to east and then from north to south."
+      - name: y1
+        description: "The startpoint of the cluster growth"
+      - name: y2
+        description: "The endpoint of the cluster growth"
+      - name: urban_threshold
+        description: "The degree-of-urbanization threshold used to classify the pixels as urban or not"
+      - name: geom
+        description: "The geometry of the cluster in Coordinate reference system = EPSG:54009"
+
+  - name: world_country_borders_2019
+    description: "The country borders of the world in 2019. We use this to assign clusters to countries."
+    columns:
+      - name: gwcode
+        description: "The country code from CShapes"
+      - name: geom
+        description: "The geometry of the country in Coordinate reference system = EPSG:54009"
+  
+  - name: world_cluster_growth_geocoding
+    description: "The geocoding of the cluster growth. We assign a country to each cluster growth. Clusters that intersect with multiple countries are assigned to both countries."
+    columns:
+      - name: cluster_id
+        description: "The ID of the cluster growth"
+      - name: y1
+        description: "The startpoint of the cluster growth"
+      - name: y2
+        description: "The endpoint of the cluster growth"
+      - name: urban_threshold
+        description: "The degree-of-urbanization threshold used to classify the pixels as urban or not"
+      - name: gwcode
+        description: "The country code from CShapes"
+      - name: n_matched_countries
+        description: "The number of countries that the cluster growth intersects with"
+
+  - name: world_cluster_growth_population
+    description: "The population of the cluster growth at the startpoint (y1) and endpoint (y2). The population of the cluster in year y1 is computed as the sum of the population of all pixels in the GHSL population raster that intersect with the cluster growth in year y1. Same for the population in year y2."
+    columns:
+      - name: cluster_id
+        description: "The ID of the cluster growth"
+      - name: y1
+        description: "The startpoint of the cluster growth"
+      - name: y2
+        description: "The endpoint of the cluster growth"
+      - name: urban_threshold
+        description: "The degree-of-urbanization threshold used to classify the pixels as urban or not"
+      - name: population_y1
+        description: "The population of the cluster growth at the startpoint (y1)"
+      - name: population_y2
+        description: "The population of the cluster growth at the endpoint (y2)"
+
+  - name: world_cluster_growth_population_country
+    description: "Cluster growth population joined with country codes from world bank"
+    columns:
+      - name: cluster_id
+        description: "The ID of the cluster growth"
+      - name: y1
+        description: "The startpoint of the cluster growth"
+      - name: y2
+        description: "The endpoint of the cluster growth"
+      - name: urban_threshold
+        description: "The degree-of-urbanization threshold used to classify the pixels as urban or not"
+      - name: population_y1
+        description: "The population of the cluster growth at the startpoint (y1)"
+      - name: population_y2
+        description: "The population of the cluster growth at the endpoint (y2)"
+      - name: country
+        description: "The country code from world bank"
+
+  - name: world_urban_population
+    description: "The urban population of countries around the world (with projections to 2100). This iobtained by multipling the population of the country by the urban population share of the country."
+    columns:
+      - name: country
+        description: "The country code from world bank"
+      - name: year
+      - name: urban_population
+        description: "The urban population of the country"
+        

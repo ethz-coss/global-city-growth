@@ -9,9 +9,21 @@ from .constants import constants
 @dg.asset(
     deps=[TableNamesResource().names.world.transformations.world_cluster_base_matching()],
     kinds={'postgres'},
-    group_name="world_intermediate"
+    group_name="world_intermediate",
+    metadata={
+        "dagster/column_schema": dg.TableSchema([
+            dg.TableColumn(name="component_id", type="INT", description="The ID of the connected component"),
+            dg.TableColumn(name="cluster_id", type="INT", description="The ID of the cluster"),
+            dg.TableColumn(name="y1", type="INT", description="The startpoint of the cluster growth"),
+            dg.TableColumn(name="y2", type="INT", description="The endpoint of the cluster growth"),
+            dg.TableColumn(name="urban_threshold", type="INT", description="The degree-of-urbanization threshold used to classify the pixels as urban or not"),
+        ])
+    }
+
 )
 def world_crosswalk_component_id_to_cluster_id(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource):
+    """Crosswalk mapping each cluster to its connected component in the bipartite graph matching across years. Each connected component correpsonds to a unique cluster growth. """
+    
     context.log.info(f"Creating matching between connected components and cluster ids")
     urban_thresholds = constants["WORLD_DEGREE_OF_URBANIZATION_THRESHOLDS"]
 

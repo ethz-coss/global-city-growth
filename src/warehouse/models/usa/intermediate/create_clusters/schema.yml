@@ -27,7 +27,7 @@ models:
 
 
   - name: usa_cluster_growth_geom
-    description: "The geometry of the cluster growth. A cluster growth is a connected component in the bipartite graph matching across years. It is used to assign stable boundaries to a cluster across years to compute the popualtion growth. These stable boundaries are computed as the spatial union of the clusters in the connected component."
+    description: "The geometry of the cluster growth. A cluster growth is a connected component in the bipartite graph matching across years. It is used to assign stable boundaries to a cluster across years to compute the population growth. These stable boundaries are computed as the spatial union of the clusters in the connected component."
     columns:
       - name: cluster_id
         description: "The ID of the cluster growth. This is a concatenation of y1, y2 (the years for which the cluster growth is computed), pixel_threshold, and an integer. This integer is used to assign a unique deterministic cluster_id to each cluster_growth. It is obtained by ordering the centroids of clusters from west to east and then from north to south."
