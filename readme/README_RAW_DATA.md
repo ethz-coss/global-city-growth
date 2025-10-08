@@ -27,6 +27,7 @@ This README references the primary works describing each dataset rather than exp
 | CShapes 2.0                                 | **Included**                            | CC BY-NC-SA                             | `2.0`                    | [https://cshapes.org/](https://cshapes.org/)               |
 | CShapes → ISO/World Bank Crosswalk          | **Included**                            | CC BY 4.0                               |                          | This repository                                            |
 | Our World in Data (population/urbanization) | **Included**                            | CC BY 4.0                               |                          | [https://ourworldindata.org/](https://ourworldindata.org/) |
+| Our World in Data (population/urbanization) | **Included**                            | CC BY 4.0                               |                          | DOI: `https://doi.org/10.6084/m9.figshare.c.5521821.v1` |
 
 
 ## Dataset Manifest
@@ -94,16 +95,23 @@ Here is detailed list of all datasets used in this project, including those prov
 
 * **Our World in Data (OWID)**
     * **Status**: Included in this repository
-    * **Description:** Datasets related to population and urbanization.
+    * **Description:** Population with projections
     * **Original Source:** 
-        - [urban-population-share-2050.csv](https://ourworldindata.org/urban-population-share-2050)
         - [population-long-run-with-projections.csv](https://ourworldindata.org/grapher/population-long-run-with-projections)
         - countries_with_regions.csv is handmade by the author of this repository
     * **License:** CC-BY-4.0
     * **Files:**
-        * `world/owid/urban-population-share-2050.csv`
-        * `world/owid/population-long-run-with-projections.csv`
-        * `world/owid/countries_with_regions.csv`
+        * `world/misc/population-long-run-with-projections.csv`
+        * `world/misc/countries_with_regions.csv`
+
+* **Updating Global Urbanization Projections Under the Shared Socioeconomic Pathways**
+    * **Status**: Included in this repository
+    * **Description:** Urbanization with projections. We use World Bank-based annual projections under SSP2 (``middle of the road''). 
+    * **Original Source:** 
+        - [urban-population-share-with-projections.csv](https://doi.org/10.6084/m9.figshare.c.5521821.v1)
+    * **License:** CC-BY-4.0
+    * **Files:**
+        * `world/misc/urban-population-share-with-projections.csv`
 
 ## Folder Structure
 
@@ -117,5 +125,5 @@ The data in this repository is organized into the following folder structure:
 ├── world/
 │   ├── ghsl/
 │   ├── cshapes/
-│   └── owid/
+│   └── misc/
 ```
