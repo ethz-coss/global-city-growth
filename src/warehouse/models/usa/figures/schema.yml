@@ -1,0 +1,107 @@
+models:
+  - name: usa_year_epoch
+    description: "We group years into three epochs: 1850-1880, 1900-1940, 1990-2020."
+    columns:
+      - name: year
+        description: "The year"
+      - name: epoch
+        description: "The epoch of the year: '1850-1880', '1900-1940', '1990-2020'"
+
+  - name: usa_cluster_growth_population_analysis
+    description: "For our final analysis, we build different analysis datasets based on the specs in analysis parameters. These datasets are essentially refined version of our based dataset usa_cluster_growth_population under different analysis parameters, like the urban threshold, the city population threshold. This tables joins all these datasets together and indexes them by analysis_id."
+    columns:
+      - name: cluster_id
+        description: "see usa_cluster_growth_geom"
+      - name: y1
+        description: "see usa_cluster_growth_geom"
+      - name: y2
+        description: "see usa_cluster_growth_geom"
+      - name: urban_threshold
+        description: "see usa_cluster_base_geom"
+      - name: population_y1
+        description: "see usa_cluster_growth_population"
+      - name: population_y2
+        description: "see usa_cluster_growth_population"
+      - name: analysis_id
+        description: "The ID of the analysis"
+
+  - name: usa_dataset_summary_table
+    description: "A summary table of the USA dataset used for the analysis."
+    columns:
+      - name: analysis_id
+        description: "see usa_cluster_growth_population_analysis"
+      - name: num_cities
+        description: "The number of cities in the dataset"
+      - name: num_years
+        description: "The number of years in the dataset"
+      - name: min_year
+        description: "The earliest year in the dataset"
+      - name: max_year
+        description: "The latest year in the dataset"
+  
+  - name: usa_average_growth
+    description: "The average growth of the population of the cities over one decade. This average growth is weighted by the population of the cities."
+    columns:
+      - name: year
+        description: "The start of the decade"
+      - name: log_average_growth
+        description: "The log10 average growth of the population of the cities over one decade. This average growth is weighted by the population of the cities."
+      - name: epoch
+        description: "see usa_year_epoch"
+      - name: analysis_id
+        description: "see usa_cluster_growth_population_analysis"
+
+  - name: usa_size_vs_growth
+    description: "The log population of cities at the start of a decade and the log growth of the city over the decade"
+    columns:
+      - name: cluster_id
+        description: "see usa_cluster_growth_geom"
+      - name: year
+        description: "The start of the decade"
+      - name: log_population
+        description: "The log10 population of the city at the start of the decade"
+      - name: log_growth
+        description: "The log10 growth of the city over the decade"
+      - name: analysis_id
+        description: "see usa_cluster_growth_population_analysis"
+
+  - name: usa_size_vs_growth_normalized
+    description: "The normalized log growth of the city over the decade. The normalized log growth is the log growth minus the average growth of the population nationwide."
+    columns:
+      - name: cluster_id
+        description: "see usa_cluster_growth_geom"
+      - name: year
+        description: "The start of the decade"
+      - name: normalized_log_growth
+        description: "The normalized log growth of the city over the decade computed as the log growth minus the average growth of the population nationwide"
+      - name: epoch
+        description: "see usa_year_epoch"
+      - name: analysis_id
+        description: "see usa_cluster_growth_population_analysis"
+
+  - name: usa_rank_vs_size
+    description: "The log-rank of the cities  (1 = largest city), vs their log-population in a given decade."
+    columns:
+      - name: cluster_id
+        description: "see usa_cluster_growth_geom"
+      - name: year
+      - name: log_population
+        description: "The log10 of the population of the city"
+      - name: log_rank
+        description: "The log10 of the rank of the city"
+      - name: analysis_id
+        description: "see usa_cluster_growth_population_analysis"
+
+  - name: usa_rank_size_slopes_change
+    description: "The change in the rank-size slope from some base year to a given year."
+    columns:
+      - name: year
+      - name: year_base
+        description: "The base year from which the change is computed"
+      - name: analysis_id
+        description: "see usa_cluster_growth_population_analysis"
+      - name: rank_size_slope_change
+        description: "The change in the rank-size slope from the base year to the given year."
+      - name: analysis_id
+        description: "see usa_cluster_growth_population_analysis"
+      

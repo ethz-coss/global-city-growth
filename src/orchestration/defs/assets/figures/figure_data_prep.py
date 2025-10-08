@@ -20,12 +20,12 @@ from .figure_stats import get_mean_derivative_penalized_b_spline, get_ols_slope
             dg.TableColumn(name="analysis_id", type="string", description="see world_cluster_growth_population_country_analysis"),
             dg.TableColumn(name="country", type="string", description="see world_cluster_growth_geocoding"),
             dg.TableColumn(name="year", type="int", description="The start year of the decade"),
-            dg.TableColumn(name="size_growth_slope", type="float", description="The average slope of the log-size vs log-growth curve, where log-size is the log population of the city at the start of the decade, and log-growth is the log growth of the city population between the start and end of the decade."),
+            dg.TableColumn(name="size_growth_slope", type="float", description="The average slope of the log-size vs log-growth curve fitted using a penalized B-spline"),
         ])
     } 
 )
 def world_size_growth_slopes_historical(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource)  -> pd.DataFrame:
-    """The slopes of the log-size vs log-growth curve on historical data"""
+    """We take the log-size and log-growth of the cities in a given country and at the start of a decade and fit a curve through it using a penalized B-spline. We then compute the average slope of the curve. """
     context.log.info("Calculating world size growth slopes")
     xaxis = 'log_population'
     yaxis = 'log_growth'
@@ -45,12 +45,12 @@ def world_size_growth_slopes_historical(context: dg.AssetExecutionContext, postg
             dg.TableColumn(name="analysis_id", type="string", description="see world_cluster_growth_population_country_analysis"),
             dg.TableColumn(name="country", type="string", description="see world_cluster_growth_geocoding"),
             dg.TableColumn(name="year", type="int", description="The year of the observation"),
-            dg.TableColumn(name="rank_size_slope", type="float", description="The average slope of the log-rank vs log-size curve, where log-rank is the log rank of the city in a given year (1 = largest city), and log-size is the log population of the city in that same year."),
+            dg.TableColumn(name="rank_size_slope", type="float", description="The average slope of the log-rank vs log-size curve fitted using a penalized B-spline"),
         ])
     }
 )
 def world_rank_size_slopes_historical(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> pd.DataFrame:
-    """The slopes of the log-rank vs log-size curve on historical data"""
+    """We take the log-rank (1=largest city) and log-size of the cities in a given country and at the start of a decade and fit a curve through it using a penalized B-spline. We then compute the average slope of the curve. """
 
     context.log.info("Calculating world rank size slopes")
     xaxis = 'log_rank'
@@ -176,14 +176,27 @@ def world_region_regression_with_urbanization_controls(context: dg.AssetExecutio
     results = size_growth_slopes_urbanization_region.groupby('analysis_id', group_keys=False).apply(lambda g: _get_regression_results_for_region_regression_with_urbanization_controls(df=g).assign(analysis_id=g.name)).reset_index(drop=True)
     return results
 
+# TODO: USA size-growth slopes are missing!!!
+
+
 
 @dg.asset(
     deps=[TableNamesResource().names.usa.figures.usa_rank_vs_size()],
     kinds={'postgres'},
     group_name="figure_data_prep",
-    io_manager_key="postgres_io_manager"
+    io_manager_key="postgres_io_manager",
+    metadata={
+        "dagster/column_schema": dg.TableSchema([
+            dg.TableColumn(name="analysis_id", type="string", description="see usa_cluster_growth_population_analysis"),
+            dg.TableColumn(name="year", type="int"),
+            dg.TableColumn(name="rank_size_slope", type="float", description="The average slope of the log-rank vs log-size curve fitted using a penalized B-spline"),
+        ])
+    }
 )
 def usa_rank_size_slopes(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> pd.DataFrame:
+    """
+    We take the log-rank and log-size of the cities in a given year and fit a curve through it using a penalized B-spline. We then compute the average slope of the curve.
+    """
     context.log.info("Calculating usa rank size slopes urbanization")
     x_axis = 'log_rank'
     y_axis = 'log_population'

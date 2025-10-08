@@ -3,7 +3,7 @@ models:
     description: "Population of census place stable. Union of the normalized population before 1940 and the NHGIS population from 1990 to 2020."
     columns:
       - name: census_place_stable_id
-        description: "The NHGIS ID of the stable census place"
+        description: "see usa_crosswalk_nhgis_census_place_to_census_place_stable and usa_nhgis_census_place_geom"
       - name: year
       - name: population
 
@@ -11,7 +11,7 @@ models:
     description: "Geometry of census place stable"
     columns:
       - name: census_place_stable_id
-        description: "The NHGIS ID of the stable census place"
+        description: "see usa_crosswalk_nhgis_census_place_to_census_place_stable and usa_nhgis_census_place_geom"
       - name: geom
         description: "Coordinate reference system = EPSG:5070"
 

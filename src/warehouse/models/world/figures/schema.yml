@@ -143,6 +143,21 @@ models:
       - name: urban_population_share
         description: "see world_urbanization"
 
+  - name: world_rank_vs_size
+    description: "The log-rank of the cities  (1 = largest city), vs their log-population in a given decade.
+    columns:
+      - name: cluster_id
+        description: "see world_cluster_growth_geom"
+      - name: year
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: log_population
+        description: "The log10 of the population of the city"
+      - name: log_rank
+        description: "The log10 of the rank of the city"
+      - name: analysis_id
+        description: "see world_cluster_growth_population_country_analysis"
+
   - name: world_rank_size_slopes_projections
     description: "The slopes of the log-rank vs log-size projected forward in time. The projection are based on an equation relating rank-size slopes and size-growth slopes: a_{t+10} = a_t * (1 + b_{t}) where a_t is the rank-size slope in year t and b_t is the size growth slope in year t."
     columns:
