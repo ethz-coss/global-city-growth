@@ -180,9 +180,21 @@ def usa_raster_census_place_convolved_all_years(context: dg.AssetExecutionContex
 @dg.asset(
     deps=[TableNamesResource().names.usa.transformations.usa_cluster_base_matching()],
     kinds={'postgres'},
-    group_name="usa_intermediate_create_clusters"
+    group_name="usa_intermediate_create_clusters",
+    metadata={
+        "dagster/column_schema": dg.TableSchema([
+            dg.TableColumn(name="component_id", type="INT", description="The ID of the connected component"),
+            dg.TableColumn(name="cluster_id", type="INT", description="The ID of the cluster"),
+            dg.TableColumn(name="y1", type="INT", description="The startpoint of the cluster growth"),
+            dg.TableColumn(name="y2", type="INT", description="The endpoint of the cluster growth"),
+            dg.TableColumn(name="urban_threshold", type="INT", description="The urban pixel threshold used to classify the pixels as urban or not"),
+        ])
+    }
 )
 def usa_crosswalk_component_id_to_cluster_id(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource):
+    """
+    Crosswalk mapping each cluster to its connected component in the bipartite graph matching across years. Each connected component correpsonds to a unique cluster growth. 
+    """
     context.log.info(f"Creating matching between connected components and cluster ids")
     urban_thresholds = constants["USA_URBAN_POPULATION_PIXEL_THRESHOLDS"]
     engine = postgres.get_engine()

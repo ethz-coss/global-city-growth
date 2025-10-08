@@ -1,0 +1,57 @@
+models:
+  - name: usa_cluster_base_geom
+    description: "The geometry of the base clusters. These clusters are created from the raster census place. We use DBSCAN to cluster the urban pixels and then we union the pixels to get the cluster geometry."
+    columns:
+      - name: cluster_id
+        description: "The ID of the cluster. This is a concatenation of the year, pixel_threshold, and an integer. This integer is used to assign a unique deterministic cluster_id to each cluster_base. It is obtained by ordering the centroids of clusters from west to east and then from north to south."
+      - name: year
+      - name: urban_threshold
+        description: "The urban pixel threshold used to classify the pixels as urban or not"
+      - name: geom
+        description: "The geometry of the cluster in Coordinate reference system = EPSG:5070"
+
+
+  - name: usa_cluster_base_matching
+    description: "Matching between cluster geometries across different years. We take pairs of years and match clusters that intersect with each other spatially. Clusters that do not intersect with each other are matched to themselves. This yields a bipartite graph. "
+    columns:
+      - name: left_cluster_id
+        description: "The cluster ID of one endpoint of the edge"
+      - name: right_cluster_id
+        description: "The cluster ID of the other endpoint of the edge"
+      - name: y1
+        description: "The startpoint of the cluster growth"
+      - name: y2
+        description: "The endpoint of the cluster growth"
+      - name: urban_threshold
+        description: "The urban pixel threshold used to classify the pixels as urban or not"
+
+
+  - name: usa_cluster_growth_geom
+    description: "The geometry of the cluster growth. A cluster growth is a connected component in the bipartite graph matching across years. It is used to assign stable boundaries to a cluster across years to compute the popualtion growth. These stable boundaries are computed as the spatial union of the clusters in the connected component."
+    columns:
+      - name: cluster_id
+        description: "The ID of the cluster growth. This is a concatenation of y1, y2 (the years for which the cluster growth is computed), pixel_threshold, and an integer. This integer is used to assign a unique deterministic cluster_id to each cluster_growth. It is obtained by ordering the centroids of clusters from west to east and then from north to south."
+      - name: y1
+        description: "The startpoint of the cluster growth"
+      - name: y2
+        description: "The endpoint of the cluster growth"
+      - name: urban_threshold
+        description: "The urban pixel threshold used to classify the pixels as urban or not"
+      - name: geom
+        description: "The geometry of the cluster in Coordinate reference system = EPSG:5070"
+
+  - name: usa_cluster_growth_population
+    description: "The population of the cluster growth at the startpoint (y1) and endpoint (y2). The population of the cluster in year y1 is computed as the sum of the population of the census places in year y1 that are contained within that cluster growth. Same for the population in year y2."
+    columns:
+      - name: cluster_id
+        description: "The ID of the cluster growth"
+      - name: y1
+        description: "The startpoint of the cluster growth"
+      - name: y2
+        description: "The endpoint of the cluster growth"
+      - name: urban_threshold
+        description: "The urban pixel threshold used to classify the pixels as urban or not"
+      - name: population_y1
+        description: "The population of the cluster growth at the startpoint"
+      - name: population_y2
+        description: "The population of the cluster growth at the endpoint"
