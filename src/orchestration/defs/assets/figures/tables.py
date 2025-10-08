@@ -19,11 +19,11 @@ from ..constants import constants
 
 def _make_table_slopes_by_urbanization(df: pd.DataFrame, x_axis: str, y_axis: str) -> pd.DataFrame:
     ols_reg_no_fe = smf.ols(f'{y_axis} ~ {x_axis}', data=df).fit()
-    ols_reg_with_country_year_fe = smf.ols(f'{y_axis} ~ {x_axis} + C(country) + C(year)', data=df).fit()
+    ols_reg_with_country_fe = smf.ols(f'{y_axis} ~ {x_axis} + C(country)', data=df).fit()
 
     results = []
 
-    for model in [ols_reg_no_fe, ols_reg_with_country_year_fe]:
+    for model in [ols_reg_no_fe, ols_reg_with_country_fe]:
         coef = model.params.get(x_axis)
         bse = model.bse.get(x_axis)
         pval = model.pvalues.get(x_axis)
@@ -32,11 +32,9 @@ def _make_table_slopes_by_urbanization(df: pd.DataFrame, x_axis: str, y_axis: st
         results.append([coef, bse, pval, r2, nobs])
 
     # Mapping model types for the final table
-    year_fe = ['no', 'yes']
     country_fe = ['no', 'yes']
 
     table = pd.DataFrame(results, columns=['coef', 'bse', 'pval', 'r2', 'nobs'])
-    table['year_fe'] = year_fe
     table['country_fe'] = country_fe
     return table
 
@@ -49,13 +47,11 @@ def _format_table_slopes_by_urbanization_for_latex(table: pd.DataFrame, x_label:
     n_str    = [f"{int(table.loc[i,'nobs'])}" for i in range(m)]
     r2_str   = [f"{table.loc[i,'r2']:.3f}" for i in range(m)]
     cfe_str  = [str(table.loc[i,'country_fe']).capitalize() for i in range(m)]
-    yfe_str  = [str(table.loc[i,'year_fe']).capitalize() for i in range(m)]
 
     out = pd.DataFrame([
         [x_label,              *coef_str],
         ["",                   *bse_str],
         ["Country fixed effect", *cfe_str],
-        ["Year fixed effect",    *yfe_str],
         ["Observations",         *n_str],
         [r"$R^2$",               *r2_str],
     ], columns=[''] + [f"col{i}" for i in range(1, m+1)]) 
