@@ -17,6 +17,18 @@ from .constants import constants
     
 
 def _load_raster(con: sqlalchemy.Connection, table_name: str, year: int, schema: str = 'public') -> xr.DataArray:
+    """
+    Load a raster from a table to postgis.
+    
+    Parameters:
+    - con: sqlalchemy connection
+    - table_name: str
+    - year: int
+    - schema: str
+
+    Returns:
+    - xr.DataArray (this is a rioxarray DataArray)
+    """
     res = con.execute(text(f"""
                 SELECT ST_AsGDALRaster(ST_Union(rast), 'GTIff') 
                 FROM {schema}.{table_name}
@@ -28,6 +40,15 @@ def _load_raster(con: sqlalchemy.Connection, table_name: str, year: int, schema:
     return raster_dataset
 
 def _dump_raster(con: sqlalchemy.Connection, data: xr.DataArray, table_name: str, schema: str = 'public'):
+    """
+    Dump a raster to a table to postgis. I could not find a preimplemented way to do this in python.
+    
+    Parameters:
+    - con: sqlalchemy connection
+    - data: xr.DataArray (it must be a rioxarray DataArray)
+    - table_name: str
+    - schema: str
+    """
     assert data.rio is not None, "The input data must be a rioxarray DataArray"
     assert data.rio.crs is not None, "The input data must have a CRS"
     assert data.rio.transform() is not None, "The input data must have a transform"
@@ -104,9 +125,16 @@ def usa_crosswalk_nhgis_census_place_to_connected_component(context: dg.AssetExe
     deps=[TableNamesResource().names.usa.transformations.usa_raster_census_place()],
     partitions_def=dg.StaticPartitionsDefinition([str(y) for y in constants["USA_YEARS"]]),
     kinds={'postgres'},
-    group_name="usa_intermediate_rasterize_census_places"
+    group_name="usa_intermediate_rasterize_census_places",
+    metadata={
+        "dagster/column_schema": dg.TableSchema([
+            dg.TableColumn(name="rast", type="raster", description="The raster. Its just one big tile with all the cells."),
+        ])
+    }
 )
 def usa_raster_census_place_convolved_year(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource):
+    """Convolution of the raster census place for a given year. We apply a 2D exponential kernel to the raster to smooth the population values. The original raster is very spiky because census place population are assigned to the cells contained within the census place. The convolution kernel spreads out the population around the cells containing the x, y coordinates of the census place."""
+
     year = context.partition_key
     context.log.info(f"Convolving raster census place for year {year}")
 
@@ -130,9 +158,16 @@ def usa_raster_census_place_convolved_year(context: dg.AssetExecutionContext, po
 @dg.asset(
     deps=[usa_raster_census_place_convolved_year],
     kinds={'postgres'},
-    group_name="usa_intermediate_rasterize_census_places"
+    group_name="usa_intermediate_rasterize_census_places",
+    metadata={
+        "dagster/column_schema": dg.TableSchema([
+            dg.TableColumn(name="rast", type="raster", description="The raster for a given year. Its just one big tile with all the cells."),
+            dg.TableColumn(name="year", type="INT", description="The year"),
+        ])
+    }
 )
 def usa_raster_census_place_convolved_all_years(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource):
+    """The union of all the convolved raster tables into a single table"""
     context.log.info(f"Unioning all the convolved raster tables into a single table")
     union_year_raster_tables_into_single_table(
         union_table_name=tables.names.usa.transformations.usa_raster_census_place_convolved_all_years(),

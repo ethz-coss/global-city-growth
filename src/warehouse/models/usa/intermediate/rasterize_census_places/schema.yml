@@ -1,0 +1,29 @@
+models:
+  - name: usa_census_place_stable_population
+    description: "Population of census place stable. Union of the normalized population before 1940 and the NHGIS population from 1990 to 2020."
+    columns:
+      - name: census_place_stable_id
+        description: "The NHGIS ID of the stable census place"
+      - name: year
+      - name: population
+
+  - name: usa_census_place_stable_geom
+    description: "Geometry of census place stable"
+    columns:
+      - name: census_place_stable_id
+        description: "The NHGIS ID of the stable census place"
+      - name: geom
+        description: "Coordinate reference system = EPSG:5070"
+
+  - name: usa_template_raster
+    description: "A template raster covering the continental USA. The raster is a box that covers all US states except Alaska and Hawaii."
+    columns:
+      - name: rast
+        description: "Coordinate reference system = EPSG:5070"
+
+  - name: usa_raster_census_place
+    description: "A raster with the population of the census place stable for each year. We take the template raster and fill it with values. Each raster cell in a given year is given as value the sum of the population in the census place stable contained within that cell in that year."
+    columns:
+      - name: rast
+        description: "The raster tiles (each tile contains many cells). Coordinate reference system = EPSG:5070"
+      - name: year
