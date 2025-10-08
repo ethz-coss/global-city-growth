@@ -3,9 +3,9 @@ models:
     description: "Crosswalk between historical census places and NHGIS census places. Each historical census place is linked to its closest NHGIS census place."
     columns:
       - name: hist_census_place_id
-        description: "The Census Place Project ID of the census place"
+        description: "see crosswalk_hist_id_to_hist_census_place_raw"
       - name: nhgis_census_place_id
-        description: "The NHGIS ID of the census place"
+        description: "see usa_nhgis_census_place_geom"
       - name: distance
         description: "The distance between the historical census place and the NHGIS census place"
 
@@ -13,9 +13,9 @@ models:
     description: "Migration flows between NHGIS census places aggregated from hist census place migration"
     columns:
       - name: census_place_origin
-        description: "The NHGIS ID of the census place where the person was living in the origin year"
+        description: "see usa_nhgis_census_place_migration"
       - name: census_place_destination
-        description: "The NHGIS ID of the census place where the person was living in the destination year"
+        description: "see usa_nhgis_census_place_migration"
       - name: year_origin
       - name: year_destination
       - name: all_migrants
@@ -25,7 +25,7 @@ models:
     description: "Population of NHGIS census places aggregated from hist census place population"
     columns:
       - name: census_place_id
-        description: "The NHGIS ID of the census place"
+        description: "see usa_nhgis_census_place_geom"
       - name: year
       - name: population
 
@@ -33,7 +33,7 @@ models:
     description: "Number of times a census place appears in the data and the last year it appears in the data"
     columns:
       - name: census_place_id
-        description: "The NHGIS ID of the census place"
+        description: "see usa_nhgis_census_place_geom"
       - name: num_appearances
         description: "The number of times the census place appears in the data"
       - name: last_appearance
@@ -43,7 +43,7 @@ models:
     description: "Linked population of NHGIS census places aggregated from hist census place migration. It is important to note that census place population and linked population are different because not all individuals are linked. To compute migration probabilities, we need to use the linked population, because migrants are part of the linked population."
     columns:
       - name: census_place_id
-        description: "The NHGIS ID of the census place"
+        description: "see usa_nhgis_census_place_geom"
       - name: year
       - name: population
         description: "The linked population of the census place. Sum of all migrants that were there in the origin year."
@@ -52,9 +52,9 @@ models:
     description: "Migration probability between two census places. It is the ratio of the number of migrants to the linked population of the origin census place."
     columns:
       - name: census_place_origin
-        description: "The NHGIS ID of the census place where the person was living in the origin year"
+        description: "The NHGISPLACE code of the census place where the person was living in the origin year"
       - name: census_place_destination
-        description: "The NHGIS ID of the census place where the person was living in the destination year"
+        description: "The NHGISPLACE code of the census place where the person was living in the destination year"
       - name: year_origin
       - name: year_destination
       - name: migration_probability
@@ -63,9 +63,9 @@ models:
     description: "Nearest neighbors for each NHGIS census place. We use the nearest neighbors as a fallback for places that disappear from the data and for which we have no migration information."
     columns:
       - name: census_place_id
-        description: "The NHGIS ID of the census place"
+        description: "see usa_nhgis_census_place_geom"
       - name: neighbor_census_place_id
-        description: "The NHGIS ID of the nearest neighbor"
+        description: "The NHGISPLACE code of the nearest neighbor"
       - name: distance
         description: "The distance between the census place and the nearest neighbor"
 
@@ -73,23 +73,23 @@ models:
     description: "Equivalence network between NHGIS census places. The edges of this network are decided based on the following rules: 1. If a census place disappears from the data, we select a 'continuation' place and link it to the census place that disappeared. This continuation place is: (a) the census place that has the highest migration probability to the disappearing place in the year of disappearance; (b) the census place that is the nearest neighbor of the disappearing place. 2. If two census places have a high migration probability, we link them. The migration probability is considered high if it is higher than 0.t and the distance between the places is less than 30000 meters. 3. We link census place to themselves (because a place is always equivalent to itself)."
     columns:
       - name: left_census_place_id
-        description: "The NHGIS ID of one endpoint of the edge"
+        description: "The NHGISPLACE code of one endpoint of the edge"
       - name: right_census_place_id
-        description: "The NHGIS ID of the other endpoint of the edge"
+        description: "The NHGISPLACE code of the other endpoint of the edge"
 
   - name: usa_crosswalk_nhgis_census_place_to_census_place_stable
     description: "Crosswalk from NHGIS census place to census place stable. The ID of the census place stable is the NHGIS ID of the most populous census place in the connected component of the equivalence network. This makes the crosswalk deterministit. "
     columns:
       - name: census_place_stable_id
-        description: "The NHGIS ID of the stable census place (connected component of the equivalence network)"
+        description: "The NHGISPLACE code of the stable census place (connected component of the equivalence network)"
       - name: census_place_id
-        description: "The NHGIS ID of the census place"
+        description: "see usa_nhgis_census_place_geom"
 
   - name: usa_census_place_stable_population_with_anomaly_flags
     description: "Population of census place stable with anomaly flags. The anomaly flags are set to 1 if the population is anomalous. Anomalous population is defined as a population that grows fast in one year and shrinks fast in the next year, creating a spike or a dip."
     columns:
       - name: census_place_stable_id
-        description: "The NHGIS ID of the stable census place"
+        description: "see usa_crosswalk_nhgis_census_place_to_census_place_stable and usa_nhgis_census_place_geom"
       - name: year
       - name: population
       - name: anomaly_flag
@@ -99,7 +99,7 @@ models:
     description: "Population of census place stable interpolated where is missing or anomalous. The population is interpolated using the closest population observations."
     columns:
       - name: census_place_stable_id
-        description: "The NHGIS ID of the stable census place"
+        description: "see usa_crosswalk_nhgis_census_place_to_census_place_stable and usa_nhgis_census_place_geom"
       - name: year
       - name: population
         description: "The population with interpolated values"

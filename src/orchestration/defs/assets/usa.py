@@ -98,7 +98,7 @@ def _convolve2d(image, kernel):
     metadata={
         "dagster/column_schema": dg.TableSchema([
             dg.TableColumn(name="component_id", type="INT", description="The ID of the connected component"),
-            dg.TableColumn(name="census_place_id", type="INT", description="The NHGIS ID of the census place"),
+            dg.TableColumn(name="census_place_id", type="INT", description="see usa_nhgis_census_place_geom"),
         ])
     }
 )
@@ -161,8 +161,8 @@ def usa_raster_census_place_convolved_year(context: dg.AssetExecutionContext, po
     group_name="usa_intermediate_rasterize_census_places",
     metadata={
         "dagster/column_schema": dg.TableSchema([
-            dg.TableColumn(name="rast", type="raster", description="The raster for a given year. Its just one big tile with all the cells."),
-            dg.TableColumn(name="year", type="INT", description="The year"),
+            dg.TableColumn(name="rast", type="raster", description="see usa_raster_census_place_convolved_year"),
+            dg.TableColumn(name="year", type="INT"),
         ])
     }
 )
@@ -184,10 +184,10 @@ def usa_raster_census_place_convolved_all_years(context: dg.AssetExecutionContex
     metadata={
         "dagster/column_schema": dg.TableSchema([
             dg.TableColumn(name="component_id", type="INT", description="The ID of the connected component"),
-            dg.TableColumn(name="cluster_id", type="INT", description="The ID of the cluster"),
-            dg.TableColumn(name="y1", type="INT", description="The startpoint of the cluster growth"),
-            dg.TableColumn(name="y2", type="INT", description="The endpoint of the cluster growth"),
-            dg.TableColumn(name="urban_threshold", type="INT", description="The urban pixel threshold used to classify the pixels as urban or not"),
+            dg.TableColumn(name="cluster_id", type="INT", description="see usa_cluster_base_geom"),
+            dg.TableColumn(name="y1", type="INT", description="see usa_cluster_base_geom"),
+            dg.TableColumn(name="y2", type="INT", description="see usa_cluster_base_geom"),
+            dg.TableColumn(name="urban_threshold", type="INT", description="see usa_cluster_base_geom"),
         ])
     }
 )

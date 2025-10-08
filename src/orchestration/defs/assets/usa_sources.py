@@ -120,7 +120,7 @@ def usa_nhgis_census_place_geom_all_years_raw(context: dg.AssetExecutionContext,
     io_manager_key="postgres_io_manager",
     metadata={
         "dagster/column_schema": dg.TableSchema([
-            dg.TableColumn(name="id", type="INT", description="The Census Place Project ID of the census place"),
+            dg.TableColumn(name="id", type="INT", description="see crosswalk_hist_id_to_hist_census_place_raw"),
             dg.TableColumn(name="lon", type="FLOAT", description="The longitude of the census place"),
             dg.TableColumn(name="lat", type="FLOAT", description="The latitude of the census place"),
         ])

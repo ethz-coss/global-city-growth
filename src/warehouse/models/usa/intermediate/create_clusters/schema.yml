@@ -36,7 +36,7 @@ models:
       - name: y2
         description: "The endpoint of the cluster growth"
       - name: urban_threshold
-        description: "The urban pixel threshold used to classify the pixels as urban or not"
+        description: "see usa_cluster_base_geom"
       - name: geom
         description: "The geometry of the cluster in Coordinate reference system = EPSG:5070"
 
@@ -44,13 +44,13 @@ models:
     description: "The population of the cluster growth at the startpoint (y1) and endpoint (y2). The population of the cluster in year y1 is computed as the sum of the population of the census places in year y1 that are contained within that cluster growth. Same for the population in year y2."
     columns:
       - name: cluster_id
-        description: "The ID of the cluster growth"
+        description: "see usa_cluster_growth_geom"
       - name: y1
-        description: "The startpoint of the cluster growth"
+        description: "see usa_cluster_growth_geom"
       - name: y2
-        description: "The endpoint of the cluster growth"
+        description: "see usa_cluster_growth_geom"
       - name: urban_threshold
-        description: "The urban pixel threshold used to classify the pixels as urban or not"
+        description: "see usa_cluster_base_geom"
       - name: population_y1
         description: "The population of the cluster growth at the startpoint"
       - name: population_y2

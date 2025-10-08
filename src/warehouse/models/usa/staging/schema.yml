@@ -3,14 +3,14 @@ models:
     description: "The geometry of historical census places from the Census Place Project"
     columns:
       - name: id
-        description: "The Census Place Project ID of the census place"
+        description: "see crosswalk_hist_id_to_hist_census_place_raw"
       - name: geom
         description: "The geometry of the census place in EPSG:5070"
   - name: usa_nhgis_census_place_geom
     description: "The geometry of census places from NHGIS"
     columns:
       - name: census_place_id
-        description: "The NHGIS ID of the census place"
+        description: "The NHGISPLACE code, a consistent identifier across time for place points."
       - name: census_place_name
         description: "The name of the census place"
       - name: geom
@@ -19,7 +19,7 @@ models:
     description: "The time series ofpopulation of census places from NHGIS"
     columns:
       - name: census_place_id
-        description: "The NHGIS ID of the census place"
+        description: "see usa_nhgis_census_place_geom"
       - name: year
       - name: population
   - name: usa_states_geom
