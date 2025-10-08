@@ -30,9 +30,23 @@ def upload_readme_to_zenodo(access_token: str):
     upload_file_to_zenodo(file_path, filename, access_token)
 
 
-    
+def download_raw_data_from_zenodo(download_url: str):
+    from pySmartDL import SmartDL
+    from os import fspath
+    import time
+
+    rid = "17240844"
+    download_url = f"https://zenodo.org/api/records/{rid}/files-archive"
+    zip_path = '/Users/andrea/Desktop/PhD/Data/Pipeline/global-city-growth/data_temp_2/raw_data.zip'
+    obj = SmartDL(urls=download_url, dest=fspath(zip_path))
+    obj.start(blocking=False)
+
+    while not obj.isFinished():
+        print(f"Downloading progress: {obj.get_progress() * 100:.3f}%")
+        time.sleep(15)
 
 if __name__ == "__main__":
     ZENODO_ACCESS_TOKEN = 'faOt2P8QYRHkl1i68SnG961MZO6tN4kXtnSWqgimYaAQTnetiG2uBjSxv9fV'
-    upload_readme_to_zenodo(ZENODO_ACCESS_TOKEN)
     # upload_readme_to_zenodo(ZENODO_ACCESS_TOKEN)
+    # upload_raw_data_to_zenodo(ZENODO_ACCESS_TOKEN)
+    # download_raw_data_from_zenodo(ZENODO_ACCESS_TOKEN)

@@ -34,13 +34,11 @@ def _make_temp_download_dir(base_dir: Path) -> Path:
 
 
 def _download_raw_data_zenodo(context: dg.AssetExecutionContext, storage: StorageResource, download_url: str, access_token: str) -> int:
-    # TODO: Remove access token when Zenodo is published
     target_filename = "raw_data.zip"
     download_dir = _make_temp_download_dir(base_dir=storage.paths.download.download())
     zip_path = download_dir / target_filename
 
-    request_args = {"headers": {"Authorization": f"Bearer {access_token}"}}
-    obj = SmartDL(urls=download_url, dest=fspath(zip_path), request_args=request_args)
+    obj = SmartDL(urls=download_url, dest=fspath(zip_path))
     obj.start(blocking=False)
 
     while not obj.isFinished():
@@ -189,9 +187,7 @@ def raw_data_zenodo(context: dg.AssetExecutionContext, storage: StorageResource)
     context.log.info("Downloading Raw Data from Zenodo")
     data_catalog = _load_data_catalog(path=storage.data_catalog_path)
     download_url = _get_inputs_raw_data_zenodo(data_catalog=data_catalog)
-    # TODO: remove when Zenodo is published
-    ZENODO_ACCESS_TOKEN = 'faOt2P8QYRHkl1i68SnG961MZO6tN4kXtnSWqgimYaAQTnetiG2uBjSxv9fV'
-    size = _download_raw_data_zenodo(context=context, storage=storage, download_url=download_url, access_token=ZENODO_ACCESS_TOKEN)
+    size = _download_raw_data_zenodo(context=context, storage=storage, download_url=download_url)
     return dg.Output(value=size, metadata={"size": size})
 
 @dg.asset(

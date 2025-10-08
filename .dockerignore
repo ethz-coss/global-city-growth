@@ -7,4 +7,5 @@ venv/
 
 tmp/
 data*/
+/figures*/
 .dagster_instance/
