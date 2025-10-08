@@ -121,9 +121,7 @@ def world_crosswalk_cshapes_code_to_iso_code(context: dg.AssetExecutionContext, 
     io_manager_key="postgres_io_manager"
 )
 def world_urbanization_raw(context: dg.AssetExecutionContext, storage: StorageResource):
-    urbanization_path = storage.paths.world.owid.urbanization()
-    from pathlib import Path
-    urbanization_path = Path("data/world/owid/world_urbanization_clean.csv")
+    urbanization_path = storage.paths.world.misc.urbanization()
     context.log.info(f"Copying urbanization from {urbanization_path}")
     urbanization_df = pd.read_csv(urbanization_path)
     return urbanization_df
@@ -137,7 +135,7 @@ def world_urbanization_raw(context: dg.AssetExecutionContext, storage: StorageRe
     io_manager_key="postgres_io_manager"
 )
 def world_country_region(context: dg.AssetExecutionContext, storage: StorageResource):
-    countries_with_regions_path = storage.paths.world.owid.countries_with_regions()
+    countries_with_regions_path = storage.paths.world.misc.countries_with_regions()
     context.log.info(f"Copying countries with region and subregion from {countries_with_regions_path}")
     countries_with_regions_df = pd.read_csv(countries_with_regions_path)
     return countries_with_regions_df
@@ -151,7 +149,7 @@ def world_country_region(context: dg.AssetExecutionContext, storage: StorageReso
     io_manager_key="postgres_io_manager"
 )
 def world_population_raw(context: dg.AssetExecutionContext, storage: StorageResource):
-    population_path = storage.paths.world.owid.population()
+    population_path = storage.paths.world.misc.population()
     context.log.info(f"Copying population from {population_path}")
     population_df = pd.read_csv(population_path)
     return population_df

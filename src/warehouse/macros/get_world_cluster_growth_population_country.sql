@@ -1,6 +1,12 @@
 {% macro get_world_cluster_growth_population_country(urban_threshold, city_population_threshold, country_min_num_cities, country_exclude, analysis_id) %}
     WITH countries AS (
-        WITH num_cities_by_country_year AS (
+        WITH countries_in_urbanization_and_population_data AS (
+            SELECT DISTINCT country
+            FROM {{ ref('world_urbanization') }}
+            INNER JOIN {{ ref('world_population') }}
+            USING (country)
+        ),
+        num_cities_by_country_year AS (
             SELECT  country, 
                     y1 AS year, 
                     COUNT(DISTINCT cluster_id) AS num_cities
@@ -18,6 +24,7 @@
         FROM num_cities_by_country
         WHERE num_cities >= {{ country_min_num_cities }}
         AND country NOT IN ({{ country_exclude }})
+        AND country IN (SELECT country FROM countries_in_urbanization_and_population_data)
     ),
     cities AS (
         SELECT  cluster_id,

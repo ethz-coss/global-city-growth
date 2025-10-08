@@ -125,8 +125,8 @@ def si_figure_usa_robustness(context: dg.AssetExecutionContext, postgres: Postgr
     figure_file_name = 'si_figure_usa_robustness.png'
 
     analysis_id_50 = MAIN_ANALYSIS_ID
-    analysis_id_100 = 9
-    analysis_id_200 = 10
+    analysis_id_100 = 10
+    analysis_id_200 = 11
     map_analysis_id_to_urban_threshold = {analysis_id_50: 50, analysis_id_100: 100, analysis_id_200: 200}
     e1, e2, e3 = '1850-1880', '1900-1940', '1990-2020'
     epochs = [e1, e2, e3]

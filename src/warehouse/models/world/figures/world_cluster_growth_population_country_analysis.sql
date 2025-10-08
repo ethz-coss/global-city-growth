@@ -1,4 +1,6 @@
 -- depends_on: {{ ref('world_cluster_growth_population_country') }}
+-- depends_on: {{ ref('world_urbanization') }}
+-- depends_on: {{ ref('world_population') }}
 {% set get_analysis_parameters_query %}
     SELECT
         analysis_id,

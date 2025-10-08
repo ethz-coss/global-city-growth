@@ -83,11 +83,11 @@ class CShapesBorderPaths:
     
 
 @dataclass(frozen=True)
-class OWIDPaths:
+class MiscPaths:
     root: Path
 
     def urbanization(self) -> Path:
-        return self.root / "urban-population-share-2050.csv"
+        return self.root / "urban-population-share-with-projections.csv"
 
     def population(self) -> Path:
         return self.root / "population-long-run-with-projections.csv"
@@ -100,14 +100,14 @@ class OWIDPaths:
 class WorldPaths:
     ghsl: GHSLPaths
     cshapes_border: CShapesBorderPaths
-    owid: OWIDPaths
+    misc: MiscPaths
 
     @classmethod
     def from_root(cls, root: Path) -> "WorldPaths":
         return cls(
             ghsl=GHSLPaths(root / "ghsl"),
             cshapes_border=CShapesBorderPaths(root / "cshapes"),
-            owid=OWIDPaths(root / "owid")
+            misc=MiscPaths(root / "misc")
         )
 
 @dataclass(frozen=True)

@@ -105,8 +105,6 @@ average_rank_size_slope_late_2075 AS (
     SELECT  'Average rank size slope in late 2075' AS description,
             AVG(rank_size_slope) AS value
     FROM {{ ref('world_rank_size_slopes') }}
-    JOIN {{ ref('world_urbanization_groups') }}
-    USING (country)
     WHERE year = 2075 AND urban_population_share_group = '0-60'
     AND analysis_id = {{ analysis_id }}
 ),
@@ -114,12 +112,9 @@ average_rank_size_slope_early_2075 AS (
     SELECT  'Average rank size slope in early 2075' AS description,
             AVG(rank_size_slope) AS value
     FROM {{ ref('world_rank_size_slopes') }}
-    JOIN {{ ref('world_urbanization_groups') }}
-    USING (country)
     WHERE year = 2075 AND urban_population_share_group = '60-100'
     AND analysis_id = {{ analysis_id }}
 ),
-share_of_population_covered_
 paper_stats AS (
     SELECT * FROM share_of_urban_population_living_in_cities_above_1m_world_1975
     UNION ALL
