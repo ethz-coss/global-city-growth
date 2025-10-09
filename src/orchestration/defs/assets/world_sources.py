@@ -11,7 +11,7 @@ from ...utils import union_year_raster_tables_into_single_table
 from ..assets.download import raw_data_zenodo
 
 
-ghsl_years_partition = dg.StaticPartitionsDefinition([str(y) for y in constants['GHSL_RASTER_YEARS']])
+# ghsl_years_partition = dg.StaticPartitionsDefinition([str(y) for y in constants['GHSL_RASTER_YEARS']])
 
 def _load_ghsl_raster(context: dg.AssetExecutionContext, bash: dg.PipesSubprocessClient, raster_path: str, table_name: str):
     """
@@ -34,12 +34,11 @@ def _load_ghsl_raster(context: dg.AssetExecutionContext, bash: dg.PipesSubproces
     current_dir = os.path.dirname(os.path.abspath(__file__))
     bash_script_path = f'{current_dir}/load_ghsl_raster.sh'
     cmd = ["bash", bash_script_path] + args
-    return bash.run(command=cmd, context=context).get_results()
+    bash.run(command=cmd, context=context).get_results()
 
 @dg.asset(
     deps=[raw_data_zenodo],
     kinds={'postgres'},
-    partitions_def=ghsl_years_partition,
     group_name="world_raw",
     metadata={
         "dagster/column_schema": dg.TableSchema([
@@ -50,16 +49,15 @@ def _load_ghsl_raster(context: dg.AssetExecutionContext, bash: dg.PipesSubproces
 )
 def world_raster_ghsl_pop(context: dg.AssetExecutionContext, storage: StorageResource, tables: TableNamesResource, bash: dg.PipesSubprocessClient):
     """ The population raster from GHSL"""
-    year = context.partition_key
-    context.log.info(f"Copying GHSL pop raster for year {year}")
-    ghsl_pop_raster_path = storage.paths.world.ghsl.pop(year=year)
-    table_name = tables.names.world.sources.world_raster_ghsl_pop(year=year)
-    return _load_ghsl_raster(context=context, bash=bash, raster_path=ghsl_pop_raster_path, table_name=table_name)
+    for year in constants['GHSL_RASTER_YEARS']:
+        context.log.info(f"Copying GHSL pop raster for year {year}")
+        ghsl_pop_raster_path = storage.paths.world.ghsl.pop(year=year)
+        table_name = tables.names.world.sources.world_raster_ghsl_pop(year=year)
+        _load_ghsl_raster(context=context, bash=bash, raster_path=ghsl_pop_raster_path, table_name=table_name)
 
 @dg.asset(
     deps=[raw_data_zenodo],
     kinds={'postgres'},
-    partitions_def=ghsl_years_partition,
     group_name="world_raw",
     metadata={
         "dagster/column_schema": dg.TableSchema([
@@ -70,11 +68,11 @@ def world_raster_ghsl_pop(context: dg.AssetExecutionContext, storage: StorageRes
 )
 def world_raster_ghsl_smod(context: dg.AssetExecutionContext, storage: StorageResource, tables: TableNamesResource, bash: dg.PipesSubprocessClient):
     """ The degree of urbanization raster from the GHSL"""
-    year = context.partition_key
-    context.log.info(f"Copying GHSL smod raster for year {year}")
-    ghsl_smod_raster_path = storage.paths.world.ghsl.smod(year=year)
-    table_name = tables.names.world.sources.world_raster_ghsl_smod(year=year)
-    return _load_ghsl_raster(context=context, bash=bash, raster_path=ghsl_smod_raster_path, table_name=table_name)
+    for year in constants['GHSL_RASTER_YEARS']:
+        context.log.info(f"Copying GHSL smod raster for year {year}")
+        ghsl_smod_raster_path = storage.paths.world.ghsl.smod(year=year)
+        table_name = tables.names.world.sources.world_raster_ghsl_smod(year=year)
+        _load_ghsl_raster(context=context, bash=bash, raster_path=ghsl_smod_raster_path, table_name=table_name)
 
 
 @dg.asset(
