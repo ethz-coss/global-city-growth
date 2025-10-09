@@ -157,7 +157,7 @@ def _get_data_for_projection_vs_historical_share_population_cities_above_1m(post
 
 @dg.asset(
     deps=[TableNamesResource().names.world.figures.world_rank_size_slopes_decade_change(), TableNamesResource().names.world.figures.world_size_growth_slopes_historical(), TableNamesResource().names.world.si.world_rank_size_slopes_ols_decade_change(), TableNamesResource().names.world.si.world_size_growth_slopes_ols(), TableNamesResource().names.world.figures.world_population_share_cities_above_1m_historical(), TableNamesResource().names.world.figures.world_population_share_cities_above_1m_projections(), TableNamesResource().names.world.si.world_population_share_cities_above_1m_projections_ols()],
-    group_name="supplementary_information"
+    group_name="si_figures"
 )
 def si_figure_equation_correlation(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> dg.MaterializeResult:
     context.log.info("Plotting equation correlation figure")
@@ -181,7 +181,7 @@ def si_figure_equation_correlation(context: dg.AssetExecutionContext, postgres: 
 
 @dg.asset(
     deps=[TableNamesResource().names.world.figures.world_population_share_cities_above_1m_historical(), TableNamesResource().names.world.figures.world_population_share_cities_above_1m_projections(), TableNamesResource().names.world.si.world_urban_population(), TableNamesResource().names.world.sources.world_country_region()],
-    group_name="supplementary_information"
+    group_name="si_figures"
 )
 def si_figure_projection_vs_historical_share_population_cities_above_1m(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> dg.MaterializeResult:
     context.log.info("Plotting projection vs historical share population cities above 1m figure")

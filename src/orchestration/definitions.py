@@ -18,7 +18,11 @@ from .defs.assets.figures.si.si_linear_rigidity import si_figure_linear_rigidity
 from .defs.assets.figures.si.si_robustness import si_figure_usa_robustness, si_tables_world_robustness
 from .defs.resources.resources import duckdb_resource, storage_resource, postgres_resource, dbt_resource, table_names_resource, pipes_subprocess_resource, postgres_pandas_io_manager, ipums_api_client
 
-# job_all = define_asset_job("all_job", selection=AssetSelection.all())
+download_job = define_asset_job("0_download_job", selection=AssetSelection.groups("download"))
+ipums_full_count_job = define_asset_job("1_ipums_full_count_job", selection=AssetSelection.groups("ipums_full_count_staging", "ipums_full_count_intermediate", "ipums_full_count_final"))
+usa_job = define_asset_job("2_usa_job", selection=AssetSelection.groups("usa_raw", "usa_staging", "usa_intermediate_normalize_hist_data", "usa_intermediate_rasterize_census_places", "usa_intermediate_create_clusters"))
+world_job = define_asset_job("3_world_job", selection=AssetSelection.groups("world_raw", "world_staging", "world_intermediate"))
+figures_job = define_asset_job("4_figures_job", selection=AssetSelection.groups("figure_data_prep", "paper_stats", "figures", "si_figure_data_prep", "si_figures"))
 
 defs = Definitions(
     assets=[
@@ -111,5 +115,6 @@ defs = Definitions(
         "postgres_io_manager": postgres_pandas_io_manager,
         "ipums_api_client": ipums_api_client
     },
+    jobs=[download_job, ipums_full_count_job, usa_job, world_job, figures_job],
     executor=in_process_executor
 )

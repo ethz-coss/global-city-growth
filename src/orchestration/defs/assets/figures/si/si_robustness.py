@@ -118,7 +118,7 @@ def _get_data_size_vs_growth(postgres: PostgresResource, table_size_vs_growth: s
 
 @dg.asset(
     deps=[TableNamesResource().names.usa.figures.usa_size_vs_growth(), TableNamesResource().names.usa.figures.usa_size_vs_growth_normalized(),TableNamesResource().names.usa.figures.usa_year_epoch(), TableNamesResource().names.usa.figures.usa_average_growth()],
-    group_name="supplementary_information"
+    group_name="si_figures"
 )
 def si_figure_usa_robustness(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> dg.MaterializeResult:
     context.log.info("Creating usa robustness figure")
@@ -176,7 +176,7 @@ def si_figure_usa_robustness(context: dg.AssetExecutionContext, postgres: Postgr
 
 @dg.asset(
     deps=[TableNamesResource().names.other.analysis_parameters(), TableNamesResource().names.world.figures.world_size_growth_slopes_historical_urbanization()],
-    group_name="supplementary_information"
+    group_name="si_figures"
 )
 def si_tables_world_robustness(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> dg.MaterializeResult:
     context.log.info("Creating world robustness tables")

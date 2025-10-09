@@ -165,7 +165,7 @@ def _get_data_linear_vs_spline_slope(engine: Engine, table_name: str, column_nam
       
 @dg.asset(
     deps=[TableNamesResource().names.world.figures.world_rank_vs_size(), TableNamesResource().names.world.figures.world_size_vs_growth(), TableNamesResource().names.world.si.world_linearity_test_size_vs_growth(), TableNamesResource().names.world.si.world_linearity_test_rank_vs_size()],
-    group_name="supplementary_information",
+    group_name="si_figures",
     io_manager_key="postgres_io_manager"
 )
 def si_figure_linear_rigidity(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> dg.MaterializeResult:
