@@ -11,8 +11,6 @@ from ...utils import union_year_raster_tables_into_single_table
 from ..assets.download import raw_data_zenodo
 
 
-# ghsl_years_partition = dg.StaticPartitionsDefinition([str(y) for y in constants['GHSL_RASTER_YEARS']])
-
 def _load_ghsl_raster(context: dg.AssetExecutionContext, bash: dg.PipesSubprocessClient, raster_path: str, table_name: str):
     """
     Runs a bash script to load a raster into a table in postgis.
