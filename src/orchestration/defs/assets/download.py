@@ -33,7 +33,7 @@ def _make_temp_download_dir(base_dir: Path) -> Path:
     return download_dir
 
 
-def _download_raw_data_zenodo(context: dg.AssetExecutionContext, storage: StorageResource, download_url: str, access_token: str) -> int:
+def _download_raw_data_zenodo(context: dg.AssetExecutionContext, storage: StorageResource, download_url: str) -> int:
     target_filename = "raw_data.zip"
     download_dir = _make_temp_download_dir(base_dir=storage.paths.download.download())
     zip_path = download_dir / target_filename

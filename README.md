@@ -1,0 +1,11 @@
+- clone the repository ``git clone https://github.com/andreamusso96/global-city-growth.git``
+- enter the repostory ``cd global-city-growth``
+- copy the .env.example file into a .env file
+- get an API key from IPUMS (https://developer.ipums.org/docs/v2/get-started/)
+- copy it into the .env file
+- run the containers  ``docker compose up --build``
+- wait for docker to build and launch (around 3 minutes)
+- Navigate to the dagster UI (http://localhost:3000/)
+- Navigate to the jobs panel on top of the screen
+- Run the jobs in the order suggested (first download,...)
+- Wait for each job to run and then run the next only if the previous one was successful
