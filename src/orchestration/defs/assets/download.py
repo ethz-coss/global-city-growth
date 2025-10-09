@@ -133,14 +133,14 @@ def _download_nhgis_1900_2010_place_geom_year(context: dg.AssetExecutionContext,
     outer_zip_name = f"nhgis{extract_id:04d}_shape.zip"
     outer_zip_path = download_dir / outer_zip_name
 
-    _unzip(outer_zip_path=outer_zip_path, dest_dir=download_dir)
+    _unzip(zip_path=outer_zip_path, dest_dir=download_dir)
 
     extracted_dir = download_dir / f"nhgis{extract_id:04d}_shape"
     inner_zip_name = f"nhgis{extract_id:04d}_shapefile_tlgnis_us_place_point_{year}.zip"
     inner_zip_path = extracted_dir / inner_zip_name
 
     final_dir = storage.paths.usa.nhgis.census_place_geom_folder(year=year)
-    _unzip(inner_zip_path=inner_zip_path, dest_dir=final_dir) 
+    _unzip(zip_path=inner_zip_path, dest_dir=final_dir) 
     shutil.rmtree(download_dir)
     return final_dir.stat().st_size
 

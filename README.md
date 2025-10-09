@@ -8,4 +8,7 @@
 - Navigate to the dagster UI (http://localhost:3000/)
 - Navigate to the jobs panel on top of the screen
 - Run the jobs in the order suggested (first download,...)
-- Wait for each job to run and then run the next only if the previous one was successful
+- Start by running 0_download_job which downloads all the data
+- This job takes around X hours
+- If you go in the Runs panel on Dagster and click on the job you can see the progress logs under events
+- 
