@@ -18,11 +18,23 @@ from .defs.assets.figures.si.si_linear_rigidity import si_figure_linear_rigidity
 from .defs.assets.figures.si.si_robustness import si_figure_usa_robustness, si_tables_world_robustness
 from .defs.resources.resources import duckdb_resource, storage_resource, postgres_resource, dbt_resource, table_names_resource, pipes_subprocess_resource, postgres_pandas_io_manager, ipums_api_client
 
-download_job = define_asset_job("0_download_job", selection=AssetSelection.groups("download"))
-ipums_full_count_job = define_asset_job("1_ipums_full_count_job", selection=AssetSelection.groups("ipums_full_count_staging", "ipums_full_count_intermediate", "ipums_full_count_final"))
-usa_job = define_asset_job("2_usa_job", selection=AssetSelection.groups("usa_raw", "usa_staging", "usa_intermediate_normalize_hist_data", "usa_intermediate_rasterize_census_places", "usa_intermediate_create_clusters"))
-world_job = define_asset_job("3_world_job", selection=AssetSelection.groups("world_raw", "world_staging", "world_intermediate"))
-figures_job = define_asset_job("4_figures_job", selection=AssetSelection.groups("figure_data_prep", "paper_stats", "figures", "si_figure_data_prep", "si_figures"))
+download_job = define_asset_job("0_download_job", 
+                                selection=AssetSelection.groups("download"),
+                                description="Download the raw data from the sources. Should run first.")
+ipums_full_count_job = define_asset_job("1_ipums_full_count_job", 
+                                        selection=AssetSelection.groups("ipums_full_count_staging", "ipums_full_count_intermediate", "ipums_full_count_final"),
+                                        description="Extract census place population estimates from the IPUMS USA Full Count data. Should run second.")
+usa_job = define_asset_job("2_usa_job", 
+                           selection=AssetSelection.groups("usa_raw", "usa_staging", "usa_intermediate_normalize_hist_data", "usa_intermediate_rasterize_census_places", "usa_intermediate_create_clusters"),
+                           description="Clean the census place population estimates, create US population rasters, and extract clusters. Should run third.")
+
+
+world_job = define_asset_job("3_world_job", 
+                             selection=AssetSelection.groups("world_raw", "world_staging", "world_intermediate"),
+                             description="Create clusters from the GHSL grids. Should run fourth.")
+figures_job = define_asset_job("4_figures_job", 
+                               selection=AssetSelection.groups("figure_data_prep", "paper_stats", "figures", "si_figure_data_prep", "si_figures"),
+                               description="Prepare the data for the figures and supplementary information and then make the plots. Should run fifth.")
 
 defs = Definitions(
     assets=[
