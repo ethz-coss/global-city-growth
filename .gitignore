@@ -1,6 +1,6 @@
 # Environment variables
 .env
-/.DS_Store
+.DS_Store
 
 # Python cache and virtual environments
 __pycache__/
@@ -8,11 +8,12 @@ __pycache__/
 .venv/
 venv/
 
-# Project-specific outputs (we only want to track code, not generated artifacts)
-artifacts/
-warehouse/dbt_packages/
-warehouse/logs/
-warehouse/target/
+/logs/
+/src/logs/
+
+src/warehouse/dbt_packages/
+src/warehouse/logs/
+src/warehouse/target/
 
 # Notebook checkpoints
 .ipynb_checkpoints
