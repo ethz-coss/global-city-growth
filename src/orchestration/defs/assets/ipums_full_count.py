@@ -188,7 +188,7 @@ def ipums_full_count_census_place_id(context: dg.AssetExecutionContext, duckdb: 
     
 
 @dg.asset(
-    deps=[ipums_full_count_census_place_id],
+    deps=[dg.AssetDep(ipums_full_count_census_place_id, partition_mapping=dg.AllPartitionMapping())],
     kinds={'duckdb'},
     group_name="ipums_full_count_intermediate",
     pool="duckdb_write",
