@@ -123,7 +123,6 @@ def usa_crosswalk_nhgis_census_place_to_connected_component(context: dg.AssetExe
 
 @dg.asset(
     deps=[TableNamesResource().names.usa.transformations.usa_raster_census_place()],
-    partitions_def=dg.StaticPartitionsDefinition([str(y) for y in constants["USA_YEARS"]]),
     kinds={'postgres'},
     group_name="usa_intermediate_rasterize_census_places",
     metadata={
@@ -135,24 +134,24 @@ def usa_crosswalk_nhgis_census_place_to_connected_component(context: dg.AssetExe
 def usa_raster_census_place_convolved_year(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource):
     """Convolution of the raster census place for a given year. We apply a 2D exponential kernel to the raster to smooth the population values. The original raster is very spiky because census place population are assigned to the cells contained within the census place. The convolution kernel spreads out the population around the cells containing the x, y coordinates of the census place."""
 
-    year = context.partition_key
-    context.log.info(f"Convolving raster census place for year {year}")
-
     convolution_kernel_size = constants["USA_CONVOLUTION_KERNEL_SIZE"]
     convolution_kernel_decay = constants["USA_CONVOLUTION_KERNEL_DECAY"]
-    convolved_raster_table_name = tables.names.usa.transformations.usa_raster_census_place_convolved_year(year=year)
 
-    engine = postgres.get_engine()
-    with engine.begin() as con:
-        con.execute(text(f"DROP TABLE IF EXISTS {convolved_raster_table_name}"))
-        raster = _load_raster(con=con, table_name=tables.names.usa.transformations.usa_raster_census_place(), year=year)
-        raster_vals = raster.sel(band=1).values.astype(np.float64)
+    for year in constants["USA_YEARS"]:
+        context.log.info(f"Convolving raster census place for year {year}")
+        convolved_raster_table_name = tables.names.usa.transformations.usa_raster_census_place_convolved_year(year=year)
 
-        kernel = _get_2d_exponential_kernel(size=convolution_kernel_size, decay_rate=convolution_kernel_decay)
-        convolved_raster_vals = _convolve2d(image=raster_vals, kernel=kernel)
+        engine = postgres.get_engine()
+        with engine.begin() as con:
+            con.execute(text(f"DROP TABLE IF EXISTS {convolved_raster_table_name}"))
+            raster = _load_raster(con=con, table_name=tables.names.usa.transformations.usa_raster_census_place(), year=year)
+            raster_vals = raster.sel(band=1).values.astype(np.float64)
 
-        convolved_raster = raster.copy(data=np.expand_dims(convolved_raster_vals, axis=0))
-        _dump_raster(con=con, data=convolved_raster, table_name=convolved_raster_table_name, schema="public")
+            kernel = _get_2d_exponential_kernel(size=convolution_kernel_size, decay_rate=convolution_kernel_decay)
+            convolved_raster_vals = _convolve2d(image=raster_vals, kernel=kernel)
+
+            convolved_raster = raster.copy(data=np.expand_dims(convolved_raster_vals, axis=0))
+            _dump_raster(con=con, data=convolved_raster, table_name=convolved_raster_table_name, schema="public")
 
 
 @dg.asset(
