@@ -11,4 +11,4 @@
 - Start by running 0_download_job which downloads all the data
 - This job takes around 2:10 hours
 - If you go in the Runs panel on Dagster and click on the job you can see the progress logs under events
-- Launch the 1_ipums_full_count. Pick all in the parittion selection and click launch backfill
+- Launch the 1_ipums_full_count
