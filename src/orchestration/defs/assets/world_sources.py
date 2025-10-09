@@ -53,6 +53,8 @@ def world_raster_ghsl_pop(context: dg.AssetExecutionContext, storage: StorageRes
         table_name = tables.names.world.sources.world_raster_ghsl_pop(year=year)
         _load_ghsl_raster(context=context, bash=bash, raster_path=ghsl_pop_raster_path, table_name=table_name)
 
+    return dg.Output(value=None, metadata={"years": constants['GHSL_RASTER_YEARS']})
+
 @dg.asset(
     deps=[raw_data_zenodo],
     kinds={'postgres'},
@@ -71,6 +73,8 @@ def world_raster_ghsl_smod(context: dg.AssetExecutionContext, storage: StorageRe
         ghsl_smod_raster_path = storage.paths.world.ghsl.smod(year=year)
         table_name = tables.names.world.sources.world_raster_ghsl_smod(year=year)
         _load_ghsl_raster(context=context, bash=bash, raster_path=ghsl_smod_raster_path, table_name=table_name)
+    
+    return dg.Output(value=None, metadata={"years": constants['GHSL_RASTER_YEARS']})
 
 
 @dg.asset(
