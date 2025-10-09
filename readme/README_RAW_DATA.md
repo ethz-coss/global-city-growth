@@ -125,9 +125,11 @@ The data in this repository is organized into the following folder structure:
 │   ├── census_place_project/
 │   ├── nhgis/              # populated by acquisition scripts
 │   ├── ipums_full_count/   # populated by acquisition scripts
-│   └── misc/
+│   ├── misc/
+│   └── tmp/                # for db files
 ├── world/
 │   ├── ghsl/
 │   ├── cshapes/
 │   └── misc/
+
 ```
