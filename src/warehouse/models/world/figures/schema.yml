@@ -43,12 +43,12 @@ models:
       - name: max_year
         description: "The latest year in the dataset"
 
-  - name: world_paper_stats:
+  - name: world_paper_stats
     description: "A table of statistics used in the paper."
     columns:
-      - description
+      - name: description
         description: "The description of the statistic computed"
-      - value
+      - name: value
         description: "The value of the statistic computed"
 
   - name: world_average_growth
@@ -125,7 +125,7 @@ models:
       - name: country
         description: "see world_cluster_growth_geocoding"
       - name: size_growth_slope
-        description: "The average slope of the size-growth slope across the observation period (see world_size_growth_slopes_historical for a definition of size-growth slope)"
+        description: "The average value of the size-growth slope across the observation period (see world_size_growth_slopes_historical for a definition of size-growth slope)"
       - name: geom
         description: "The geometry of the country borders in 2019 in the Mollweide projection (EPSG:54009)"
 
@@ -144,7 +144,7 @@ models:
         description: "see world_urbanization"
 
   - name: world_rank_vs_size
-    description: "The log-rank of the cities  (1 = largest city), vs their log-population in a given decade.
+    description: "The log-rank of the cities  (1 = largest city), vs their log-population in a given decade."
     columns:
       - name: cluster_id
         description: "see world_cluster_growth_geom"

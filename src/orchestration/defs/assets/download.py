@@ -184,6 +184,8 @@ def _get_inputs_nhgis_place_geom_1900_2010(data_catalog: Dict[str, Any]) -> Tupl
     group_name="download",
 )
 def raw_data_zenodo(context: dg.AssetExecutionContext, storage: StorageResource):
+    """A zip file called raw_data.zip containing all the raw data used in the project that are redistributable. See readme/README_RAW_DATA.md for more details."""
+
     context.log.info("Downloading Raw Data from Zenodo")
     data_catalog = _load_data_catalog(path=storage.data_catalog_path)
     download_url = _get_inputs_raw_data_zenodo(data_catalog=data_catalog)
@@ -195,6 +197,7 @@ def raw_data_zenodo(context: dg.AssetExecutionContext, storage: StorageResource)
     deps=[raw_data_zenodo],
 )
 def ipums_usa_full_count_downloaded(context: dg.AssetExecutionContext, storage: StorageResource, ipums_api_client: IpumsAPIClientResource):
+    """IPUMS USA Full Count data 1850-1940."""
     context.log.info("Downloading IPUMS USA Full Count")
     data_catalog = _load_data_catalog(path=storage.data_catalog_path)
     years, samples, variables, data_format = _get_inputs_ipums_usa_full_count(data_catalog=data_catalog)
@@ -212,6 +215,7 @@ def ipums_usa_full_count_downloaded(context: dg.AssetExecutionContext, storage: 
     deps=[raw_data_zenodo],
 )
 def nhgis_place_population_1990_2020_downloaded(context: dg.AssetExecutionContext, storage: StorageResource, ipums_api_client: IpumsAPIClientResource):
+    """NHGIS Place Population 1990-2020."""
     context.log.info("Downloading NHGIS Place Population 1990-2020")
     data_catalog = _load_data_catalog(path=storage.data_catalog_path)
     table_name, years, geog_level = _get_inputs_nhgis_place_population_1990_2020(data_catalog=data_catalog)
@@ -223,6 +227,7 @@ def nhgis_place_population_1990_2020_downloaded(context: dg.AssetExecutionContex
     deps=[raw_data_zenodo],
 )
 def nhgis_place_geom_1900_2010_downloaded(context: dg.AssetExecutionContext, storage: StorageResource, ipums_api_client: IpumsAPIClientResource):
+    """NHGIS Place Geometry 1900-2010."""
     context.log.info("Downloading NHGIS Place Geometry 1900-2010")
     data_catalog = _load_data_catalog(path=storage.data_catalog_path)
     years, shapefile_name_template = _get_inputs_nhgis_place_geom_1900_2010(data_catalog=data_catalog)

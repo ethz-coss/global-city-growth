@@ -25,7 +25,7 @@ from .figure_stats import get_mean_derivative_penalized_b_spline, get_ols_slope
     } 
 )
 def world_size_growth_slopes_historical(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource)  -> pd.DataFrame:
-    """We take the log-size and log-growth of the cities in a given country and at the start of a decade and fit a curve through it using a penalized B-spline. We then compute the average slope of the curve. """
+    """We take city log-size at the start of a decade and log-growth over that decade for various countries and years. We then fit a curve through it using a penalized B-spline and compute the average slope of the curve. """
     context.log.info("Calculating world size growth slopes")
     xaxis = 'log_population'
     yaxis = 'log_growth'
@@ -50,7 +50,7 @@ def world_size_growth_slopes_historical(context: dg.AssetExecutionContext, postg
     }
 )
 def world_rank_size_slopes_historical(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> pd.DataFrame:
-    """We take the log-rank (1=largest city) and log-size of the cities in a given country and at the start of a decade and fit a curve through it using a penalized B-spline. We then compute the average slope of the curve. """
+    """We take city log-rank (1=largest city) and log-size in a given year for various countries and years. We then fit a curve through it using a penalized B-spline and compute the average slope of the curve. """
 
     context.log.info("Calculating world rank size slopes")
     xaxis = 'log_rank'
@@ -160,10 +160,11 @@ def _get_regression_results_for_region_regression_with_urbanization_controls(df:
     }
 )
 def world_region_regression_with_urbanization_controls(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> pd.DataFrame:
-    context.log.info("Calculating world region regression with urbanization controls")
     """ 
     We regress regional dummies against the size growth slopes of countries, with and without controls for the urban population share. We then save the coefficients and confidence intervals for the regional dummies of each region.
     """
+    
+    context.log.info("Calculating world region regression with urbanization controls")
     
     q = f"""
     SELECT *
@@ -175,10 +176,6 @@ def world_region_regression_with_urbanization_controls(context: dg.AssetExecutio
     size_growth_slopes_urbanization_region = pd.read_sql(q, con=postgres.get_engine())
     results = size_growth_slopes_urbanization_region.groupby('analysis_id', group_keys=False).apply(lambda g: _get_regression_results_for_region_regression_with_urbanization_controls(df=g).assign(analysis_id=g.name)).reset_index(drop=True)
     return results
-
-# TODO: USA size-growth slopes are missing!!!
-
-
 
 @dg.asset(
     deps=[TableNamesResource().names.usa.figures.usa_rank_vs_size()],

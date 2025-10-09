@@ -5,4 +5,3 @@ sources:
       - name: world_size_growth_slopes_historical
       - name: world_rank_size_slopes_historical
       - name: world_size_growth_slopes_projections
-      - name: world_rank_size_slopes_ols

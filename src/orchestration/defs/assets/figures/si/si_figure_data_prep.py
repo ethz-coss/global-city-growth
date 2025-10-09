@@ -17,9 +17,19 @@ from ..figure_io import MAIN_ANALYSIS_ID
     deps=[TableNamesResource().names.world.figures.world_size_vs_growth()],
     kinds={'postgres'},
     group_name="si_figure_data_prep",
-    io_manager_key="postgres_io_manager"
+    io_manager_key="postgres_io_manager",
+    metadata={
+        "dagster/column_schema": dg.TableSchema([
+            dg.TableColumn(name="analysis_id", type="string", description="see world_cluster_growth_population_country_analysis"),
+            dg.TableColumn(name="country", type="string", description="see world_cluster_growth_geocoding"),
+            dg.TableColumn(name="year", type="int", description="The start year of the decade"),
+            dg.TableColumn(name="size_growth_slope", type="float", description="The coefficient of and OLS regression of log-size vs log-growth"),
+        ])
+    } 
 )
 def world_size_growth_slopes_ols(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource)  -> pd.DataFrame:
+    """We take city log-size at the start of the decade against their log-growth over one decade for various countries and years. We then fit an OLS regression (instead of a penalized B-spline) and take the slope coefficient. """
+
     context.log.info("Calculating world size growth slopes")
     xaxis = 'log_population'
     yaxis = 'log_growth'
@@ -33,9 +43,19 @@ def world_size_growth_slopes_ols(context: dg.AssetExecutionContext, postgres: Po
     deps=[TableNamesResource().names.world.figures.world_rank_vs_size()],
     kinds={'postgres'},
     group_name="si_figure_data_prep",
-    io_manager_key="postgres_io_manager"
+    io_manager_key="postgres_io_manager",
+    metadata={
+        "dagster/column_schema": dg.TableSchema([
+            dg.TableColumn(name="analysis_id", type="string", description="see world_cluster_growth_population_country_analysis"),
+            dg.TableColumn(name="country", type="string", description="see world_cluster_growth_geocoding"),
+            dg.TableColumn(name="year", type="int", description="The start year of the decade"),
+            dg.TableColumn(name="rank_size_slope", type="float", description="The coefficient of and OLS regression of log-rank vs log-size"),
+        ])
+    }
 )
 def world_rank_size_slopes_ols(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource)  -> pd.DataFrame:
+    """We take the city log-rank and log-size in a given year for various countries and years. We then fit an OLS regression (instead of a penalized B-spline) and take the slope coefficient. """
+
     context.log.info("Calculating world rank size slopes")
     xaxis = 'log_rank'
     yaxis = 'log_population'
@@ -54,6 +74,10 @@ def _calculate_gaussian_loglik(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     return log_likelihood
 
 def _test_linearity_of_size_growth_curve(df: pd.DataFrame, x_axis: str, y_axis: str, n_boots: int, lam: float) -> bool:
+    """ 
+    We test the linearity of the log-size vs log-growth curve using a bootstrap test. This test is explained in the Supplementary Information of the paper.
+    """
+
     df = df[[x_axis, y_axis]].copy()
     n = df.shape[0]
     lin = smf.ols(f'{y_axis} ~ {x_axis}', data=df).fit()
@@ -98,10 +122,21 @@ def _test_linearity_of_size_growth_curve(df: pd.DataFrame, x_axis: str, y_axis: 
 @dg.asset(
     deps=[TableNamesResource().names.world.figures.world_size_vs_growth()],
     group_name="si_figure_data_prep",
-    io_manager_key="postgres_io_manager"
+    io_manager_key="postgres_io_manager",
+    metadata={
+        "dagster/column_schema": dg.TableSchema([
+            dg.TableColumn(name="analysis_id", type="string", description="see world_cluster_growth_population_country_analysis"),
+            dg.TableColumn(name="country", type="string", description="see world_cluster_growth_geocoding"),
+            dg.TableColumn(name="year", type="int", description="The start year of the decade"),
+            dg.TableColumn(name="D_bootstrap", type="float", description="The bootstraped test statistic"),
+            dg.TableColumn(name="D_true", type="float", description="The true test statistic"),
+            dg.TableColumn(name="reject_linear", type="bool", description="Whether the null hypothesis of linearity is rejected using a threshold of 0.05"),
+        ])
+    }
     )
 def world_linearity_test_size_vs_growth(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> dg.MaterializeResult:
-    # We do this only for the main analysis id because it takes too long to run for all analysis ids
+    """We test the linearity of the log-size vs log-growth curve using a bootstrap test. We do this only for the main analysis id because it takes too long to run for all analysis ids."""
+
     context.log.info("Running linearity test for size vs growth")
     df = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_size_vs_growth()} WHERE analysis_id = {MAIN_ANALYSIS_ID}", con=postgres.get_engine())
     n_boots = 100
@@ -120,9 +155,19 @@ def _measure_distortion_rank_size_curve(df: pd.DataFrame, x_axis: str, y_axis: s
 @dg.asset(
     deps=[TableNamesResource().names.world.figures.world_rank_vs_size()],
     group_name="si_figure_data_prep",
-    io_manager_key="postgres_io_manager"
+    io_manager_key="postgres_io_manager",
+    metadata={
+        "dagster/column_schema": dg.TableSchema([
+            dg.TableColumn(name="analysis_id", type="string", description="see world_cluster_growth_population_country_analysis"),
+            dg.TableColumn(name="country", type="string", description="see world_cluster_growth_geocoding"),
+            dg.TableColumn(name="year", type="int", description="The start year of the decade"),
+            dg.TableColumn(name="max_resid", type="float", description="The maximum residual from the line fit through an OLS regression"),
+        ])
+    }
 )
 def world_linearity_test_rank_vs_size(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> dg.MaterializeResult:
+    """We measure the distortion of the log-rank vs log-size by computing the maximum residual from the line fit through an OLS regression. Large residuals indicate non-linearity."""
+
     context.log.info("Measuring distortion for rank size curve")
     df = pd.read_sql(f"SELECT * FROM {tables.names.world.figures.world_rank_vs_size()}", con=postgres.get_engine())
     test_results = df.groupby(['analysis_id', 'country', 'year']).apply(lambda x: _measure_distortion_rank_size_curve(df=x, x_axis='log_rank', y_axis='log_population')).reset_index().rename(columns={0: 'max_resid'})

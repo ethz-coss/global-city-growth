@@ -1,0 +1,23 @@
+models:
+  - name: world_rank_size_slopes_ols_decade_change
+    description: "The change in the rank-size slope (estimated with OLS) over one decade. This table is to compare spline based esitimates of the rank-size slope to OLS estimate in the Supplementary Information."
+    columns:
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: year
+        description: "The start of the decade"
+      - name: analysis_id
+        description: "see world_cluster_growth_population_country_analysis"
+      - name: rank_size_slope_decade_change
+        description: "The change in the rank-size slope (estimated with OLS) from the start of the decade to the end of the decade"
+
+  - name: world_population_share_cities_above_1m_projections_ols
+    description: "The population share of cities with a population above 1 million calculated using our projection method. This is estimated in the same way as world_population_share_cities_above_1m_projections (i.e., with the equation s = (x_max^{1-alpha} - z^{1-alpha}) / (x_max^{1-alpha} - x_min^{1-alpha})). However, this table uses OLS estimates of the rank-size slope rather than spline based ones. We do not calculate future values of the rank size slope because the main focus here is to compare whether spline based or OLS based estimates are better at reproducing historical data."
+    columns:
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: year
+      - name: analysis_id
+        description: "see world_cluster_growth_population_analysis"
+      - name: population_share_cities_above_1m
+        description: "The population share of cities with a population above 1 million projected using the method described in world_population_share_cities_above_1m_projections, but using OLS estimates of the rank-size slope rather than spline based ones."
