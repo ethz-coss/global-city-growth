@@ -131,6 +131,6 @@ defs = Definitions(
         "postgres_io_manager": postgres_pandas_io_manager,
         "ipums_api_client": ipums_api_client
     },
-    jobs=[download_job, ipums_full_count_job, usa_job, world_job, figures_job],
+    jobs=[all_job, download_job, ipums_full_count_job, usa_job, world_job, figures_job],
     executor=in_process_executor
 )
