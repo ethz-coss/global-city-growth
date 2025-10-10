@@ -104,11 +104,15 @@ def make_table_2(df_size_growth_slopes: pd.DataFrame) -> str:
     return latex
 
 def _get_latex_from_formatted_table_dataset_summary(table: pd.DataFrame) -> str:
+    colfmt = '@{\\extracolsep{\\fill}}' + ('l' + 'c' * table.shape[1])
     latex = table.to_latex(
         index=False,
         escape=False,
-        column_format='l' + 'c' * table.shape[1]
+        column_format=colfmt
     )
+    latex = latex.replace(r"\begin{tabular}{", f"\\begin{{tabular*}}{{0.8\linewidth}}{{", 1)
+    latex = latex.replace(r"\end{tabular}", r"\end{tabular*}", 1)
+
     latex = latex.replace("\r\n", "\n").replace("\r", "\n")
     header_line = (
         r"\\[-1.8ex]\hline"

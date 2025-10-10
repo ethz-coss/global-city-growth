@@ -115,6 +115,30 @@ average_rank_size_slope_early_2075 AS (
     WHERE year = 2075 AND urban_population_share_group = '60-100'
     AND analysis_id = {{ analysis_id }}
 ),
+world_population_share_in_countries_covered_by_analysis AS (
+    WITH countries_in_analysis AS (
+        SELECT DISTINCT country
+        FROM {{ ref('world_cluster_growth_population_country_analysis') }}
+        WHERE analysis_id = {{ analysis_id }}
+    ),
+    total_population_countries_in_analysis AS (
+        SELECT  SUM(population) AS total_population_analysis
+        FROM {{ ref('world_population') }}
+        WHERE year = 2025
+        AND country IN (SELECT country FROM countries_in_analysis)
+    ),
+    total_world_population_2025 AS (
+        SELECT  SUM(population) AS total_population
+        FROM {{ ref('world_population') }} wp
+        JOIN {{ source('cshapes', 'world_crosswalk_cshapes_code_to_iso_code') }} cw
+        ON wp.country = cw.world_bank_code
+        WHERE year = 2025
+    )
+    SELECT  'World population share in countries covered by analysis in 2025' AS description,
+            total_population_analysis / total_population AS value
+    FROM total_population_countries_in_analysis
+    CROSS JOIN total_world_population_2025
+)
 paper_stats AS (
     SELECT * FROM share_of_urban_population_living_in_cities_above_1m_world_1975
     UNION ALL
@@ -145,5 +169,7 @@ paper_stats AS (
     SELECT * FROM average_rank_size_slope_early_2075
     UNION ALL
     SELECT * FROM average_rank_size_slope_late_2075
+    UNION ALL
+    SELECT * FROM world_population_share_in_countries_covered_by_analysis
 )
 SELECT * FROM paper_stats
