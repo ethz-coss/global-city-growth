@@ -59,7 +59,9 @@ Open `.env` and set the IPUMS_API_KEY=your_key_here. This is necessary to downlo
 ```
 docker compose up --build
 ```
-First build usually takes ~3 minutes
+First build usually takes ~3 minutes. 
+This will create two docker container global-city-growth-database and global-city-growth-orchestrator. 
+The first hosts a postgres database, the second hosts the code and is used to orchestrate the pipeline using Dagster. 
 
 ### 5) Orchestrate with Dagster
 
