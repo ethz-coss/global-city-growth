@@ -6,7 +6,7 @@ models:
         description: "The ID of the cluster. This is a concatenation of the year, pixel_threshold, and an integer. This integer is used to assign a unique deterministic cluster_id to each cluster_base. It is obtained by ordering the centroids of clusters from west to east and then from north to south."
       - name: year
       - name: urban_threshold
-        description: "The degree-of-urbanization threshold used to classify the pixels as urban or not"
+        description: "The degree-of-urbanization threshold used to classify the pixels as urban or not. Note that this threshol is exlcusive, meaning that a threshold at 21 means that pixels strictly greater than 21 are urban and pixels less than or equal to 21 are not urban."
       - name: geom
         description: "The geometry of the cluster in Coordinate reference system = EPSG:54009"
 
