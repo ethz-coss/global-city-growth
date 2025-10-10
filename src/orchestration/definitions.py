@@ -38,8 +38,6 @@ figures_job = define_asset_job("5_figures_job",
                                selection=AssetSelection.groups("figure_data_prep", "paper_stats", "figures", "si_figure_data_prep", "si_figures"),
                                description="Prepare the data for the figures and supplementary information and then make the plots. Should run fifth.")
 
-all_job = define_asset_job("all_job", selection=AssetSelection.all(), description="Run the full pipeline.")
-
 defs = Definitions(
     assets=[
         # Download
