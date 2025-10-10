@@ -161,9 +161,6 @@ class WorldFigures:
     def world_size_vs_growth_normalized_by_group(self) -> str:
         return "world_size_vs_growth_normalized_by_group"
 
-    def world_size_growth_slopes(self) -> str:
-        return "world_size_growth_slopes"
-
     def world_size_growth_slopes_historical(self) -> str:
         return "world_size_growth_slopes_historical"
 

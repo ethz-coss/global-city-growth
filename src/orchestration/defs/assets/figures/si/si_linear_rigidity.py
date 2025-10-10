@@ -164,7 +164,7 @@ def _get_data_linear_vs_spline_slope(engine: Engine, table_name: str, column_nam
     return slopes
       
 @dg.asset(
-    deps=[TableNamesResource().names.world.figures.world_rank_vs_size(), TableNamesResource().names.world.figures.world_size_vs_growth(), TableNamesResource().names.world.si.world_linearity_test_size_vs_growth(), TableNamesResource().names.world.si.world_linearity_test_rank_vs_size()],
+    deps=[TableNamesResource().names.world.figures.world_rank_vs_size(), TableNamesResource().names.world.figures.world_size_vs_growth(), TableNamesResource().names.world.si.world_linearity_test_size_vs_growth(), TableNamesResource().names.world.si.world_linearity_test_rank_vs_size(), TableNamesResource().names.world.figures.world_rank_size_slopes(), TableNamesResource().names.world.figures.world_size_growth_slopes_historical()],
     group_name="si_figures",
     io_manager_key="postgres_io_manager"
 )
@@ -210,7 +210,7 @@ def si_figure_linear_rigidity(context: dg.AssetExecutionContext, postgres: Postg
     _plot_non_linearity_figure_size_growth(fig=fig, ax=ax2, colors=colors, title='Brazil', df_size_vs_growth=bra_size_vs_growth, df_test_results=bra_test_results, yaxlim=(-0.08, 0.2))
 
     size_growth_slopes = _get_data_linear_vs_spline_slope_for_multiple_country_year(engine=postgres.get_engine(), 
-                                                                                    table_name=tables.names.world.figures.world_size_growth_slopes(), 
+                                                                                    table_name=tables.names.world.figures.world_size_growth_slopes_historical(), 
                                                                                     column_name='size_growth_slope', 
                                                                                     country_year_list=[size_growth_country_year_1, size_growth_country_year_2])
 
