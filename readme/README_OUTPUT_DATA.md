@@ -14,8 +14,8 @@ This repository provides **city boundaries** and **population** for the United S
 │ ├── usa_cluster_growth_geom.gpkg
 │ └── usa_cluster_growth_population.csv
 └── world/
-├── world_cluster_growth_geom.gpkg
-└── world_cluster_growth_population_country.csv 
+  ├── world_cluster_growth_geom.gpkg
+  └── world_cluster_growth_population_country.csv 
 
 ```
 
