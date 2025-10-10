@@ -176,6 +176,9 @@ class WorldFigures:
     def world_rank_vs_size(self) -> str:
         return "world_rank_vs_size"
 
+    def world_rank_size_slopes_historical(self) -> str:
+        return "world_rank_size_slopes_historical"
+
     def world_rank_size_slopes(self) -> str:
         return "world_rank_size_slopes"
     

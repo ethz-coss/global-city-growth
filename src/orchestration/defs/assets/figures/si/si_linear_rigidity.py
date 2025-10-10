@@ -240,7 +240,7 @@ def si_figure_linear_rigidity(context: dg.AssetExecutionContext, postgres: Postg
     _plot_non_linearity_figure_rank_size(fig=fig, ax=ax6, colors=colors, title='China', df_rank_vs_size=chn_rank_vs_size, plot_legend=True)
 
     rank_size_slopes = _get_data_linear_vs_spline_slope_for_multiple_country_year(engine=postgres.get_engine(), 
-                                                                                    table_name=tables.names.world.figures.world_rank_size_slopes(), 
+                                                                                    table_name=tables.names.world.figures.world_rank_size_slopes_historical(), 
                                                                                     column_name='rank_size_slope', 
                                                                                     country_year_list=[rank_size_country_year_1, rank_size_country_year_2])
     _plot_barchart_slope_ols_vs_spline(fig=fig, ax=ax7, colors=colors, x_axis_label='Rank-size slope', df=rank_size_slopes)

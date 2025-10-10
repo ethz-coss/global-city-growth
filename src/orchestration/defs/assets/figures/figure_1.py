@@ -136,8 +136,8 @@ def _plot_growth_rates_group_barchart_by_region(fig: plt.Figure, ax: plt.Axes, d
 
     group_to_order = {
         'above_1m': 1,
-        'below_1m': 2,
-        'largest_city': 0,
+        'below_1m': 0,
+        'largest_city': 2,
     }
     df['city_group_ordered'] = df['city_group'].map(group_to_order)
     df = df.sort_values(by=['city_group_ordered', 'region'])
