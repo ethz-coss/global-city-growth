@@ -156,7 +156,7 @@ def _get_data_for_projection_vs_historical_share_population_cities_above_1m(post
     return df_country, df_region   
 
 @dg.asset(
-    deps=[TableNamesResource().names.world.figures.world_rank_size_slopes_decade_change(), TableNamesResource().names.world.figures.world_size_growth_slopes_historical(), TableNamesResource().names.world.si.world_rank_size_slopes_ols_decade_change(), TableNamesResource().names.world.si.world_size_growth_slopes_ols(), TableNamesResource().names.world.figures.world_population_share_cities_above_1m_historical(), TableNamesResource().names.world.figures.world_population_share_cities_above_1m_projections(), TableNamesResource().names.world.si.world_population_share_cities_above_1m_projections_ols()],
+    deps=[TableNamesResource().names.world.figures.world_rank_size_slopes_decade_change(), TableNamesResource().names.world.figures.world_size_growth_slopes_historical(), TableNamesResource().names.world.si.world_rank_size_slopes_ols_decade_change(), TableNamesResource().names.world.si.world_size_growth_slopes_historical_ols(), TableNamesResource().names.world.figures.world_population_share_cities_above_1m_historical(), TableNamesResource().names.world.figures.world_population_share_cities_above_1m_projections(), TableNamesResource().names.world.si.world_population_share_cities_above_1m_projections_ols()],
     group_name="si_figures"
 )
 def si_figure_equation_correlation(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> dg.MaterializeResult:
@@ -166,7 +166,7 @@ def si_figure_equation_correlation(context: dg.AssetExecutionContext, postgres: 
     ax1, ax2, ax3, ax4 = axes.flatten()
 
     df_spline = _get_data_for_equation_1(postgres=postgres, table_rank_size_slopes_decade_change=tables.names.world.figures.world_rank_size_slopes_decade_change(), table_size_growth_slopes=tables.names.world.figures.world_size_growth_slopes_historical())
-    df_linear = _get_data_for_equation_1(postgres=postgres, table_rank_size_slopes_decade_change=tables.names.world.si.world_rank_size_slopes_ols_decade_change(), table_size_growth_slopes=tables.names.world.si.world_size_growth_slopes_ols())
+    df_linear = _get_data_for_equation_1(postgres=postgres, table_rank_size_slopes_decade_change=tables.names.world.si.world_rank_size_slopes_ols_decade_change(), table_size_growth_slopes=tables.names.world.si.world_size_growth_slopes_historical_ols())
     _plot_eq1_spline_vs_linear(fig=fig, ax_spline=ax1, ax_linear=ax2, df_spline=df_spline, df_linear=df_linear)
 
     df_spline = _get_data_for_equation_2(postgres=postgres, table_world_population_share_cities_above_1m_historical=tables.names.world.figures.world_population_share_cities_above_1m_historical(), table_world_population_share_cities_above_1m_projections=tables.names.world.figures.world_population_share_cities_above_1m_projections())

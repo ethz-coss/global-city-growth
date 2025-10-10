@@ -27,7 +27,7 @@ from ..figure_io import MAIN_ANALYSIS_ID
         ])
     } 
 )
-def world_size_growth_slopes_ols(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource)  -> pd.DataFrame:
+def world_size_growth_slopes_historical_ols(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource)  -> pd.DataFrame:
     """We take city log-size at the start of the decade against their log-growth over one decade for various countries and years. We then fit an OLS regression (instead of a penalized B-spline) and take the slope coefficient. """
 
     context.log.info("Calculating world size growth slopes")
@@ -53,7 +53,7 @@ def world_size_growth_slopes_ols(context: dg.AssetExecutionContext, postgres: Po
         ])
     }
 )
-def world_rank_size_slopes_ols(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource)  -> pd.DataFrame:
+def world_rank_size_slopes_historical_ols(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource)  -> pd.DataFrame:
     """We take the city log-rank and log-size in a given year for various countries and years. We then fit an OLS regression (instead of a penalized B-spline) and take the slope coefficient. """
 
     context.log.info("Calculating world rank size slopes")

@@ -218,8 +218,11 @@ class WorldSupplementaryInformation:
     def world_rank_size_slopes_ols_decade_change(self) -> str:
         return "world_rank_size_slopes_ols_decade_change"
     
-    def world_size_growth_slopes_ols(self) -> str:
-        return "world_size_growth_slopes_ols"
+    def world_size_growth_slopes_historical_ols(self) -> str:
+        return "world_size_growth_slopes_historical_ols"
+
+    def world_rank_size_slopes_historical_ols(self) -> str:
+        return "world_rank_size_slopes_historical_ols"
 
     def world_population_share_cities_above_1m_projections_ols(self) -> str:
         return "world_population_share_cities_above_1m_projections_ols"

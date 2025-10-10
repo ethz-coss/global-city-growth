@@ -2,4 +2,4 @@ sources:
   - name: figure_data_prep
     schema: public
     tables:
-      - name: world_rank_size_slopes_ols
+      - name: world_rank_size_slopes_historical_ols

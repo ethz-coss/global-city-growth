@@ -12,7 +12,7 @@ from .defs.assets.figures.figure_2 import figure_2
 from .defs.assets.figures.figure_3 import figure_3
 from .defs.assets.figures.tables import table_1, table_2
 from .defs.assets.dbt import dbt_warehouse
-from .defs.assets.figures.si.si_figure_data_prep import world_size_growth_slopes_ols, world_rank_size_slopes_ols, world_linearity_test_rank_vs_size, world_linearity_test_size_vs_growth
+from .defs.assets.figures.si.si_figure_data_prep import world_size_growth_slopes_historical_ols, world_rank_size_slopes_historical_ols, world_linearity_test_rank_vs_size, world_linearity_test_size_vs_growth
 from .defs.assets.figures.si.si_projections import si_figure_equation_correlation, si_figure_projection_vs_historical_share_population_cities_above_1m
 from .defs.assets.figures.si.si_linear_rigidity import si_figure_linear_rigidity
 from .defs.assets.figures.si.si_robustness import si_figure_usa_robustness, si_tables_world_robustness
@@ -107,8 +107,8 @@ defs = Definitions(
         table_2,
 
         ## SI Figure Data Prep
-        world_size_growth_slopes_ols,
-        world_rank_size_slopes_ols,
+        world_size_growth_slopes_historical_ols,
+        world_rank_size_slopes_historical_ols,
         world_linearity_test_rank_vs_size,
         world_linearity_test_size_vs_growth,
 
