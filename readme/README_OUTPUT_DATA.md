@@ -1,8 +1,8 @@
-# Boundaries & Population of cities: USA (1850–2020) and Global (1975–2025)   
+# Boundaries & population of cities: USA (1850–2020) and World (1975–2025)   
 
-This repository provides **city boundaries** and **population** for the United States (1850-2020) and the world (1975-2025). Data are organized around the idea of **cluster_growth**: a stable city boundary computed for a time window (y_1, y_2), within which growth is measured consistently.
+This repository provides **city boundaries** and **population** for the United States (1850-2020) and the world (1975-2025). Data are organized around the idea of **cluster_growth**: a stable city boundary computed for a time window $(y_1, y_2)$, within which growth is measured consistently. Among the numerous city definition, this definition has two main advantages: (i) it dynamically adjusts as urban areas expand; and (ii) it is consistent across space and time, facilitating robust comparative analyses.
 
----
+See also the paper [PAPER LINK HERE]
 
 ## Contents
 
@@ -24,7 +24,7 @@ This repository provides **city boundaries** and **population** for the United S
 
 ## What is a "cluster growth"?
 
-![Cluster growth computtion](figure_4.png)
+![Cluster growth computation](figure_cca.png)
 
 Cluster growth are stable city boundaries computed with the City Clustering Algorithm (CCA). The CCA computes stable city boundaries for a time interval $(y_1, y_2)$. This algorithm proceeds in five steps: (A) It takes two grids as input, one for each year, containing estimates of population or built-up area. (B) It classifies grid cell as either urban or non-urban using a threshold on these population/built-up area estimates. (C) It groups contiguous urban grid cells to form clusters. (D) It matches clusters across years when they overlap spatially, forming a bipartite graph. (E) It defines a city's boundary as the spatial union of all clusters within a single connected component of the graph. See the paper for full details.
 
@@ -33,7 +33,7 @@ An important choice in the algorithm above are the population and built-up area 
 - **World:** GHSL SMOD degree‑of‑urbanization (**exclusive thresholds**; e.g., 21 ⇒ use cells with value **> 21**). Values used: **21 (Suburban+), 22 (Semi‑dense+), 23 (Dense urban+).**
 
 **Core references (methods):**
-1. **Your paper** — *add full title, author list, year, and DOI/URL here.*  
+1. [PAPER LINK HERE]
 2. Rozenfeld, H.D., Rybski, D., Gabaix, X., & Makse, H.A. (2008). *The City Clustering Algorithm.* (add complete citation/DOI)
 
 ---

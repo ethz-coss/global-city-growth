@@ -1,6 +1,6 @@
 # Global City Growth - Raw Data Archive
 
-This repository contains the raw datasets used in [CITE PAPER HERE] to facilitate replication.
+This repository contains the raw datasets used in [PAPER LINK HERE] to facilitate replication.
 We include **only datasets whose licenses allow redistribution**. 
 For datasets that do not allow redistribution, we provide scripts to download the data from the original sources using APIs.
 
