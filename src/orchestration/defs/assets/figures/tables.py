@@ -59,31 +59,36 @@ def _format_table_slopes_by_urbanization_for_latex(table: pd.DataFrame, x_label:
     return out
 
 def _get_latex_from_formatted_table_slopes_by_urbanization(table: pd.DataFrame, y_label) -> str:
-    m = table.shape[1]
+    colfmt = '@{\\extracolsep{\\fill}}lcc'
+
     latex = table.to_latex(
         index=False,
-        header=False,                    
+        header=False,
         escape=False,
-        column_format='l' + 'c' * m,
-    )
+        column_format=colfmt,
+    ).replace("\r\n", "\n").replace("\r", "\n")
 
-    latex = latex.replace("\r\n", "\n").replace("\r", "\n")
+    # switch tabular -> tabular* without regex (avoids \l issue)
+    latex = latex.replace(r"\begin{tabular}{", f"\\begin{{tabular*}}{{0.8\linewidth}}{{", 1)
+    latex = latex.replace(r"\end{tabular}", r"\end{tabular*}", 1)
 
+    # header/footer
     header_line = (
         r"\\[-1.8ex]\hline"
         r"\hline \\[-1.8ex]"
-        f"Independent \\textbackslash \ Dependent& \multicolumn{{{m}}}{{c}}{{{y_label}}} \\\\\n"
-    )   
-
+        f"Independent \\textbackslash{{}} Dependent& "
+        f"\\multicolumn{{2}}{{c}}{{{y_label}}} \\\\\n"
+    )
     footer_line = (
         r"\hline"
         r"\hline \\[-1.8ex]"
-        f"& \multicolumn{{{m - 1}}}{{r}}{{$^{{*}}$p$<$0.1; $^{{**}}$p$<$0.05; $^{{***}}$p$<$0.01}} \\\\\n"
+        f"& \\multicolumn{{2}}{{r}}{{$^{{*}}$p$<$0.1; $^{{**}}$p$<$0.05; $^{{***}}$p$<$0.01}} \\\\\n"
     )
 
     latex = latex.replace("\\toprule\n", header_line, 1)
     latex = latex.replace("\\bottomrule\n", footer_line, 1)
     return latex
+
 
 
 def make_table_2(df_size_growth_slopes: pd.DataFrame) -> str:
