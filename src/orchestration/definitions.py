@@ -23,7 +23,7 @@ all_job = define_asset_job("0_all_job", selection=AssetSelection.all(), descript
 download_job = define_asset_job("1_download_job", 
                                 selection=AssetSelection.groups("download"),
                                 description="Download the raw data from the sources. Should run first.")
-ipums_full_count_job = define_asset_job("0_ipums_full_count_job", 
+ipums_full_count_job = define_asset_job("2_ipums_full_count_job", 
                                         selection=AssetSelection.groups("ipums_full_count_staging", "ipums_full_count_intermediate", "ipums_full_count_final"),
                                         description="Extract census place population estimates from the IPUMS USA Full Count data. Should run second.")
 usa_job = define_asset_job("3_usa_job", 
