@@ -167,7 +167,7 @@ def figure_2(context: dg.AssetExecutionContext, postgres: PostgresResource, tabl
     world_size_growth_slopes = read_pandas(engine=engine, table=tables.names.world.figures.world_size_growth_slopes_historical_urbanization(), analysis_id=MAIN_ANALYSIS_ID)
     _plot_size_growth_slope_vs_urbanization(fig=fig, ax=ax1, df=world_size_growth_slopes)
 
-    n_boots = 10
+    n_boots = 1000
     kor_size_vs_growth = read_pandas(engine=engine, table=tables.names.world.figures.world_size_vs_growth(), analysis_id=MAIN_ANALYSIS_ID, where="country = 'KOR'")
     _plot_size_growth_curve_kor_by_year(fig=fig, ax=ax2, df_size_vs_growth=kor_size_vs_growth, n_boots=n_boots)
 
