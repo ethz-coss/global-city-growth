@@ -1,8 +1,6 @@
 # Global City Growth - Raw Data Archive
 
-This repository contains the raw datasets used in [PAPER LINK HERE] to facilitate replication.
-We include **only datasets whose licenses allow redistribution**. 
-For datasets that do not allow redistribution, we provide scripts to download the data from the original sources using APIs.
+This repository contains the raw datasets used in [PAPER LINK HERE]. We include **only datasets whose licenses allow redistribution**. For datasets that do not allow redistribution, we provide scripts to download the data from the original sources using APIs (see the [Github](https://github.com/andreamusso96/global-city-growth) or Zenodo repository for our code [ZENODO CODE LINK HERE]).
 
 ## Overview
 
@@ -91,11 +89,9 @@ Here is detailed list of all datasets used in this project, including those prov
     * **Description:** Population with projections
     * **Original Source:** 
         - [population-long-run-with-projections.csv](https://ourworldindata.org/grapher/population-long-run-with-projections)
-        - countries_with_regions.csv is handmade by the author of this repository
     * **License:** CC-BY-4.0
     * **Files:**
         * `world/misc/population-long-run-with-projections.csv`
-        * `world/misc/countries_with_regions.csv`
 
 * **Updating Global Urbanization Projections Under the Shared Socioeconomic Pathways**
     * **Status**: Included in this repository

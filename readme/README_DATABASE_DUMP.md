@@ -17,6 +17,6 @@ psql -d city_growth -f city_growth_dump.sql
 
 ## Documentation & Paper
 
-- The documentation for the columns of each table in the database can be found here: [LINK TO DOC HERE]
-- The paper [LINK TO PAPER]
-- Github repository [LINK TO GITHUB]
+- [Documentation](https://andreamusso96.github.io/global-city-growth-pipeline-doc/) expalaining the tables and columns in the database dump
+- The [paper](LINK TO PAPER)
+- [Github repository](https://github.com/andreamusso96/global-city-growth)

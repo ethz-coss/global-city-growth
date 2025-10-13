@@ -4,9 +4,11 @@ _A harmonized view of how cities grew in the United States (1850–2020) and wor
 
 ![Cluster growth computation](readme/world_map_cities.png)
 
-## Summary
+## Paper abstract
 
-Over the past 50 years, urban populations have become increasingly concentrated in large cities. In 1975, the average country had 18\% of its urban residents living in cities of at least one million people. By 2025, that average had risen to 39\%. Are we headed toward a world where most urbanites live in large cities, or will this concentration trend level off? Using new data built from satellite grids from GHSL and historical censuses from IPUMS, we show that concentration in large cities slows as urban systems mature, and project a global slowdown in the rise of the large cities in the near future. Read the paper here: [PAPER LINK HERE]
+[ABSTRACT GOES HERE]
+
+Read the paper here: [PAPER LINK HERE]
 
 ## What’s in this project
 
@@ -79,7 +81,9 @@ The first hosts a postgres database, the second hosts the code and is used to or
 
 ## How this repo is organized
 
-The documentation for the pipeline is hosted here [DOCUMENTATION LINK HERE]
+The [documentation](https://github.com/andreamusso96/global-city-growth) explaining the pipeline's tables (and their columns). 
+
+The folder structure:
 
 - readme/ - The readmes of the various repositories associated with the project
 - src/ - The code
