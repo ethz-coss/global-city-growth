@@ -138,7 +138,7 @@ world_population_share_in_countries_covered_by_analysis AS (
             total_population_analysis / total_population AS value
     FROM total_population_countries_in_analysis
     CROSS JOIN total_world_population_2025
-)
+),
 paper_stats AS (
     SELECT * FROM share_of_urban_population_living_in_cities_above_1m_world_1975
     UNION ALL
