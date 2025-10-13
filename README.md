@@ -2,7 +2,7 @@
 
 _A harmonized view of how cities grew in the United States (1850–2020) and worldwide (1975–2025), with reproducible code and shareable data._
 
-[IMAGE GOES HERE]
+![Cluster growth computation](readme/world_map_cities.png)
 
 ## Summary
 
