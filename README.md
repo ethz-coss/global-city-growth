@@ -6,7 +6,7 @@ _A harmonized view of how cities grew in the United States (1850–2020) and wor
 
 ## Paper abstract
 
-[ABSTRACT GOES HERE]
+From 1975 to 2025, urban populations have become increasingly concentrated in large cities. On average across countries, the share of urban residents living in cities with over one million people rose from 18\% in 1975 to 39\% in 2025. Will this trend towards greater concentration in large cities continue or level off? We introduce two new city population datasets that use consistent city definitions across countries and over time. The first covers the world between 1975 and 2025, using satellite imagery. The second covers the U.S. between 1850 and 2020, using census microdata. We find that urban growth follows a consistent life cycle. Early in urbanization, large cities grow faster than smaller ones. As urban systems mature, this growth advantage fades, and cities of all sizes grow at similar rates. We use this life cycle to project future concentration in large cities. Our projections suggest that over the next 50 years, concentration will increase at less than half the rate observed in the past 50 years. 
 
 Read the paper here: [PAPER LINK HERE]
 
