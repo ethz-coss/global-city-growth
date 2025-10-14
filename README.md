@@ -16,7 +16,7 @@ Harmonized **boundaries** and **populations**, comparable across **time** and **
   - **World:** 1975–2025  
   - **United States:** 1850–2020  
 
-You can find the data here: [DATA LINK HERE]
+You can find the data [here](https://doi.org/10.5281/zenodo.17315338)
 
 **Reproducible pipeline**
   - End‑to‑end DAG (100+ tasks) over ≈**300 GB** of raster, vector, CSV, and Parquet.
@@ -28,11 +28,11 @@ You can find the data here: [DATA LINK HERE]
 
 - Paper (arXiv): add link
 
-- Raw data (Zenodo): add link
+- Raw data (Zenodo): https://doi.org/10.5281/zenodo.17343655
 
-- Output data (Zenodo): add link
+- Database dump (Zenodo): https://doi.org/10.5281/zenodo.17338968
 
-- Database dump (Zenodo): add link
+- Output data (Zenodo): https://doi.org/10.5281/zenodo.17315338
 
 ## Quick start (replication)
 
@@ -93,4 +93,4 @@ The folder structure:
         - src/warehouse/models - Dbt models
 
 ## Citation
-[CITATION HERE]
+If you use our work, please cite the [paper](PAPER LINK HERE)
