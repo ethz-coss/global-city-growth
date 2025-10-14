@@ -1,6 +1,6 @@
 # Global City Growth - Raw Data Archive
 
-This repository contains the raw datasets used in [PAPER LINK HERE]. We include **only datasets whose licenses allow redistribution**. For datasets that do not allow redistribution, we provide scripts to download the data from the original sources using APIs (see the [Github](https://github.com/andreamusso96/global-city-growth) or Zenodo repository for our code [ZENODO CODE LINK HERE]).
+This repository contains the raw datasets used in [PAPER LINK HERE]. We include **only datasets whose licenses allow redistribution**. For datasets that do not allow redistribution, we provide scripts to download the data from the original sources using APIs (see the [GitHub](https://github.com/andreamusso96/global-city-growth) or [Zenodo](https://doi.org/10.5281/zenodo.17339403)).
 
 ## Overview
 

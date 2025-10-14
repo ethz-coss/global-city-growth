@@ -25,15 +25,13 @@ See the [paper](PAPER LINK HERE)
 
 ![Cluster growth computation](figure_cca.png)
 
-Cluster growth are stable city boundaries computed with the City Clustering Algorithm (CCA). The CCA computes stable city boundaries for a time interval $(y_1, y_2)$. This algorithm proceeds in five steps: (A) It takes two grids as input, one for each year, containing estimates of population or built-up area. (B) It classifies grid cell as either urban or non-urban using a threshold on these population/built-up area estimates. (C) It groups contiguous urban grid cells to form clusters. (D) It matches clusters across years when they overlap spatially, forming a bipartite graph. (E) It defines a city's boundary as the spatial union of all clusters within a single connected component of the graph. See the paper for full details.
+Cluster growth are stable city boundaries computed with the City Clustering Algorithm (CCA). The CCA computes stable city boundaries for a time interval $(y_1, y_2)$. This algorithm proceeds in five steps: (A) It takes two grids as input, one for each year, containing estimates of population or built-up area. (B) It classifies grid cells as either urban or non-urban using a threshold on these population/built-up area estimates. (C) It groups contiguous urban grid cells to form clusters. (D) It matches clusters across years when they overlap spatially, forming a bipartite graph. (E) It defines a city's boundary as the spatial union of all clusters within a single connected component of the graph. See the paper for full details.
 
 An important choice in the algorithm above are the population and built-up area thresholds to classify a cell as urban or non-urban. We provide the following thresholds in the datasets below:
 - **USA:** This threshold is the number of people in one cell of the grid. Whenever the number of people of in a grid cell is greater than the threshold we classify the cell as urban. Thresholds: **50**, **100**, **200**.  
 - **World:** This threshold is the GHSL SMOD degree‑of‑urbanization (see [here](https://human-settlement.emergency.copernicus.eu/ghs_smod2023.php)). Whenever the degree-of-urbanization of a grid cell is greater than the threshold we classify the cell as urban. Thresholds: **21 (Suburban+), 22 (Semi‑dense+), 23 (Dense urban+).** Note the thresholds are **exclusive**: e.g., 21 ⇒ cells with value **> 21** are classified as urban. 
 
 See our paper for more information [PAPER LINK HERE]. 
-
-
 
 ## Sources
 
@@ -46,7 +44,7 @@ See our paper for more information [PAPER LINK HERE].
 **Global (1975–2025)**  
 - GHSL SMOD 2023 (degree of urbanization): https://human-settlement.emergency.copernicus.eu/ghs_smod2023.php  
 - GHSL POP (population rasters): https://human-settlement.emergency.copernicus.eu/ghs_pop.php  
-- CShapes (country boundaries). *Add version and official URL you used.*
+- CShapes (country boundaries): https://icr.ethz.ch/data/cshapes/
 
 
 ## File and column documentation
