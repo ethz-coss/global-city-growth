@@ -81,7 +81,7 @@ The first hosts a postgres database, the second hosts the code and is used to or
 
 ## How this repo is organized
 
-The [documentation](https://github.com/andreamusso96/global-city-growth) explaining the pipeline's tables (and their columns). 
+The [documentation](https://andreamusso96.github.io/global-city-growth-pipeline-doc/) explaining the pipeline's tables (and their columns). 
 
 The folder structure:
 
