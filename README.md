@@ -1,4 +1,4 @@
-# Global City Growth
+# Large cities lose their growth edge as urban systems mature
 
 _A harmonized view of how cities grew in the United States (1850–2020) and worldwide (1975–2025), with reproducible code and shareable data._
 
@@ -8,7 +8,7 @@ _A harmonized view of how cities grew in the United States (1850–2020) and wor
 
 From 1975 to 2025, urban populations have become increasingly concentrated in large cities. On average across countries, the share of urban residents living in cities with over one million people rose from 18\% in 1975 to 39\% in 2025. Will this trend towards greater concentration in large cities continue or level off? We introduce two new city population datasets that use consistent city definitions across countries and over time. The first covers the world between 1975 and 2025, using satellite imagery. The second covers the U.S. between 1850 and 2020, using census microdata. We find that urban growth follows a consistent life cycle. Early in urbanization, large cities grow faster than smaller ones. As urban systems mature, this growth advantage fades, and cities of all sizes grow at similar rates. We use this life cycle to project future concentration in large cities. Our projections suggest that over the next 50 years, concentration will increase at less than half the rate observed in the past 50 years. 
 
-Read the paper here: [PAPER LINK HERE]
+Read the paper here: https://arxiv.org/abs/2510.12417
 
 ## What’s in this project
 
@@ -26,7 +26,7 @@ You can find the data [here](https://doi.org/10.5281/zenodo.17315338)
 
 ## Important links
 
-- Paper (arXiv): add link
+- Paper (arXiv): https://arxiv.org/abs/2510.12417
 
 - Raw data (Zenodo): https://doi.org/10.5281/zenodo.17343655
 
@@ -93,4 +93,4 @@ The folder structure:
         - src/warehouse/models - Dbt models
 
 ## Citation
-If you use our work, please cite the [paper](PAPER LINK HERE)
+If you use our work, please cite the [paper](https://arxiv.org/abs/2510.12417)

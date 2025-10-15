@@ -1,4 +1,4 @@
-# Global City Growth — Database Dump
+# Large cities lose their growth edge as urban systems mature -- Database dump
 
 This repository contains a single SQL dump for the Global City Growth Project. This project studies city growth with a harmonized definition of city across space and time across:
 - **World:** 1975–2025
@@ -18,5 +18,5 @@ psql -d city_growth -f city_growth_dump.sql
 ## Documentation & Paper
 
 - [Documentation](https://andreamusso96.github.io/global-city-growth-pipeline-doc/) explaining the tables and columns in the database dump
-- The [paper](LINK TO PAPER)
+- The [paper](https://arxiv.org/abs/2510.12417)
 - [GitHub repository](https://github.com/andreamusso96/global-city-growth)

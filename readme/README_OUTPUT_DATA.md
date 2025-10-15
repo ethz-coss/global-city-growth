@@ -2,7 +2,7 @@
 
 This repository provides **city boundaries** and **population** for the United States (1850-2020) and the world (1975-2025). Data are organized around the idea of **cluster_growth**: a stable city boundary computed for a time window $(y_1, y_2)$, within which growth is measured consistently. Among the numerous city definition, this definition has two main advantages: (i) it dynamically adjusts as urban areas expand; and (ii) it is consistent across space and time, facilitating comparative analyses.
 
-See the [paper](PAPER LINK HERE)
+See the [paper](https://arxiv.org/abs/2510.12417).
 
 ## Contents
 
@@ -31,7 +31,7 @@ An important choice in the algorithm above are the population and built-up area 
 - **USA:** This threshold is the number of people in one cell of the grid. Whenever the number of people of in a grid cell is greater than the threshold we classify the cell as urban. Thresholds: **50**, **100**, **200**.  
 - **World:** This threshold is the GHSL SMOD degree‑of‑urbanization (see [here](https://human-settlement.emergency.copernicus.eu/ghs_smod2023.php)). Whenever the degree-of-urbanization of a grid cell is greater than the threshold we classify the cell as urban. Thresholds: **21 (Suburban+), 22 (Semi‑dense+), 23 (Dense urban+).** Note the thresholds are **exclusive**: e.g., 21 ⇒ cells with value **> 21** are classified as urban. 
 
-See our paper for more information [PAPER LINK HERE]. 
+See our paper for more information: https://arxiv.org/abs/2510.12417. 
 
 ## Sources
 
@@ -56,7 +56,7 @@ See our paper for more information [PAPER LINK HERE].
 - `geom` - CRS **EPSG:5070** (Conus Albers).
 
 **What are stable census places?**  
-We unify historical (1850–1940) “historical census places” and modern (1990–2020) NHGIS places, resolve disappearing places and implausible spikes using migration‑informed linkages (via IPUMS linking). Result: a harmonized, cleaner place‑level panel for long‑run analysis (full pipeline in the [paper](PAPER LINK HERE)).
+We unify historical (1850–1940) “historical census places” and modern (1990–2020) NHGIS places, resolve disappearing places and implausible spikes using migration‑informed linkages (via IPUMS linking). Result: a harmonized, cleaner place‑level panel for long‑run analysis (full pipeline in the [paper](https://arxiv.org/abs/2510.12417)).
 
 ---
 
