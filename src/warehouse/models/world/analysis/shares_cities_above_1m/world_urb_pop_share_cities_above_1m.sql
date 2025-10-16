@@ -1,19 +1,19 @@
-WITH population_share_cities_above_1m_union_historical_and_projections AS (
-    SELECT  country, 
-            year, 
-            analysis_id, 
-            urban_population_share_cities_above_one_million,
-            true AS is_projection
-    FROM {{ ref('world_population_share_cities_above_1m_projections') }}
-    WHERE year > 2025
-    UNION ALL
+WITH population_share_cities_above_1m_union_historical_and_projections AS (  
     SELECT  country, 
             year, 
             analysis_id,
             urban_population_share_cities_above_one_million,
             false AS is_projection
-    FROM {{ ref('world_population_share_cities_above_1m_historical') }}
+    FROM {{ ref('world_urb_pop_share_cities_above_1m_historical') }}
     WHERE year <= 2025
+    UNION ALL
+    SELECT  country, 
+            year, 
+            analysis_id, 
+            urban_population_share_cities_above_one_million,
+            true AS is_projection
+    FROM {{ ref('world_urb_pop_share_cities_above_1m_projections') }}
+    WHERE year > 2025
 ),
 population_share_cities_above_1m_and_urbanization_group AS (
     SELECT  country,

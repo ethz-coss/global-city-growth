@@ -39,7 +39,7 @@ urban_population_share_cities_above_one_million_real AS (
             year, 
             analysis_id,
             urban_population_share_cities_above_one_million AS urban_population_share_cities_above_one_million_real
-    FROM {{ ref('world_population_share_cities_above_1m_historical') }}
+    FROM {{ ref('world_urb_pop_share_cities_above_1m_historical') }}
     CROSS JOIN candidate_omegas
 ),
 distance_estimate_real AS (

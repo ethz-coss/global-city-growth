@@ -16,7 +16,7 @@ from .defs.assets.figures.figure_1 import figure_1_map, figure_1_plots
 from .defs.assets.figures.figure_2 import figure_2
 from .defs.assets.figures.figure_3 import figure_3
 from .defs.assets.figures.tables import table_1, table_2
-from .defs.assets.figures.si.si_projections import si_figure_equation_correlation, si_figure_projection_vs_historical_share_population_cities_above_1m
+from .defs.assets.figures.si.si_projections import si_figure_equation_correlation, si_figure_projection_vs_historical_urb_pop_share_cities_above_1m
 from .defs.assets.figures.si.si_linear_rigidity import si_figure_linear_rigidity
 from .defs.assets.figures.si.si_robustness import si_figure_usa_robustness, si_tables_world_robustness
 
@@ -120,7 +120,7 @@ defs = Definitions(
 
         ## Supplementary Information
         si_figure_equation_correlation,
-        si_figure_projection_vs_historical_share_population_cities_above_1m,
+        si_figure_projection_vs_historical_urb_pop_share_cities_above_1m,
         si_figure_linear_rigidity,
         si_figure_usa_robustness,
         si_tables_world_robustness

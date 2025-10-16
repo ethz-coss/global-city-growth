@@ -1,37 +1,37 @@
-{% set analysis_id = 1 %}
+{% set analysis_id = var('constants')['MAIN_ANALYSIS_ID'] %}
 
 WITH share_of_urban_population_living_in_cities_above_1m_world_1975 AS (
     SELECT  'Share of urban population living in cities above 1M in 1975' AS description,
             AVG(urban_population_share_cities_above_one_million) AS value
-    FROM {{ ref('world_population_share_cities_above_1m') }}
+    FROM {{ ref('world_urb_pop_share_cities_above_1m') }}
     WHERE year = 1975
     AND analysis_id = {{ analysis_id }}
 ),
 share_of_urban_population_living_in_cities_above_1m_world_2025 AS (
     SELECT  'Share of urban population living in cities above 1M in 2025' AS description,
             AVG(urban_population_share_cities_above_one_million) AS value
-    FROM {{ ref('world_population_share_cities_above_1m') }}
+    FROM {{ ref('world_urb_pop_share_cities_above_1m') }}
     WHERE year = 2025
     AND analysis_id = {{ analysis_id }}
 ),
 share_of_urban_population_living_in_cities_above_1m_world_2075 AS (
     SELECT  'Share of urban population living in cities above 1M in 2075' AS description,
             AVG(urban_population_share_cities_above_one_million) AS value
-    FROM {{ ref('world_population_share_cities_above_1m') }}
+    FROM {{ ref('world_urb_pop_share_cities_above_1m') }}
     WHERE year = 2075 
     AND analysis_id = {{ analysis_id }}
 ),
 share_of_urban_population_living_in_cities_above_1m_early_2075 AS (
     SELECT  'Share of urban population living in cities above 1M in early 2075' AS description,
             AVG(urban_population_share_cities_above_one_million) AS value
-    FROM {{ ref('world_population_share_cities_above_1m') }}
+    FROM {{ ref('world_urb_pop_share_cities_above_1m') }}
     WHERE year = 2075 AND urban_population_share_group = '0-60'
     AND analysis_id = {{ analysis_id }}
 ),
 share_of_urban_population_living_in_cities_above_1m_late_2075 AS (
     SELECT  'Share of urban population living in cities above 1M in late 2075' AS description,
             AVG(urban_population_share_cities_above_one_million) AS value
-    FROM {{ ref('world_population_share_cities_above_1m') }}
+    FROM {{ ref('world_urb_pop_share_cities_above_1m') }}
     WHERE year = 2075 AND urban_population_share_group = '60-100'
     AND analysis_id = {{ analysis_id }}
 ),
@@ -70,7 +70,7 @@ large_city_concentration_growth_rate_world_late_2025_2075 AS (
 median_size_growth_slope_world_1975_2025 AS (
     SELECT  'Median size growth slope in 1975-2025' AS description,
             PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY size_growth_slope) AS value
-    FROM {{ source('figure_data_prep', 'world_size_growth_slopes_historical') }}
+    FROM {{ source('world_analysis_python', 'world_size_growth_slopes_historical') }}
     WHERE year >= 1975 AND year <= 2015
     AND analysis_id = {{ analysis_id }}
 ),

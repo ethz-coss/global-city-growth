@@ -200,14 +200,14 @@ class WorldFigures:
     def world_region_regression_with_urbanization_controls(self) -> str:
         return "world_region_regression_with_urbanization_controls"
 
-    def world_population_share_cities_above_1m(self) -> str:
-        return "world_population_share_cities_above_1m"
+    def world_urb_pop_share_cities_above_1m(self) -> str:
+        return "world_urb_pop_share_cities_above_1m"
 
-    def world_population_share_cities_above_1m_historical(self) -> str:
-        return "world_population_share_cities_above_1m_historical"
+    def world_urb_pop_share_cities_above_1m_historical(self) -> str:
+        return "world_urb_pop_share_cities_above_1m_historical"
 
-    def world_population_share_cities_above_1m_projections(self) -> str:
-        return "world_population_share_cities_above_1m_projections"
+    def world_urb_pop_share_cities_above_1m_projections(self) -> str:
+        return "world_urb_pop_share_cities_above_1m_projections"
 
 
 @dataclass(frozen=True)
@@ -227,8 +227,8 @@ class WorldSupplementaryInformation:
     def world_rank_size_slopes_historical_ols(self) -> str:
         return "world_rank_size_slopes_historical_ols"
 
-    def world_population_share_cities_above_1m_projections_ols(self) -> str:
-        return "world_population_share_cities_above_1m_projections_ols"
+    def world_urb_pop_share_cities_above_1m_projections_ols(self) -> str:
+        return "world_urb_pop_share_cities_above_1m_projections_ols"
 
     def world_urban_population(self) -> str:
         return "world_urban_population"

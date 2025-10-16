@@ -1,5 +1,5 @@
 models:
-  - name: world_population_share_cities_above_1m_historical
+  - name: world_urb_pop_share_cities_above_1m_historical
     description: "The urban (note urban not total!) population share of cities above 1 million. This is computed from the population data by summing the total population and that of cities above 1 million."
     columns:
       - name: country
@@ -10,7 +10,7 @@ models:
       - name: urban_population_share_cities_above_one_million
         description: "The urban population share of cities above 1 million"
 
-  - name: world_population_share_cities_above_1m_projections
+  - name: world_urb_pop_share_cities_above_1m_projections
     description: "The urban population share of cities above 1 million projected into the future. The projections are based on a simple equation relating the shares to the rank-size slopes: s = (x_max^{1-alpha} - z^{1-alpha}) / (x_max^{1-alpha} - x_min^{1-alpha}) where x_max, x_min are upper and lower bounds of the urban population, z is 1 million, and alpha is the zipf exponent (1 / rank_size_slope). To compute these projections we set x_min = 5000, z = 1 million, and alpha = 1 / rank_size_slope. We set x_max = omega * urban_population, where omega is a free parameter. We tune omega in the marcro get_optimal_omegas_population_share_cities_above_1m_projections."
     columns:
       - name: country
@@ -21,7 +21,46 @@ models:
       - name: urban_population_share_cities_above_one_million
         description: "The urban population share of cities above 1 million projected with the above method."
 
-  - name: world_population_share_cities_above_1m
+  - name: world_tot_pop_share_cities_above_1m_projections_extr
+    description: "The total population share of cities above 1 million projected into the future using past extrapolation. The basic idea is to use the average size growth slope over the period 1975-2025 to project the rank-size slopes into the future. And then use these projected rank size slopes with the same method as world_urb_pop_share_cities_above_1m_projections to project the urban population share of cities above 1 million into the future. Finally, we multiply the projected share of the urban population in cities above 1 million by the projected urban population share overall to get projected share of the TOTAL population in cities above 1 million."
+    columns:
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: year
+      - name: analysis_id
+        description: "see world_cluster_growth_population_country_analysis"
+      - name: total_population_share_cities_above_one_million
+        description: "The total population share of cities above 1 million projected using extrapolation (see above description)."
+      - name: population
+        description: "see world_population"
+
+  - name: world_tot_pop_share_cities_above_1m_projections_inc_returns
+    description: "The total population share of cities above 1 million projected into the future using fixed increasing return. Same procedure as in world_tot_pop_share_cities_above_1m_projections_extr, but we use a fixed size growth slope of 0.02."
+    columns:
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: year
+      - name: analysis_id
+        description: "see world_cluster_growth_population_country_analysis"
+      - name: total_population_share_cities_above_one_million
+        description: "The total population share of cities above 1 million projected using fixed increasing return (see above description)."
+      - name: population
+        description: "see world_population"
+
+  - name: world_tot_pop_share_cities_above_1m_projections_prop_growth
+    description: "The total population share of cities above 1 million projected into the future using proportional growth. Same procedure as in world_tot_pop_share_cities_above_1m_projections_extr, but we use a fixed size growth slope of 0.00 (so proportional growth)."
+    columns:
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: year
+      - name: analysis_id
+        description: "see world_cluster_growth_population_country_analysis"
+      - name: total_population_share_cities_above_one_million
+        description: "The total population share of cities above 1 million projected using proportional growth (see above description)."
+      - name: population
+        description: "see world_population"
+
+  - name: world_urb_pop_share_cities_above_1m
     description: "The union of the historical and projected data. Historical data is before 2025 (2025 included), and projections are after 2025 (2025 excluded)."
     columns:
       - name: country
@@ -30,7 +69,7 @@ models:
       - name: analysis_id
         description: "see world_cluster_growth_population_country_analysis"
       - name: urban_population_share_cities_above_one_million
-        description: "The urban population share of cities above 1 million"
+        description: "see world_urb_pop_share_cities_above_1m_historical and world_urb_pop_share_cities_above_1m_projections"
       - name: urban_population
         description: "see world_urban_population"
       - name: urban_population_share_group

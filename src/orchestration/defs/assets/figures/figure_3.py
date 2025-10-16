@@ -125,7 +125,7 @@ def _plot_rank_size_slope_by_urbanization_group(fig: plt.Figure, ax: plt.Axes, d
 
 
 @dg.asset(
-    deps=[TableNamesResource().names.world.figures.world_rank_size_slopes_change_1975_2025(), TableNamesResource().names.world.figures.world_rank_size_slopes_change_2025_2075(), TableNamesResource().names.usa.figures.usa_rank_size_slopes_change(), TableNamesResource().names.world.figures.world_rank_size_slopes_change(),TableNamesResource().names.world.figures.world_population_share_cities_above_1m()],
+    deps=[TableNamesResource().names.world.figures.world_rank_size_slopes_change_1975_2025(), TableNamesResource().names.world.figures.world_rank_size_slopes_change_2025_2075(), TableNamesResource().names.usa.figures.usa_rank_size_slopes_change(), TableNamesResource().names.world.figures.world_rank_size_slopes_change(),TableNamesResource().names.world.figures.world_urb_pop_share_cities_above_1m()],
     group_name="figures"
 )
 def figure_3(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> dg.MaterializeResult:
@@ -154,8 +154,8 @@ def figure_3(context: dg.AssetExecutionContext, postgres: PostgresResource, tabl
     world_rank_size_slopes_change_2025_2075 = read_pandas(engine=engine, table=tables.names.world.figures.world_rank_size_slopes_change_2025_2075(), analysis_id=MAIN_ANALYSIS_ID)
     _plot_rank_size_slope_change_by_urbanization_group(fig=fig, ax=ax3, df=world_rank_size_slopes_change_2025_2075, base_year=2025, plot_legend=True, title='Projections')
 
-    world_population_share_cities_above_1m = read_pandas(engine=engine, table=tables.names.world.figures.world_population_share_cities_above_1m(), analysis_id=MAIN_ANALYSIS_ID, where="year <= 2075")
-    _plot_urban_population_share_in_cities_above_one_million_by_urbanization_group(fig=fig, ax=ax4, df=world_population_share_cities_above_1m)
+    world_urb_pop_share_cities_above_1m = read_pandas(engine=engine, table=tables.names.world.figures.world_urb_pop_share_cities_above_1m(), analysis_id=MAIN_ANALYSIS_ID, where="year <= 2075")
+    _plot_urban_population_share_in_cities_above_one_million_by_urbanization_group(fig=fig, ax=ax4, df=world_urb_pop_share_cities_above_1m)
 
     world_rank_size_slopes = read_pandas(engine=engine, table=tables.names.world.figures.world_rank_size_slopes(), analysis_id=MAIN_ANALYSIS_ID, where="year <= 2075")
     _plot_rank_size_slope_by_urbanization_group(fig=fig, ax=ax5, df=world_rank_size_slopes)
