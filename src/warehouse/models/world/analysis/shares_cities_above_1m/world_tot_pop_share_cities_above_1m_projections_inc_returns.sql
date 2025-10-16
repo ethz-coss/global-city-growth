@@ -8,7 +8,7 @@ WITH size_growth_slope_projection_inc_returns AS (
         SELECT generate_series(2020, 2065, 5) AS year
     ),
     size_growth_slopes_projection AS (
-        SELECT 0.02 AS size_growth_slope
+        SELECT 0.03 AS size_growth_slope
     ),
     countries_analysis_ids AS (
         SELECT DISTINCT country, analysis_id
@@ -54,6 +54,7 @@ total_population_share_in_cities_above_1m_inc_returns_projections AS (
     USING (country, year)
     JOIN {{ ref('world_population') }}
     USING (country, year)
+    WHERE year >= 2025
 )
 SELECT *
 FROM total_population_share_in_cities_above_1m_inc_returns_projections

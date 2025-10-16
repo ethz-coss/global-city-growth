@@ -53,6 +53,7 @@ total_population_share_in_cities_above_1m_extrapolation_projections AS (
     USING (country, year)
     JOIN {{ ref('world_population') }}
     USING (country, year)
+    WHERE year >= 2025
 )
 SELECT *
 FROM total_population_share_in_cities_above_1m_extrapolation_projections
