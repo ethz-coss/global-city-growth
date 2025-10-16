@@ -38,11 +38,13 @@ world_job = define_asset_job("4_world_job",
                              description="Create clusters from the GHSL grids. Should run fourth.")
 
 analysis_job = define_asset_job("5_analysis_job", 
-                                selection=AssetSelection.groups("figure_data_prep", "paper_stats"),
-                                description="Prepare the data for the figures and supplementary information and then make the plots. Should run fifth.")
-figures_job = define_asset_job("5_figures_job", 
-                               selection=AssetSelection.groups("figure_data_prep", "paper_stats", "figures", "si_figure_data_prep", "si_figures"),
-                               description="Prepare the data for the figures and supplementary information and then make the plots. Should run fifth.")
+                                selection=AssetSelection.groups("analysis", "usa_analysis", "world_analysis", 
+                                "world_analysis_size_vs_growth", "world_analysis_rank_vs_size","world_analysis_share_cities_above_1m", "si_analysis"),
+                                description="Analyze the data for the figures and supplementary information. Should run fifth.")
+
+figures_job = define_asset_job("6_figures_job", 
+                               selection=AssetSelection.groups("paper_stats", "figures", "si_figures"),
+                               description="Create the figures, tables, paper stats, and supplementary information. Should run sixth.")
 
 defs = Definitions(
     assets=[
