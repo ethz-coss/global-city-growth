@@ -1,5 +1,5 @@
 sources:
-  - name: figure_data_prep
+  - name: world_analysis_python
     schema: public
     tables:
       - name: world_size_growth_slopes_historical

@@ -4,7 +4,7 @@ WITH world_rank_size_slopes_with_projections AS (
             analysis_id, 
             rank_size_slope,
             false AS is_projection
-    FROM{{ source('figure_data_prep', 'world_rank_size_slopes_historical') }}
+    FROM{{ source('world_analysis_python', 'world_rank_size_slopes_historical') }}
     WHERE year < 2030
     UNION ALL
     SELECT  country, 
