@@ -6,9 +6,11 @@ import numpy as np
 import seaborn as sns
 
 from ..figure_style import style_axes, style_config, annotate_letter_label
-from ..figure_io import read_pandas, MAIN_ANALYSIS_ID, materialize_image, save_figure
+from ..figure_io import materialize_image, save_figure
 from ....resources.resources import PostgresResource, TableNamesResource
+from ...constants import constants
 
+MAIN_ANALYSIS_ID = constants['MAIN_ANALYSIS_ID']
 
 def _plot_diagonal_correlation(fig, ax, df, x_axis, y_axis, title, x_axis_label, y_axis_label, diag_min, diag_max, alpha, annotation_font_size):
     diag = np.linspace(diag_min, diag_max, 100)

@@ -6,8 +6,7 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 import seaborn as sns
 import geopandas as gpd
-import os
-from typing import Tuple, Dict, Any
+from typing import Tuple
 
 import matplotlib.colors as mcolors
 
@@ -18,10 +17,11 @@ from sqlalchemy import true
 
 from ...resources.resources import PostgresResource, TableNamesResource
 from .figure_style import create_bicolor_cmap, style_inset_axes, style_axes, annotate_letter_label, region_colors, style_config, apply_figure_theme, plot_spline_with_ci
-from .figure_stats import clustered_boostrap_ci, fit_penalized_b_spline
-from .figure_io import read_pandas, read_postgis, save_figure, materialize_image, MAIN_ANALYSIS_ID
+from ..stats_utils import fit_penalized_b_spline
+from .figure_io import read_pandas, read_postgis, save_figure, materialize_image
 from ..constants import constants
 
+MAIN_ANALYSIS_ID = constants['MAIN_ANALYSIS_ID']
 
 def _plot_world_map_with_colorbar(fig: plt.Figure, ax: plt.Axes, gdf: gpd.GeoDataFrame) -> Tuple[plt.Figure, plt.Axes]:
 

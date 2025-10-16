@@ -1,20 +1,13 @@
 # src/orchestration/defs/assets/figures/tables.py
 import dagster as dg
 import pandas as pd
-import matplotlib.pyplot as plt
-from matplotlib.gridspec import GridSpec
 import statsmodels.formula.api as smf
-import plotly.express as px
-import seaborn as sns
-import os
-from typing import Tuple, Dict
-from stargazer.stargazer import Stargazer
-import re
-
 
 from ...resources.resources import PostgresResource, TableNamesResource
-from .figure_io import read_pandas, save_latex_table, MAIN_ANALYSIS_ID, materialize_table
+from .figure_io import read_pandas, save_latex_table, materialize_table
 from ..constants import constants
+
+MAIN_ANALYSIS_ID = constants['MAIN_ANALYSIS_ID']
 
 
 def _make_table_slopes_by_urbanization(df: pd.DataFrame, x_axis: str, y_axis: str) -> pd.DataFrame:

@@ -3,20 +3,20 @@ import dagster as dg
 import pandas as pd
 from pygam import LinearGAM, s
 import numpy as np
-from typing import List
 import statsmodels.formula.api as smf
 from scipy.stats import norm
 
-from ....resources.resources import PostgresResource, StorageResource, TableNamesResource
+from ....resources.resources import PostgresResource, TableNamesResource
 from ...constants import constants
-from ..figure_stats import get_mean_derivative_penalized_b_spline, get_ols_slope
-from ..figure_io import MAIN_ANALYSIS_ID
+from ...stats_utils import get_ols_slope
+from ...constants import constants
 
+MAIN_ANALYSIS_ID = constants['MAIN_ANALYSIS_ID']
 
 @dg.asset(
     deps=[TableNamesResource().names.world.figures.world_size_vs_growth()],
     kinds={'postgres'},
-    group_name="si_figure_data_prep",
+    group_name="si_analysis",
     io_manager_key="postgres_io_manager",
     metadata={
         "dagster/column_schema": dg.TableSchema([
@@ -42,7 +42,7 @@ def world_size_growth_slopes_historical_ols(context: dg.AssetExecutionContext, p
 @dg.asset(
     deps=[TableNamesResource().names.world.figures.world_rank_vs_size()],
     kinds={'postgres'},
-    group_name="si_figure_data_prep",
+    group_name="si_analysis",
     io_manager_key="postgres_io_manager",
     metadata={
         "dagster/column_schema": dg.TableSchema([
@@ -121,7 +121,7 @@ def _test_linearity_of_size_growth_curve(df: pd.DataFrame, x_axis: str, y_axis: 
 
 @dg.asset(
     deps=[TableNamesResource().names.world.figures.world_size_vs_growth()],
-    group_name="si_figure_data_prep",
+    group_name="si_analysis",
     io_manager_key="postgres_io_manager",
     metadata={
         "dagster/column_schema": dg.TableSchema([
@@ -154,7 +154,7 @@ def _measure_distortion_rank_size_curve(df: pd.DataFrame, x_axis: str, y_axis: s
 
 @dg.asset(
     deps=[TableNamesResource().names.world.figures.world_rank_vs_size()],
-    group_name="si_figure_data_prep",
+    group_name="si_analysis",
     io_manager_key="postgres_io_manager",
     metadata={
         "dagster/column_schema": dg.TableSchema([

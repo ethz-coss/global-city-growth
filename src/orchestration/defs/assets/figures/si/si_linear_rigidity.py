@@ -15,10 +15,11 @@ from sqlalchemy.engine import Engine
 
 from ....resources.resources import PostgresResource, TableNamesResource
 from ..figure_style import style_axes, style_config, annotate_letter_label, style_inset_axes
-from ..figure_io import read_pandas, save_figure, materialize_image, MAIN_ANALYSIS_ID
-from ..figure_stats import fit_penalized_b_spline
+from ..figure_io import read_pandas, save_figure, materialize_image
+from ...stats_utils import fit_penalized_b_spline
 from ...constants import constants
 
+MAIN_ANALYSIS_ID = constants['MAIN_ANALYSIS_ID']
 
 def _plot_non_linearity_figure_size_growth(fig: plt.Figure, ax: plt.Axes, colors: List[str], title: str, df_size_vs_growth: pd.DataFrame, df_test_results: pd.DataFrame, yaxlim: tuple = None):
     x_axis = 'log_population'

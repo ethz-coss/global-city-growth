@@ -6,15 +6,16 @@ from typing import Tuple, List
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from typing import Dict, Any
-import seaborn as sns
 
 
 from ....resources.resources import PostgresResource, TableNamesResource
 from ..figure_style import style_axes, style_config, annotate_letter_label
-from ..figure_io import materialize_image, MAIN_ANALYSIS_ID, save_figure, read_pandas, save_latex_table, materialize_table
-from ..figure_stats import fit_penalized_b_spline, size_growth_slope_by_year_with_cis
+from ..figure_io import materialize_image, save_figure, read_pandas, save_latex_table, materialize_table
+from ...stats_utils import fit_penalized_b_spline, size_growth_slope_by_year_with_cis
 from ...constants import constants
 from ..tables import make_table_2
+
+MAIN_ANALYSIS_ID = constants['MAIN_ANALYSIS_ID']
 
 def _plot_size_growth_curve_usa_by_analysis_id(fig: plt.Figure, ax: plt.Axes, show_legend: bool, title: str, df_size_vs_growth_normalized: pd.DataFrame, df_average_growth: pd.DataFrame, map_analysis_id_to_urban_threshold: Dict[int, int])-> Tuple[plt.Figure, plt.Axes]:
     x_axis = 'log_population'

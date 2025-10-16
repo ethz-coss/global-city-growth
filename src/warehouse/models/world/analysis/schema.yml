@@ -1,0 +1,66 @@
+models:
+  - name: world_urbanization_groups
+    description: "The urban population share groups of the countries. There are two groups: 0-60% and 60-100% based on the urban population share of the country in 1975."
+    columns:
+      - name: country
+        description: "The country code from world bank"
+      - name: urban_population_share_group
+        description: "The urban population share group of the country: '0-60%' or '60-100%'"
+
+  - name: world_cluster_growth_population_country_analysis
+    description: "For our final analysis, we build different analysis datasets based on the specs in analysis parameters. These datasets are essentially refined version of our based dataset world_cluster_growth_population_country under different analysis parameters, like the urban threshold, the city population threshold, the country min number of cities, and the countries to exclude. This tables joins all these datasets together and indexes them by analysis_id."
+    columns:
+      - name: cluster_id
+        description: "see world_cluster_growth_geom"
+      - name: y1
+        description: "see world_cluster_growth_geom"
+      - name: y2
+        description: "see world_cluster_growth_geom"
+      - name: urban_threshold
+        description: "see world_cluster_base_geom"
+      - name: population_y1
+        description: "see world_cluster_growth_population"
+      - name: population_y2
+        description: "see world_cluster_growth_population"
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: analysis_id
+        description: "The ID of the analysis"
+
+  - name: world_dataset_summary_table
+    description: "A summary table of the world dataset used for the analysis."
+    columns:
+      - name: analysis_id
+        description: "see world_cluster_growth_population_country_analysis"
+      - name: num_cities
+        description: "The number of cities in the dataset"
+      - name: num_countries
+        description: "The number of countries in the dataset"
+      - name: num_years
+        description: "The number of years in the dataset"
+      - name: min_year
+        description: "The earliest year in the dataset"
+      - name: max_year
+        description: "The latest year in the dataset"
+
+  - name: world_paper_stats
+    description: "A table of statistics used in the paper."
+    columns:
+      - name: description
+        description: "The description of the statistic computed"
+      - name: value
+        description: "The value of the statistic computed"
+
+  - name: world_average_growth
+    description: "The log10 average growth of the population of the cities within countries over one decade. This average growth is weighted by the population of the cities."
+    columns:
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: year
+        description: "The start year of the decade."
+      - name: analysis_id
+        description: "see world_cluster_growth_population_country_analysis"
+      - name: log_average_growth
+        description: "The log10 of the average growth of the population of the country across years"
+      - name: region
+        description: "see world_country_region"

@@ -8,9 +8,6 @@ import os
 import base64
 import dagster as dg
 
-
-MAIN_ANALYSIS_ID = 1
-
 figure_dir = '/app/figures'
 figure_si_dir = '/app/figures/si'
 table_dir = '/app/figures/tables'

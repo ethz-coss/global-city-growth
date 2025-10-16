@@ -1,0 +1,105 @@
+models:
+  - name: world_rank_vs_size
+    description: "The log-rank of the cities  (1 = largest city), vs their log-population in a given decade."
+    columns:
+      - name: cluster_id
+        description: "see world_cluster_growth_geom"
+      - name: year
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: log_population
+        description: "The log10 of the population of the city"
+      - name: log_rank
+        description: "The log10 of the rank of the city"
+      - name: analysis_id
+        description: "see world_cluster_growth_population_country_analysis"
+
+  - name: world_rank_size_slopes_projections
+    description: "The slopes of the log-rank vs log-size projected forward in time. The projection are based on an equation relating rank-size slopes and size-growth slopes: a_{t+10} = a_t * (1 + b_{t}) where a_t is the rank-size slope in year t and b_t is the size growth slope in year t."
+    columns:
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: year
+      - name: analysis_id
+        description: "see world_cluster_growth_population_country_analysis"
+      - name: rank_size_slope
+        description: "The average slope of the log-rank vs log-size curve calculated with out projection method"
+
+  - name: world_rank_size_slopes
+    description: "The union of rank-size slopes from historical data and projections."
+    columns:
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: year
+      - name: analysis_id
+        description: "see world_cluster_growth_population_country_analysis"
+      - name: rank_size_slope
+        description: "see world_rank_size_slopes_historical or world_rank_size_slopes_projections"
+      - name: is_projection
+        description: "Whether the rank-size slope is a projection or not"
+      - name: region
+        description: "see world_country_region"
+      - name: urban_population_share_group
+        description: "see world_urbanization_groups"
+
+  - name: world_rank_size_slopes_change
+    description: "The change in the rank-size slope between a base year and a given year."
+    columns:
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: year
+      - name: year_base
+        description: "The base year from which we measure the change in the rank-size slope"
+      - name: analysis_id
+        description: "see world_cluster_growth_population_country_analysis"
+      - name: rank_size_slope_change
+        description: "The change in the rank-size slope between the base year and the given year"
+
+  - name: world_rank_size_slopes_change_1975_2025
+    description: "The change in the rank-size slope between 1975 and 2025, with base year 1975."
+    columns:
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: year
+      - name: year_since_1975
+        description: "The number of years since 1975"
+      - name: analysis_id
+        description: "see world_cluster_growth_population_country_analysis"
+      - name: region
+        description: "see world_country_region"
+      - name: rank_size_slope_change
+        description: "The change in the rank-size slope between 1975 and 2025 with base year 1975"
+      - name: urban_population_share_group
+        description: "see world_urbanization_groups"
+  
+  - name: world_rank_size_slopes_change_2025_2075
+    description: "The projected change in the rank-size slope between 2025 and 2075, with base year 2025."
+    columns:
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: year
+      - name: year_since_2025
+        description: "The number of years since 2025"
+      - name: analysis_id
+      - name: region
+        description: "see world_country_region"
+      - name: rank_size_slope_change
+        description: "The change in the rank-size slope between 2025 and 2075 with base year 2025"
+      - name: urban_population_share_group
+        description: "see world_urbanization_groups"
+
+  - name: world_rank_size_slopes_decade_change
+    description: "The change in the rank-size slope between a decade and the next decade."
+    columns:
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: year
+        description: "This start year of the decade"
+      - name: analysis_id
+        description: "see world_cluster_growth_population_country_analysis"
+      - name: region
+        description: "see world_country_region"
+      - name: rank_size_slope_decade_change
+        description: "The change in the rank-size slope between the start end end of the decade"
+      - name: urban_population_share_group
+        description: "see world_urbanization_groups"

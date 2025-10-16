@@ -5,14 +5,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import plotly.express as px
 import seaborn as sns
-import os
-from typing import Tuple, Dict, Any, List
+from typing import Tuple
 
 from ...resources.resources import PostgresResource, TableNamesResource
 from .figure_style import style_axes, annotate_letter_label, plot_spline_with_ci, style_inset_axes, apply_figure_theme, style_config
-from .figure_stats import fit_penalized_b_spline, size_growth_slope_by_year_with_cis
-from .figure_io import read_pandas, save_figure, materialize_image, MAIN_ANALYSIS_ID
+from ..stats_utils import fit_penalized_b_spline, size_growth_slope_by_year_with_cis
+from .figure_io import read_pandas, save_figure, materialize_image
 from ..constants import constants
+
+MAIN_ANALYSIS_ID = constants['MAIN_ANALYSIS_ID']
 
 def _plot_size_growth_slope_vs_urbanization(fig: plt.Figure, ax: plt.Axes, df: pd.DataFrame) -> Tuple[plt.Figure, plt.Axes]:
     x_axis = 'urban_population_share'

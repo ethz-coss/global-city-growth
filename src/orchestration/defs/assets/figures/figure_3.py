@@ -12,12 +12,11 @@ from typing import Tuple, Dict, List
 from matplotlib import ticker as mtick
 
 from ...resources.resources import PostgresResource, TableNamesResource
-from .figure_style import style_axes, annotate_letter_label, plot_spline_with_ci, style_inset_axes, style_config, region_colors, apply_figure_theme
-from .figure_stats import fit_penalized_b_spline, size_growth_slope_by_year_with_cis, clustered_boostrap_ci
-from .figure_io import read_pandas, save_figure, materialize_image, MAIN_ANALYSIS_ID
+from .figure_style import style_axes, annotate_letter_label, style_inset_axes, style_config, region_colors, apply_figure_theme
+from .figure_io import read_pandas, save_figure, materialize_image
 from ..constants import constants
 
-
+MAIN_ANALYSIS_ID = constants['MAIN_ANALYSIS_ID']
 
 def _plot_rank_size_slope_change_by_urbanization_group(fig: plt.Figure, ax: plt.Axes, df: pd.DataFrame, base_year: int, plot_legend: bool, title: str) -> Tuple[plt.Figure, plt.Axes]:
     x_axis = f'year_since_{base_year}'
