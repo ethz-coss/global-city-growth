@@ -115,15 +115,15 @@ def _get_data_for_equation_1(postgres: PostgresResource, table_rank_size_slopes_
     """
     return pd.read_sql(q, con=postgres.get_engine())
 
-def _get_data_for_equation_2(postgres: PostgresResource, table_world_population_share_cities_above_1m_historical: str, table_world_population_share_cities_above_1m_projections: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
+def _get_data_for_equation_2(postgres: PostgresResource, table_urb_pop_share_cities_above_1m_historical: str, table_urb_pop_share_cities_above_1m_projections: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
     q = f"""
     SELECT  country, 
             year, 
             analysis_id, 
             h.urban_population_share_cities_above_one_million AS m_t_data, 
             p.urban_population_share_cities_above_one_million AS m_t_proj
-    FROM {table_world_population_share_cities_above_1m_historical} h
-    JOIN {table_world_population_share_cities_above_1m_projections} p
+    FROM {table_urb_pop_share_cities_above_1m_historical} h
+    JOIN {table_urb_pop_share_cities_above_1m_projections} p
     USING (analysis_id, country, year)
     WHERE analysis_id = {MAIN_ANALYSIS_ID}
     """ 

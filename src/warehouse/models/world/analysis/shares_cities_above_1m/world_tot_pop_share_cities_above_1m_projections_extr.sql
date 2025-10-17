@@ -4,7 +4,7 @@
 -- depends_on: {{ ref('world_urb_pop_share_cities_above_1m_historical') }}
 -- depends_on: {{ source('world_analysis_python', 'world_rank_size_slopes_historical') }}
 WITH size_growth_slope_projection_extrapolation AS (
-     WITH years_to_project AS (
+    WITH years_to_project AS (
         SELECT generate_series(2020, 2065, 5) AS year
     ),
     average_size_growth_slope_historical AS (
