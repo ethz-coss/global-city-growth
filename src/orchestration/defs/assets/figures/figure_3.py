@@ -86,7 +86,7 @@ def _plot_bar_share_cities_above_1m(fig: plt.Figure, ax: plt.Axes, df: pd.DataFr
     df_y['x_axis_label'] = x_axis_label
 
     n_before = len(ax.patches)
-    sns.barplot(data=df_y, x='x_axis_label', y='total_population_share_cities_above_one_million', ax=ax, color='grey', weights='population', native_scale=False, saturation=1)
+    sns.barplot(data=df_y, x='x_axis_label', y='total_population_share_cities_above_one_million', ax=ax, color='grey', weights='population', native_scale=False, saturation=1, errorbar=('ci', 95), err_kws={'linewidth': 1.5, 'alpha': 0.8})
     new_bars = ax.patches[n_before:]
     for p in new_bars:
         p.set_hatch(hatch)

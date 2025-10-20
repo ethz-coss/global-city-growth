@@ -152,7 +152,7 @@ def _plot_size_growth_curve_usa_by_epoch(fig: plt.Figure, ax: plt.Axes, df_size_
     def map_year_to_epoch(year: int) -> str:
         if year >= 1850 and year < 1930:
             return '1850-1930'
-        elif year >= 1930 and year < 2020:
+        elif year >= 1930 and year <= 2020:
             return '1930-2020'
 
     df_size_vs_growth_normalized['epoch'] = df_size_vs_growth_normalized['year'].apply(map_year_to_epoch)
