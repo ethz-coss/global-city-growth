@@ -59,12 +59,12 @@ def _plot_region_regression_with_urbanization_controls(fig: plt.Figure, ax: plt.
     with_control_error = [df['coeff_with_control'] - df['ci_low_with_control'], df['ci_high_with_control'] - df['coeff_with_control']]
 
     ax.bar(index - bar_width/2, df['coeff_no_control'], bar_width,
-                yerr=no_control_error, capsize=5,
-                label='Without control', color='skyblue', ecolor='gray')
+                yerr=no_control_error, capsize=0,
+                label='Without control', color='skyblue', error_kw={'linewidth': 1.5, 'alpha': 0.8}, ecolor='#4f4f4f')
 
     ax.bar(index + bar_width/2, df['coeff_with_control'], bar_width,
-                yerr=with_control_error, capsize=5,
-                label='With control', color='lightcoral', ecolor='gray')
+                yerr=with_control_error, capsize=0,
+                label='With control', color='lightcoral', error_kw={'linewidth': 1.5, 'alpha': 0.8}, ecolor='#4f4f4f')
 
     ax.axhline(0, color='grey', linewidth=0.8, linestyle='--')
     ax.annotate('Global average', 
