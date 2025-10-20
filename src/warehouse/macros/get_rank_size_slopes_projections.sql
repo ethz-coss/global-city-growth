@@ -8,7 +8,7 @@ WITH rank_size_slope_change AS (
             size_growth_slope,
             EXP(SUM(LN(1 + size_growth_slope)) OVER (PARTITION BY country, analysis_id ORDER BY year)) AS rank_size_slope_change
     FROM {{ size_growth_slope_projections_table }}
-    WHERE MOD(year, 10) = 5
+    WHERE MOD(year, 10) = 0
 ),
 rank_size_slopes_start AS (
     SELECT  country,
@@ -16,7 +16,7 @@ rank_size_slopes_start AS (
             analysis_id,
             rank_size_slope AS rank_size_slope_start
     FROM {{ source('world_analysis_python', 'world_rank_size_slopes_historical') }}
-    WHERE year = 2025
+    WHERE year = 2020
 ),
 rank_size_slopes_projections AS (
     SELECT  country, 

@@ -5,7 +5,7 @@
 -- depends_on: {{ source('world_analysis_python', 'world_rank_size_slopes_historical') }}
 WITH size_growth_slope_projection_prop_growth AS (
     WITH years_to_project AS (
-        SELECT generate_series(2020, 2065, 5) AS year
+        SELECT generate_series(2020, 2090, 10) AS year
     ),
     size_growth_slopes_projection AS (
         SELECT 0.00 AS size_growth_slope
