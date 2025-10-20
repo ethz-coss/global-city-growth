@@ -209,6 +209,19 @@ class WorldFigures:
     def world_urb_pop_share_cities_above_1m_projections(self) -> str:
         return "world_urb_pop_share_cities_above_1m_projections"
 
+    def world_tot_pop_share_cities_above_1m_projections_extr(self) -> str:
+        return "world_tot_pop_share_cities_above_1m_projections_extr"
+
+    def world_tot_pop_share_cities_above_1m_projections_prop_growth(self) -> str:
+        return "world_tot_pop_share_cities_above_1m_projections_prop_growth"
+
+    def world_tot_pop_share_cities_above_1m_projections_inc_returns(self) -> str:
+        return "world_tot_pop_share_cities_above_1m_projections_inc_returns"
+
+    def world_tot_pop_share_cities_above_1m(self) -> str:
+        return "world_tot_pop_share_cities_above_1m"
+
+
 
 @dataclass(frozen=True)
 class WorldSupplementaryInformation:
