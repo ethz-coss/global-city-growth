@@ -13,15 +13,6 @@ average_growth AS (
             LOG(SUM(population_y2) / SUM(population_y1)) AS log_average_growth
     FROM city_population
     GROUP BY year, analysis_id 
-),
-average_growth_with_epoch AS (
-    SELECT  year, 
-            analysis_id, 
-            log_average_growth, 
-            epoch
-    FROM average_growth
-    INNER JOIN {{ ref('usa_year_epoch') }}
-    USING (year)
 )
 SELECT * 
-FROM average_growth_with_epoch
+FROM average_growth

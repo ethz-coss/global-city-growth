@@ -156,8 +156,8 @@ def _plot_growth_size_curve_by_region(fig: plt.Figure, ax: plt.Axes, df_size_vs_
     x_axis = 'log_population'
     y_axis = 'normalized_log_growth'
 
-    x_axis_label = 'Size (log population)'
-    y_axis_label = 'Growth rate (log)'
+    x_axis_label = r'Size ($\log_{10}$ population)'
+    y_axis_label = r'Growth rate ($\log_{10}$ growth)'
     
     lam = constants['PENALTY_SIZE_GROWTH_CURVE']
 

@@ -5,7 +5,8 @@ WITH size_vs_growth_normalized AS (
             sg.analysis_id,
             sg.log_population,
             sg.log_growth - ag.log_average_growth AS normalized_log_growth,
-            ag.region
+            ag.region,
+            ag.urban_population_share_group
     FROM {{ ref('world_size_vs_growth') }} sg
     INNER JOIN {{ ref('world_average_growth') }} ag
     USING (country, year, analysis_id)

@@ -21,9 +21,12 @@ average_growth_with_region AS (
             year, 
             analysis_id, 
             log_average_growth, 
-            region2 AS region
+            region2 AS region,
+            urban_population_share_group
     FROM average_growth
     INNER JOIN {{ source('owid', 'world_country_region') }}
+    USING (country)
+    INNER JOIN {{ ref('world_urbanization_groups') }}
     USING (country)
 )
 SELECT * 

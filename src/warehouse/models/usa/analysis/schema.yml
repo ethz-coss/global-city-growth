@@ -1,12 +1,4 @@
 models:
-  - name: usa_year_epoch
-    description: "We group years into three epochs: 1850-1880, 1900-1940, 1990-2020."
-    columns:
-      - name: year
-        description: "The year"
-      - name: epoch
-        description: "The epoch of the year: '1850-1880', '1900-1940', '1990-2020'"
-
   - name: usa_cluster_growth_population_analysis
     description: "For our final analysis, we build different analysis datasets based on the specs in analysis parameters. These datasets are essentially refined version of our based dataset usa_cluster_growth_population under different analysis parameters, like the urban threshold, the city population threshold. This tables joins all these datasets together and indexes them by analysis_id."
     columns:
@@ -46,8 +38,6 @@ models:
         description: "The start of the decade"
       - name: log_average_growth
         description: "The log10 average growth of the population of the cities over one decade. This average growth is weighted by the population of the cities."
-      - name: epoch
-        description: "see usa_year_epoch"
       - name: analysis_id
         description: "see usa_cluster_growth_population_analysis"
 
@@ -74,8 +64,6 @@ models:
         description: "The start of the decade"
       - name: normalized_log_growth
         description: "The normalized log growth of the city over the decade computed as the log growth minus the average growth of the population nationwide"
-      - name: epoch
-        description: "see usa_year_epoch"
       - name: analysis_id
         description: "see usa_cluster_growth_population_analysis"
 

@@ -123,6 +123,38 @@ def _plot_rank_size_slope_by_urbanization_group(fig: plt.Figure, ax: plt.Axes, d
     ax.set_ylim(0.9, 1.3)
     return fig, ax
 
+def _plot_region_regression_with_urbanization_controls(fig: plt.Figure, ax: plt.Axes, df: pd.DataFrame) -> Tuple[plt.Figure, plt.Axes]:
+    df = df.set_index('region')
+
+    bar_width = 0.35
+    index = np.arange(len(df.index))
+    label_font_size = style_config['label_font_size']
+    inset_label_font_size = style_config['inset_label_font_size']
+
+    no_control_error = [df['coeff_no_control'] - df['ci_low_no_control'], df['ci_high_no_control'] - df['coeff_no_control']]
+    with_control_error = [df['coeff_with_control'] - df['ci_low_with_control'], df['ci_high_with_control'] - df['coeff_with_control']]
+
+    ax.bar(index - bar_width/2, df['coeff_no_control'], bar_width,
+                yerr=no_control_error, capsize=5,
+                label='Without control', color='skyblue', ecolor='gray')
+
+    ax.bar(index + bar_width/2, df['coeff_with_control'], bar_width,
+                yerr=with_control_error, capsize=5,
+                label='With control', color='lightcoral', ecolor='gray')
+
+    ax.axhline(0, color='grey', linewidth=0.8, linestyle='--')
+    ax.annotate('Global average', 
+                xy=[2.5, 0], 
+                xytext=[2, 0.005], 
+                arrowprops=dict(facecolor='black', shrink=0.05, width=0.5, headwidth=4, headlength=8),
+                fontsize=label_font_size)
+
+    ax.set_xticks(index)
+    ax.set_xticklabels(df.index, rotation=0, ha="center")
+    style_axes(ax=ax, xlabel='', ylabel='Deviation of region size-growth slope\nfrom global average')
+    ax.legend(fontsize=inset_label_font_size, loc='upper center', frameon=False, title='Urban population share control') # here we want a smaller legend font so we style it ourselves
+    return fig, ax
+
 
 @dg.asset(
     deps=[TableNamesResource().names.world.figures.world_rank_size_slopes_change_1975_2025(), TableNamesResource().names.world.figures.world_rank_size_slopes_change_2025_2075(), TableNamesResource().names.usa.figures.usa_rank_size_slopes_change(), TableNamesResource().names.world.figures.world_rank_size_slopes_change(),TableNamesResource().names.world.figures.world_urb_pop_share_cities_above_1m()],
