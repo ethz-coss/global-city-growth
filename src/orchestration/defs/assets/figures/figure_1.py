@@ -36,7 +36,7 @@ def _plot_world_map_with_colorbar(fig: plt.Figure, ax: plt.Axes, gdf: gpd.GeoDat
     colorbar_label_fontsize = 12
     colorbar_pos = [0.4, 0.13, 0.2, 0.025]
     colorbar_label_pos = 'top'
-    colorbar_label = 'Size-growth slope'
+    colorbar_label = r'Size-growth slope $\beta$'
     
     gdf_proj = gdf.to_crs(epsg=projection_epsg)
     vmin, vmax = np.nanmin(gdf_proj[col]), np.nanmax(gdf_proj[col])
@@ -67,7 +67,7 @@ def _plot_world_map_with_colorbar(fig: plt.Figure, ax: plt.Axes, gdf: gpd.GeoDat
 
     inset_distribution_pos = [0.64, 0.2, 0.09, 0.16]
     inset_distribution_ylabel = 'Density'
-    inset_distribution_xlabel = 'Size-growth slope'
+    inset_distribution_xlabel = r'$\beta$'
 
     ax_inset = fig.add_axes(inset_distribution_pos)
     sns.kdeplot(gdf_proj[col], ax=ax_inset, color='black', fill=True, alpha=0.2)
@@ -77,11 +77,9 @@ def _plot_world_map_with_colorbar(fig: plt.Figure, ax: plt.Axes, gdf: gpd.GeoDat
     ax_inset.set_yticks([])
 
     # Inset growth size
-
-
     inset_growth_size_pos = [0.2, 0.2, 0.12, 0.2]
-    inset_growth_size_xlabel = 'Size (log population)'
-    inset_growth_size_ylabel = 'Growth rate (log)'
+    inset_growth_size_xlabel = r'Size ($\log_{10}S_t$)'
+    inset_growth_size_ylabel = 'Growth rate\n' + r'($\log_{10}S_{t+10} \ / \ S_t$)'
     inset_label_text_font_size = 8
     inset_label_font_size = style_config['inset_label_font_size']
 
@@ -132,7 +130,7 @@ def _plot_growth_rates_group_barchart_by_region(fig: plt.Figure, ax: plt.Axes, d
     y_axis = 'normalized_growth'
     weights = 'population'
 
-    y_axis_label = 'Growth advantage over national average \n' + r'$g_{\text{group}} \ / \ g_{\text{national}} - 1$'
+    y_axis_label = 'Growth advantage over national average \n' + r'($g_{\text{group}} \ / \ g_{\text{national}} - 1$)'
 
     group_to_order = {
         'above_1m': 1,
@@ -156,8 +154,8 @@ def _plot_growth_size_curve_by_region(fig: plt.Figure, ax: plt.Axes, df_size_vs_
     x_axis = 'log_population'
     y_axis = 'normalized_log_growth'
 
-    x_axis_label = r'Size ($\log_{10}$ population)'
-    y_axis_label = r'Growth rate ($\log_{10}$ growth)'
+    x_axis_label = r'Size ($\log_{10}S_t$)'
+    y_axis_label = r'Growth rate ($\log_{10}S_{t+10} \ / \ S_t$)'
     
     lam = constants['PENALTY_SIZE_GROWTH_CURVE']
 

@@ -41,8 +41,8 @@ def _plot_size_growth_curve_by_urbanization_group(fig: plt.Figure, ax: plt.Axes,
     y_axis = 'normalized_log_growth'
 
     title = r'$\leftarrow$' + ' Global cross-section' + r'$\rightarrow$'
-    x_axis_label = r'Size ($\log_{10}$ population)'
-    y_axis_label = r'Growth rate ($\log_{10}$ growth)'
+    x_axis_label = r'Size ($\log_{10}S_t$)'
+    y_axis_label = r'Growth rate ($\log_{10}S_{t+10} \ / \ S_t$)'
     label_font_size = style_config['label_font_size']
 
     colors = [px.colors.qualitative.Plotly[4], px.colors.qualitative.Plotly[6]]
@@ -127,8 +127,8 @@ def _plot_size_growth_curve_kor_by_epoch(fig: plt.Figure, ax: plt.Axes, df_size_
     y_axis = 'normalized_log_growth'
 
     title = 'South Korea'
-    x_axis_label = r'Size ($\log_{10}$ population)'
-    y_axis_label = r'Growth rate ($\log_{10}$ growth)'
+    x_axis_label = r'Size ($\log_{10}S_t$)'
+    y_axis_label = r'Growth rate ($\log_{10}S_{t+10} \ / \ S_t$)'
 
     _plot_size_growth_curve_by_epoch(fig=fig, ax=ax, df_size_vs_growth_normalized=df_size_vs_growth_normalized, df_average_growth=df_average_growth, x_axis=x_axis, y_axis=y_axis, lam=lam)
     style_axes(ax=ax, xlabel=x_axis_label, ylabel=y_axis_label, title=title, legend_loc='lower right')
@@ -164,8 +164,8 @@ def _plot_size_growth_curve_usa_by_epoch(fig: plt.Figure, ax: plt.Axes, df_size_
     y_axis = 'normalized_log_growth'
 
     title = 'USA'
-    x_axis_label = r'Size ($\log_{10}$ population)'
-    y_axis_label = r'Growth rate ($\log_{10}$ growth)'
+    x_axis_label = r'Size ($\log_{10}S_t$)'
+    y_axis_label = r'Growth rate ($\log_{10}S_{t+10} \ / \ S_t$)'
 
     _plot_size_growth_curve_by_epoch(fig=fig, ax=ax, df_size_vs_growth_normalized=df_size_vs_growth_normalized, df_average_growth=df_average_growth, x_axis=x_axis, y_axis=y_axis, lam=lam)
     style_axes(ax=ax, xlabel=x_axis_label, ylabel=y_axis_label, title=title, legend_loc='lower center')
@@ -197,7 +197,7 @@ def _plot_rank_size_slope_change_usa_kor(fig: plt.Figure, ax: plt.Axes, df_usa: 
 
     title = 'USA'
     x_axis_label = r'Time since $t_0$'
-    y_axis_label = r'Change in top_heaviness since $t_0$' + '\n' + r'($\alpha_{t} \ / \ \alpha_{t_0} - 1)$'
+    y_axis_label = r'Change in top-heaviness since $t_0$' + '\n' + r'($\alpha_{t} \ / \ \alpha_{t_0} - 1)$'
     year_base, year_middle, year_end = 1850, 1930, 2020
 
     _plot_rank_size_slope_change_curves(fig=fig, ax=ax, year_base=year_base, year_middle=year_middle, year_end=year_end, df=df_usa, x_axis=x_axis, y_axis=y_axis, linewidth=2, markersize=5)
@@ -242,7 +242,7 @@ def figure_2(context: dg.AssetExecutionContext, postgres: PostgresResource, tabl
     _plot_rank_size_slope_change_by_urbanization_group(fig=fig, ax=ax3, df=world_rank_size_slopes_change_1975_2025)
 
     y_fig = 0.485
-    line = Line2D([0.2, 0.8], [y_fig, y_fig],transform=fig.transFigure, color='0.6', lw=1, ls='--', zorder=1000, clip_on=False)
+    line = Line2D([0.1, 0.9], [y_fig, y_fig],transform=fig.transFigure, color='0.6', lw=1, ls='--', zorder=1000, clip_on=False)
     fig.add_artist(line)
 
     n_boots = 1000

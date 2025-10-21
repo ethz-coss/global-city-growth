@@ -75,7 +75,7 @@ def _plot_region_regression_with_urbanization_controls(fig: plt.Figure, ax: plt.
 
     ax.set_xticks(index)
     ax.set_xticklabels(df.index, rotation=0, ha="center")
-    style_axes(ax=ax, xlabel='', ylabel='Deviation of region size-growth slope\nfrom global average')
+    style_axes(ax=ax, xlabel='', ylabel=r'Deviation of size-growth slope $\beta$' + '\nfrom global average')
     ax.legend(fontsize=inset_label_font_size, loc='upper center', frameon=False, title='Urban population share control') # here we want a smaller legend font so we style it ourselves
     return fig, ax
 
