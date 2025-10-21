@@ -5,6 +5,7 @@ WITH size_vs_growth_above_1m AS (
             log_population, 
             normalized_log_growth,
             region,
+            urban_population_share_group,
             'above_1m' AS city_group
     FROM {{ ref('world_size_vs_growth_normalized') }}
     WHERE log_population >= 6
@@ -16,6 +17,7 @@ size_vs_growth_below_1m AS (
             log_population, 
             normalized_log_growth,
             region,
+            urban_population_share_group,
             'below_1m' AS city_group
     FROM {{ ref('world_size_vs_growth_normalized') }}
     WHERE log_population < 6
@@ -32,6 +34,7 @@ size_vs_growth_largest_city AS (
             log_population, 
             normalized_log_growth,
             region,
+            urban_population_share_group,
             'largest_city' AS city_group
     FROM ranked_cities
     WHERE city_rank = 1
@@ -52,6 +55,7 @@ size_vs_growth_by_group_exponentiated AS (
             analysis_id, 
             city_group, 
             region,
+            urban_population_share_group,
             POWER(10, log_population) AS population,
             POWER(10, normalized_log_growth) - 1 AS normalized_growth
     FROM size_vs_growth_by_group
