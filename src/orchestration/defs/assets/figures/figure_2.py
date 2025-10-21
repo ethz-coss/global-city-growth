@@ -22,7 +22,9 @@ def _plot_size_growth_slope_vs_urbanization(fig: plt.Figure, ax: plt.Axes, df: p
     y_axis = 'size_growth_slope'
 
     x_axis_label = 'Urban population share'
-    y_axis_label = 'Growth advantage of large cities\n' + r'(Size-growth slope $\beta_t$)'
+    y_axis_label = 'Growth advantage of large cities\n' + r'(Size-growth slope $\beta$)'
+    title = r'$\leftarrow$' + ' Global cross-section' + r'$\rightarrow$'
+
 
     lam = constants['PENALTY_SLOPE_SPLINE']
     color = px.colors.qualitative.Plotly[0]
@@ -30,7 +32,7 @@ def _plot_size_growth_slope_vs_urbanization(fig: plt.Figure, ax: plt.Axes, df: p
     x, y, ci_low, ci_high = fit_penalized_b_spline(df=df, xaxis=x_axis, yaxis=y_axis, lam=lam)
     plot_spline_with_ci(ax=ax, x=x, y=y, ci_low=ci_low, ci_high=ci_high, color=color)
     ax.axhline(y=0, color='black', linestyle='--', linewidth=0.5)
-    style_axes(ax=ax, xlabel=x_axis_label, ylabel=y_axis_label)
+    style_axes(ax=ax, xlabel=x_axis_label, ylabel=y_axis_label, title=title)
     sns.despine(ax=ax)
     return fig, ax
 
@@ -39,8 +41,7 @@ def _plot_size_growth_curve_by_urbanization_group(fig: plt.Figure, ax: plt.Axes,
     # Main plot
     x_axis = 'log_population'
     y_axis = 'normalized_log_growth'
-
-    title = r'$\leftarrow$' + ' Global cross-section' + r'$\rightarrow$'
+    
     x_axis_label = r'Size ($\log_{10}S_t$)'
     y_axis_label = r'Growth rate ($\log_{10}S_{t+10} \ / \ S_t$)'
     label_font_size = style_config['label_font_size']
@@ -60,7 +61,7 @@ def _plot_size_growth_curve_by_urbanization_group(fig: plt.Figure, ax: plt.Axes,
     ax.plot([None], [None], marker='o', linewidth=1, color=colors[1], label='Early urbanizers (60-100%)')
     ax.legend(loc='upper center', fontsize=label_font_size, frameon=False, title='Urban population share 1975', title_fontsize=label_font_size, ncol=1)
 
-    style_axes(ax=ax, xlabel=x_axis_label, ylabel=y_axis_label, title=title)
+    style_axes(ax=ax, xlabel=x_axis_label, ylabel=y_axis_label)
     ax.set_ylim(0.01, 0.17)
     return fig, ax
 
@@ -138,7 +139,7 @@ def _plot_size_growth_curve_kor_by_epoch(fig: plt.Figure, ax: plt.Axes, df_size_
     y_axis_inset = 'size_growth_slope'
 
     x_axis_inset_label = 'Year'
-    y_axis_inset_label = r'$\beta_t$'
+    y_axis_inset_label = r'$\beta$'
 
     ax_inset = fig.add_axes([0.1705, 0.36, 0.06, 0.09])
 
@@ -175,7 +176,7 @@ def _plot_size_growth_curve_usa_by_epoch(fig: plt.Figure, ax: plt.Axes, df_size_
     y_axis_inset = 'size_growth_slope'
 
     x_axis_inset_label = 'Year'
-    y_axis_inset_label = r'$\beta_t$'
+    y_axis_inset_label = r'$\beta$'
     ax_inset = fig.add_axes([0.445, 0.36, 0.06, 0.09])
     _plot_size_growth_slope_by_year_inset(fig=fig, ax=ax_inset, df_size_vs_growth=df_size_vs_growth, x_axis=x_axis_inset, y_axis=y_axis_inset, lam=lam, n_boots=n_boots)
     style_inset_axes(ax=ax_inset, xlabel=x_axis_inset_label, ylabel=y_axis_inset_label)
@@ -231,12 +232,13 @@ def figure_2(context: dg.AssetExecutionContext, postgres: PostgresResource, tabl
     ax1, ax2, ax3, ax4, ax5, ax6 = axes.flatten()
     engine = postgres.get_engine()
 
-    world_size_growth_slopes = read_pandas(engine=engine, table=tables.names.world.figures.world_size_growth_slopes_historical_urbanization(), analysis_id=MAIN_ANALYSIS_ID)
-    _plot_size_growth_slope_vs_urbanization(fig=fig, ax=ax1, df=world_size_growth_slopes)
-
     world_size_vs_growth_normalized = read_pandas(engine=engine, table=tables.names.world.figures.world_size_vs_growth_normalized(), analysis_id=MAIN_ANALYSIS_ID)
     world_average_growth = read_pandas(engine=engine, table=tables.names.world.figures.world_average_growth(), analysis_id=MAIN_ANALYSIS_ID)
-    _plot_size_growth_curve_by_urbanization_group(fig=fig, ax=ax2, df_size_vs_growth_normalized=world_size_vs_growth_normalized, df_average_growth=world_average_growth)
+    _plot_size_growth_curve_by_urbanization_group(fig=fig, ax=ax1, df_size_vs_growth_normalized=world_size_vs_growth_normalized, df_average_growth=world_average_growth)
+
+
+    world_size_growth_slopes = read_pandas(engine=engine, table=tables.names.world.figures.world_size_growth_slopes_historical_urbanization(), analysis_id=MAIN_ANALYSIS_ID)
+    _plot_size_growth_slope_vs_urbanization(fig=fig, ax=ax2, df=world_size_growth_slopes)
 
     world_rank_size_slopes_change_1975_2025 = read_pandas(engine=engine, table=tables.names.world.figures.world_rank_size_slopes_change_1975_2025(), analysis_id=MAIN_ANALYSIS_ID)
     _plot_rank_size_slope_change_by_urbanization_group(fig=fig, ax=ax3, df=world_rank_size_slopes_change_1975_2025)

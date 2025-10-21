@@ -3,49 +3,51 @@
 -- Share of urban population living in cities above 1M
 WITH tot_pop_share_cities_above_1m_1975 AS (
     SELECT  'Share of total population living in cities above 1M in 1975' AS description,
-            AVG(total_population_share_cities_above_one_million) AS value
+            SUM(total_population_share_cities_above_one_million * population) / SUM(population) AS value
     FROM {{ ref('world_tot_pop_share_cities_above_1m') }}
     WHERE year = 1975
     AND analysis_id = {{ analysis_id }}
 ),
 tot_pop_share_cities_above_1m_2025 AS (
     SELECT  'Share of total population living in cities above 1M in 2025' AS description,
-            AVG(total_population_share_cities_above_one_million) AS value
+            SUM(total_population_share_cities_above_one_million * population) / SUM(population) AS value
     FROM {{ ref('world_tot_pop_share_cities_above_1m') }}
     WHERE year = 2025
     AND analysis_id = {{ analysis_id }}
 ),
 tot_pop_share_cities_above_1m_2100_inc_returns AS (
     SELECT  'Share of total population living in cities above 1M in 2100 (increasing returns)' AS description,
-            AVG(total_population_share_cities_above_one_million) AS value
+            SUM(total_population_share_cities_above_one_million * population) / SUM(population) AS value
     FROM {{ ref('world_tot_pop_share_cities_above_1m_projections_inc_returns') }}
     WHERE year = 2100 
     AND analysis_id = {{ analysis_id }}
 ),
 tot_pop_share_cities_above_1m_2100_prop_growth AS (
     SELECT  'Share of total population living in cities above 1M in 2100 (proportional growth)' AS description,
-            AVG(total_population_share_cities_above_one_million) AS value
+            SUM(total_population_share_cities_above_one_million * population) / SUM(population) AS value
     FROM {{ ref('world_tot_pop_share_cities_above_1m_projections_prop_growth') }}
     WHERE year = 2100 
     AND analysis_id = {{ analysis_id }}
 ),
 tot_pop_share_cities_above_1m_2100_our_model AS (
     SELECT  'Share of total population living in cities above 1M in 2100 (our model)' AS description,
-            AVG(total_population_share_cities_above_one_million) AS value
+            SUM(total_population_share_cities_above_one_million * population) / SUM(population) AS value
     FROM {{ ref('world_tot_pop_share_cities_above_1m') }}
     WHERE year = 2100 
     AND analysis_id = {{ analysis_id }}
 ),
 tot_pop_share_cities_above_1m_2100_extr AS (
     SELECT  'Share of total population living in cities above 1M in 2100 (extrapolation)' AS description,
-            AVG(total_population_share_cities_above_one_million) AS value
+            SUM(total_population_share_cities_above_one_million * population) / SUM(population) AS value
     FROM {{ ref('world_tot_pop_share_cities_above_1m_projections_extr') }}
     WHERE year = 2100 
     AND analysis_id = {{ analysis_id }}
 ),
 world_population_2100 AS (
     SELECT  SUM(population) AS total_population
-    FROM {{ ref('world_population') }}
+    FROM {{ ref('world_population') }} wp
+    JOIN {{ source('cshapes', 'world_crosswalk_cshapes_code_to_iso_code') }} cw
+    ON wp.country = cw.world_bank_code
     WHERE year = 2100
 ),
 tot_pop_share_cities_above_1m_2100_diff_ir_pg AS (

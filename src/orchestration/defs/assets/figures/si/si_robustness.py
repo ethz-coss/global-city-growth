@@ -20,8 +20,8 @@ MAIN_ANALYSIS_ID = constants['MAIN_ANALYSIS_ID']
 def _plot_size_growth_curve_usa_by_analysis_id(fig: plt.Figure, ax: plt.Axes, show_legend: bool, title: str, df_size_vs_growth_normalized: pd.DataFrame, df_average_growth: pd.DataFrame, map_analysis_id_to_urban_threshold: Dict[int, int])-> Tuple[plt.Figure, plt.Axes]:
     x_axis = 'log_population'
     y_axis = 'normalized_log_growth'
-    x_axis_label = 'Size (log population)'
-    y_axis_label = 'Growth rate (log)'
+    x_axis_label = r'Size ($\log_{10}S_t$)'
+    y_axis_label = r'Growth rate ($\log_{10}S_{t+10} \ / \ S_t$)'
 
     lam = constants['PENALTY_SIZE_GROWTH_CURVE']
 

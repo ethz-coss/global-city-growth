@@ -192,7 +192,7 @@ def si_figure_projection_vs_historical_urb_pop_share_cities_above_1m(context: dg
     fig, axes = plt.subplots(1, 2, figsize=(10, 5), gridspec_kw={'wspace': 0.25})
     ax1, ax2 = axes.flatten()
     
-    df_country, df_region = _get_data_for_projection_vs_historical_urb_pop_share_cities_above_1m(postgres=postgres, table_world_population_share_cities_above_1m_historical=tables.names.world.figures.world_urb_pop_share_cities_above_1m_historical(), table_world_population_share_cities_above_1m_projections=tables.names.world.figures.world_urb_pop_share_cities_above_1m_projections(), table_world_urban_population=tables.names.world.si.world_urban_population(), table_world_regions=tables.names.world.sources.world_country_region())
+    df_country, df_region = _get_data_for_projection_vs_historical_urb_pop_share_cities_above_1m(postgres=postgres, table_urb_pop_share_cities_above_1m_historical=tables.names.world.figures.world_urb_pop_share_cities_above_1m_historical(), table_urb_pop_share_cities_above_1m_projections=tables.names.world.figures.world_urb_pop_share_cities_above_1m_projections(), table_world_urban_population=tables.names.world.si.world_urban_population(), table_world_regions=tables.names.world.sources.world_country_region())
 
     _plot_projection_vs_historical_urb_pop_share_cities_above_1m(fig=fig, ax=ax1, df=df_country, is_country_plot=True)
     _plot_projection_vs_historical_urb_pop_share_cities_above_1m(fig=fig, ax=ax2, df=df_region, is_country_plot=False)
