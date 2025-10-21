@@ -7,6 +7,7 @@ import plotly.express as px
 import seaborn as sns
 from typing import Tuple
 from matplotlib import ticker as mtick
+from matplotlib.lines import Line2D
 
 from ...resources.resources import PostgresResource, TableNamesResource
 from .figure_style import style_axes, annotate_letter_label, plot_spline_with_ci, style_inset_axes, apply_figure_theme, style_config
@@ -226,7 +227,7 @@ def figure_2(context: dg.AssetExecutionContext, postgres: PostgresResource, tabl
     apply_figure_theme()
     figure_file_name = 'figure_2.png'
 
-    fig, axes = plt.subplots(2,3, figsize=(15, 10), gridspec_kw={'wspace': 0.25, 'hspace': 0.25})
+    fig, axes = plt.subplots(2,3, figsize=(15, 10), gridspec_kw={'wspace': 0.25, 'hspace': 0.3})
     ax1, ax2, ax3, ax4, ax5, ax6 = axes.flatten()
     engine = postgres.get_engine()
 
@@ -239,6 +240,10 @@ def figure_2(context: dg.AssetExecutionContext, postgres: PostgresResource, tabl
 
     world_rank_size_slopes_change_1975_2025 = read_pandas(engine=engine, table=tables.names.world.figures.world_rank_size_slopes_change_1975_2025(), analysis_id=MAIN_ANALYSIS_ID)
     _plot_rank_size_slope_change_by_urbanization_group(fig=fig, ax=ax3, df=world_rank_size_slopes_change_1975_2025)
+
+    y_fig = 0.485
+    line = Line2D([0.2, 0.8], [y_fig, y_fig],transform=fig.transFigure, color='0.6', lw=1, ls='--', zorder=1000, clip_on=False)
+    fig.add_artist(line)
 
     n_boots = 1000
     kor_size_vs_growth = read_pandas(engine=engine, table=tables.names.world.figures.world_size_vs_growth(), analysis_id=MAIN_ANALYSIS_ID, where="country = 'KOR'")

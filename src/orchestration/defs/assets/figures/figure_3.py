@@ -92,9 +92,6 @@ def _plot_bar_share_cities_above_1m(fig: plt.Figure, ax: plt.Axes, df: pd.DataFr
         p.set_hatch(hatch)
     return fig, ax
 
-from matplotlib.patches import Rectangle
-from matplotlib.lines import Line2D
-
 def _plot_world_population_share_cities_above_1m_scenarios(fig: plt.Figure, ax: plt.Axes, extr: pd.DataFrame, prop_growth: pd.DataFrame, inc_returns: pd.DataFrame, model: pd.DataFrame, data: pd.DataFrame) -> Tuple[plt.Figure, plt.Axes]:
     _plot_bar_share_cities_above_1m(fig=fig, ax=ax, df=data, year=1975, x_axis_label='1975', hatch=None)
     _plot_bar_share_cities_above_1m(fig=fig, ax=ax, df=extr, year=2025, x_axis_label='2025', hatch=None)
