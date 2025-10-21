@@ -74,3 +74,16 @@ models:
         description: "see world_urban_population"
       - name: urban_population_share_group
         description: "see world_urbanization_groups"
+
+  - name: world_tot_pop_share_cities_above_1m
+    description: "The urban population share of cities above 1 million multiplied by the overall urban population share. This is used to compute the total population share of cities above 1 million."
+    columns:
+      - name: country
+        description: "see world_cluster_growth_geocoding"
+      - name: year
+      - name: analysis_id
+        description: "see world_cluster_growth_population_country_analysis"
+      - name: total_population_share_cities_above_one_million
+        description: "The urban population share of cities above 1 million (see world_urb_pop_share_cities_above_1m) multiplied by the overall urban population share (see world_urbanization)."
+      - name: population
+        description: "see world_population"

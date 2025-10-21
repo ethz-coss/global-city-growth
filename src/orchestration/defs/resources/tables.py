@@ -187,9 +187,6 @@ class WorldFigures:
 
     def world_rank_size_slopes_change_1975_2025(self) -> str:
         return "world_rank_size_slopes_change_1975_2025"
-
-    def world_rank_size_slopes_change_2025_2075(self) -> str:
-        return "world_rank_size_slopes_change_2025_2075"
     
     def world_rank_size_slopes_decade_change(self) -> str:
         return "world_rank_size_slopes_decade_change"
