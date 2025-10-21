@@ -4,7 +4,7 @@ This repository provides:
 
 1) **City boundaries** and **population** for the United States (1850-2020) and the world (1975-2025). Data are organized around the idea of **cluster_growth**: a stable city boundary computed for a time window $(y_1, y_2)$, within which growth is measured consistently. Among the numerous city definition, this definition has two main advantages: (i) it dynamically adjusts as urban areas expand; and (ii) it is consistent across space and time, facilitating comparative analyses.
 
-2) Data and projections of the share of world population living in cities of 1 million people or more between 1975 and 2100. 
+2) Data and projections of **the share of world population living in cities of 1 million people or more** between 1975 and 2100. 
 
 See the [paper](https://arxiv.org/abs/2510.12417).
 
