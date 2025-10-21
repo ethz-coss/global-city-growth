@@ -1,6 +1,10 @@
 # Boundaries & population of cities: USA (1850–2020) and World (1975–2025)   
 
-This repository provides **city boundaries** and **population** for the United States (1850-2020) and the world (1975-2025). Data are organized around the idea of **cluster_growth**: a stable city boundary computed for a time window $(y_1, y_2)$, within which growth is measured consistently. Among the numerous city definition, this definition has two main advantages: (i) it dynamically adjusts as urban areas expand; and (ii) it is consistent across space and time, facilitating comparative analyses.
+This repository provides:
+
+1) **City boundaries** and **population** for the United States (1850-2020) and the world (1975-2025). Data are organized around the idea of **cluster_growth**: a stable city boundary computed for a time window $(y_1, y_2)$, within which growth is measured consistently. Among the numerous city definition, this definition has two main advantages: (i) it dynamically adjusts as urban areas expand; and (ii) it is consistent across space and time, facilitating comparative analyses.
+
+2) Data and projections of the share of world population living in cities of 1 million people or more between 1975 and 2100. 
 
 See the [paper](https://arxiv.org/abs/2510.12417).
 
@@ -122,6 +126,18 @@ Historical (1850–1940) counts reconstructed from IPUMS Full Count + Census Pla
 - `population_y1` — persons from **GHSL POP** cells intersecting the stable boundary at $y_1$.  
 - `population_y2` — persons from **GHSL POP** cells intersecting the stable boundary at $y_2$.  
 - `country` - World Bank code of the country in which the cluster is located. Country boundaries are 2019 boundaries according to the Cshapes database. 
+
+---
+
+### `world/world_tot_pop_share_cities_above_1m_with_projections.csv`
+**What:** Data and projections of the share of world population living in cities of 1 million people or more between 1975 and 2100. 
+These are the data and projections used in the main analysis of our [paper](https://arxiv.org/abs/2510.12417), estimated with the methodology described there. 
+
+- `country` - World Bank code of the country in which the cluster is located. Country boundaries are 2019 boundaries according to the Cshapes database.  
+- `year` – Calendar year (1975–2100).
+- `total_population_share_cities_above_one_million` – Share of the total population living in cities with more than 1,000,000 residents in that year (fraction between 0 and 1). This is projected as explained in the paper. 
+- `population` – Total national population for that country and year (number of persons).
+- `is_projection` – Indicator for whether the row is a projection (1) or an observed/estimated historical value (0).
 
 ---
 
