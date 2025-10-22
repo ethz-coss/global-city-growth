@@ -4,8 +4,8 @@ from pathlib import Path
 from typing import List, Dict, Any
 import time
 from enum import Enum
-from pySmartDL import SmartDL
 import dagster as dg
+import pooch
 
 
 class IpumsAPIExtractType(Enum):
@@ -109,13 +109,25 @@ class IpumsAPIClient:
 
     def download_extract(self,  extract_id: int, extract_type: IpumsAPIExtractType, download_url: str, download_dir: Path, dagster_context: dg.AssetExecutionContext = None) -> None:
         file_name = self._get_download_file_name(extract_id=extract_id, extract_type=extract_type)
-        request_args = {"headers": self._get_header()}
-        obj = SmartDL(urls=download_url, dest=fspath(download_dir / file_name), request_args=request_args, progress_bar=False, timeout=60, threads=1)
-        
+        headers = self._get_header()
+
         if dagster_context is None:
-            obj.start(blocking=True)
-        else:
-            obj.start(blocking=False)
-            while not obj.isFinished():
-                dagster_context.log.info(f"Progress: {obj.get_progress() * 100:.3f}%")
-                time.sleep(10)
+            dagster_context.log.info(f"Downloading {file_name}. See stdout for progress.")
+
+        downloader = pooch.HTTPDownloader(
+            headers=headers,                
+            timeout=300,                   
+            chunk_size=8 * 1024 * 1024,   
+            progressbar=True          
+        )
+
+        pooch.retrieve(
+            url=download_url,               
+            known_hash=None,               
+            fname=file_name,               
+            path=str(download_dir),      
+            downloader=downloader,
+        )
+
+        if dagster_context is not None:
+            dagster_context.log.info(f"Downloading finished")

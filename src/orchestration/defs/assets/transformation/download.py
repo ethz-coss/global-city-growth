@@ -9,6 +9,7 @@ from datetime import datetime
 from pySmartDL import SmartDL
 from os import fspath
 import time
+import pooch
 
 from ...resources.resources import IpumsAPIClientResource, StorageResource
 from ...resources.ipums_api import IpumsAPIExtractType
@@ -38,15 +39,19 @@ def _download_raw_data_zenodo(context: dg.AssetExecutionContext, storage: Storag
     download_dir = _make_temp_download_dir(base_dir=storage.paths.download.download())
     zip_path = download_dir / target_filename
 
-    obj = SmartDL(urls=download_url, dest=fspath(zip_path), progress_bar=False, timeout=60, threads=1)
-    obj.start(blocking=False)
+    downloader = pooch.HTTPDownloader(chunk_size=8*1024*1024, timeout=300, progressbar=True)
+    
+    context.log.info(f"Downloading {target_filename}. See stdout for progress.")
+    downloaded_path = pooch.retrieve(
+        url=download_url,               
+        known_hash=None,               
+        fname=target_filename,           
+        path=str(download_dir),          
+        downloader=downloader             
+    )
 
-    while not obj.isFinished():
-        context.log.info(f"Downloading progress: {obj.get_progress() * 100:.3f}%")
-        time.sleep(15)
-
-    context.log.info(f"Downloading finished")
-    time.sleep(60) # wait for the file to be fully downloaded
+    zip_path = Path(downloaded_path)
+    context.log.info("Downloading finished")
 
     context.log.info(f"Unzipping {zip_path}")
     _unzip(zip_path=zip_path, dest_dir=download_dir)
@@ -74,7 +79,6 @@ def _download_ipums_full_count_year(context: dg.AssetExecutionContext, storage: 
     download_dir = _make_temp_download_dir(base_dir=storage.paths.download.download())
     ipums.download_extract(extract_id=extract_id, extract_type=IpumsAPIExtractType.IPUM_USA_FULL_COUNT, download_url=download_url, download_dir=download_dir, dagster_context=context)
     context.log.info(f"Extract downloaded")
-    time.sleep(60) # wait for the file to be fully downloaded
 
     extract_id_formatted = f"{extract_id:05d}"
     gz_name = f"usa_{extract_id_formatted}.{data_format}.gz"
@@ -102,8 +106,6 @@ def _download_nhgis_1990_2020_place_population(context: dg.AssetExecutionContext
     download_dir = _make_temp_download_dir(base_dir=storage.paths.download.download())
     ipums.download_extract(extract_id=extract_id, extract_type=IpumsAPIExtractType.NHGIS_TIME_SERIES, download_url=download_url, download_dir=download_dir)
     context.log.info(f"Extract downloaded")
-
-    time.sleep(60) # wait for the file to be fully downloaded
 
     zip_name = f"nhgis{extract_id:04d}_csv.zip"
     zip_path = download_dir / zip_name
@@ -133,8 +135,6 @@ def _download_nhgis_1900_2010_place_geom_year(context: dg.AssetExecutionContext,
     download_dir = _make_temp_download_dir(base_dir=storage.paths.download.download())
     ipums.download_extract(extract_id=extract_id, extract_type=IpumsAPIExtractType.NHGIS_SHAPEFILE, download_url=download_url, download_dir=download_dir)
     context.log.info(f"Extract downloaded")
-
-    time.sleep(60) # wait for the file to be fully downloaded
 
     outer_zip_name = f"nhgis{extract_id:04d}_shape.zip"
     outer_zip_path = download_dir / outer_zip_name
