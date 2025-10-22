@@ -110,7 +110,7 @@ class IpumsAPIClient:
     def download_extract(self,  extract_id: int, extract_type: IpumsAPIExtractType, download_url: str, download_dir: Path, dagster_context: dg.AssetExecutionContext = None) -> None:
         file_name = self._get_download_file_name(extract_id=extract_id, extract_type=extract_type)
         request_args = {"headers": self._get_header()}
-        obj = SmartDL(urls=download_url, dest=fspath(download_dir / file_name), request_args=request_args)
+        obj = SmartDL(urls=download_url, dest=fspath(download_dir / file_name), request_args=request_args, progress_bar=False, timeout=60, threads=1)
         
         if dagster_context is None:
             obj.start(blocking=True)
