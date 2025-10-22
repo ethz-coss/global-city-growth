@@ -111,7 +111,7 @@ class IpumsAPIClient:
         headers = self._get_header()
 
         if dagster_context is not None:
-            dagster_context.log.info(f"Downloading {file_name}. See stdout for progress.")
+            dagster_context.log.info(f"Downloading {file_name}. See stderr in dagster UI for progress.")
 
         downloader = pooch.HTTPDownloader(
             headers=headers,                

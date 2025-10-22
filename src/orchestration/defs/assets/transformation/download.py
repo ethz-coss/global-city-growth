@@ -38,7 +38,7 @@ def _download_raw_data_zenodo(context: dg.AssetExecutionContext, storage: Storag
 
     downloader = pooch.HTTPDownloader(chunk_size=8*1024*1024, timeout=300, progressbar=True)
     
-    context.log.info(f"Downloading {target_filename}. See stdout for progress.")
+    context.log.info(f"Downloading {target_filename}. See stderr in dagster UI for progress.")
     downloaded_path = pooch.retrieve(
         url=download_url,               
         known_hash=None,               
