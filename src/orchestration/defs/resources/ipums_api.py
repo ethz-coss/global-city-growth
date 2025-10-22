@@ -1,5 +1,4 @@
 import requests
-from os import fspath
 from pathlib import Path
 from typing import List, Dict, Any
 import time
@@ -111,7 +110,7 @@ class IpumsAPIClient:
         file_name = self._get_download_file_name(extract_id=extract_id, extract_type=extract_type)
         headers = self._get_header()
 
-        if dagster_context is None:
+        if dagster_context is not None:
             dagster_context.log.info(f"Downloading {file_name}. See stdout for progress.")
 
         downloader = pooch.HTTPDownloader(
@@ -130,4 +129,4 @@ class IpumsAPIClient:
         )
 
         if dagster_context is not None:
-            dagster_context.log.info(f"Downloading finished")
+            dagster_context.log.info("Downloading finished")

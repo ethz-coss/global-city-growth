@@ -6,9 +6,6 @@ from typing import List, Dict, Any, Tuple
 import yaml
 import dagster as dg
 from datetime import datetime
-from pySmartDL import SmartDL
-from os import fspath
-import time
 import pooch
 
 from ...resources.resources import IpumsAPIClientResource, StorageResource
