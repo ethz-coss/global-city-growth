@@ -66,7 +66,8 @@ def annotate_letter_label(axes: List[plt.Axes], left_side: List[bool]) -> None:
             xycoords='axes fraction',
             ha='left',
             va='top',
-            fontsize=style_config['letter_label_font_size']
+            fontsize=style_config['letter_label_font_size'],
+            fontweight='bold'
         )
 
 

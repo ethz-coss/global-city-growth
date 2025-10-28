@@ -108,9 +108,9 @@ def _plot_world_map_with_colorbar(fig: plt.Figure, ax: plt.Axes, gdf: gpd.GeoDat
 
 
     ax_inset2.annotate(
-        text=r'Size-growth slope' + '=\naverage slope of this curve',
+        text=r'$\beta = $ average slope' + '\nof this curve',
         xy=(5.5, 0.06),  # The point on the curve to point to
-        xytext=(5.5, 0.12),    # Where the text is located
+        xytext=(5.5, 0.115),    # Where the text is located
         xycoords='data',
         arrowprops=dict(facecolor='black', shrink=0.05, width=0.5, headwidth=4, headlength=8),
         ha='center',
@@ -130,7 +130,7 @@ def _plot_growth_rates_group_barchart_by_region(fig: plt.Figure, ax: plt.Axes, d
     y_axis = 'normalized_growth'
     weights = 'population'
 
-    y_axis_label = 'Growth advantage over national average \n' + r'($g_{\text{group}} \ / \ g_{\text{national}} - 1$)'
+    y_axis_label = r'$\mathbf{Growth \ advantage \ over \ national \ avg.}$' + '\n' + r'($g_{\text{group}} \ / \ g_{\text{national}} - 1$)'
 
     group_to_order = {
         'above_1m': 1,
@@ -146,7 +146,7 @@ def _plot_growth_rates_group_barchart_by_region(fig: plt.Figure, ax: plt.Axes, d
         'largest_city': 'Largest city',
     }
     sns.barplot(data=df, x=x_axis, y=y_axis, ax=ax, weights=weights, errorbar=('ci', 95), dodge=True, orient='v', hue=region_col, palette=region_colors, fill=True, saturation=1, formatter=lambda x: group_to_label[x], legend=False, err_kws={'linewidth': 1.5, 'alpha': 0.8})
-    style_axes(ax=ax, xlabel='', ylabel=y_axis_label, title='Growth advantage')
+    style_axes(ax=ax, xlabel='', ylabel=y_axis_label)
     ax.set_xlabel('')
     return fig, ax
 
@@ -154,8 +154,8 @@ def _plot_growth_size_curve_by_region(fig: plt.Figure, ax: plt.Axes, df_size_vs_
     x_axis = 'log_population'
     y_axis = 'normalized_log_growth'
 
-    x_axis_label = r'Size ($\log_{10}S_t$)'
-    y_axis_label = r'Growth rate ($\log_{10}S_{t+10} \ / \ S_t$)'
+    x_axis_label = r'$\mathbf{Size} \ (\log_{10}S_t)$'
+    y_axis_label = r'$\mathbf{Growth \ rate} \ (\log_{10}S_{t+10} \ / \ S_t)$'
     
     lam = constants['PENALTY_SIZE_GROWTH_CURVE']
 
@@ -172,7 +172,7 @@ def _plot_growth_size_curve_by_region(fig: plt.Figure, ax: plt.Axes, df_size_vs_
         color = region_colors[r]
         plot_spline_with_ci(ax=ax, x=x, y=average_log_growth_r + y, ci_low=average_log_growth_r + ci_low, ci_high=average_log_growth_r + ci_high, color=color, label=r)
 
-    style_axes(ax=ax, xlabel=x_axis_label, ylabel=y_axis_label, title='Size-growth curves')
+    style_axes(ax=ax, xlabel=x_axis_label, ylabel=y_axis_label)
     return fig, ax
 
 
