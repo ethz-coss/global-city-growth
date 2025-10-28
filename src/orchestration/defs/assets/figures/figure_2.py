@@ -237,7 +237,7 @@ def figure_2(context: dg.AssetExecutionContext, postgres: PostgresResource, tabl
     world_average_growth = read_pandas(engine=engine, table=tables.names.world.figures.world_average_growth(), analysis_id=MAIN_ANALYSIS_ID)
     _plot_size_growth_curve_by_urbanization_group(fig=fig, ax=ax1, ax_legend=ax1_legend, df_size_growth_slopes=world_size_growth_slopes, df_size_vs_growth_normalized=world_size_vs_growth_normalized, df_average_growth=world_average_growth)
 
-    n_boots = 10
+    n_boots = 1000
     kor_size_vs_growth = read_pandas(engine=engine, table=tables.names.world.figures.world_size_vs_growth(), analysis_id=MAIN_ANALYSIS_ID, where="country = 'KOR'")
     kor_size_vs_growth_normalized = read_pandas(engine=engine, table=tables.names.world.figures.world_size_vs_growth_normalized(), analysis_id=MAIN_ANALYSIS_ID, where="country = 'KOR'")
     kor_average_growth = read_pandas(engine=engine, table=tables.names.world.figures.world_average_growth(), analysis_id=MAIN_ANALYSIS_ID, where="country = 'KOR'")

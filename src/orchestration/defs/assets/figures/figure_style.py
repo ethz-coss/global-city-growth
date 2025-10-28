@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
+import colorsys
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import seaborn as sns
 import plotly.express as px
@@ -88,3 +89,11 @@ def create_bicolor_cmap(cmap_neg: str, cmap_pos: str, midpoint_frac: float, name
     
     all_colors = np.vstack((neg_colors, pos_colors))
     return mcolors.LinearSegmentedColormap.from_list(name, all_colors)
+
+def get_light_variant_of_hex(base_hex: str) -> tuple[list[str], list[str]]:
+    base_rgb = mcolors.to_rgb(base_hex)
+    h, l, s = colorsys.rgb_to_hls(*base_rgb)
+    light_l = l + (1.0 - l) * 0.6
+    light_rgb = colorsys.hls_to_rgb(h, light_l, s)
+    light_hex = mcolors.to_hex(light_rgb)
+    return light_hex
