@@ -34,9 +34,9 @@ def _plot_world_map_with_colorbar(fig: plt.Figure, ax: plt.Axes, gdf: gpd.GeoDat
     projection_epsg = 4087
 
     colorbar_label_fontsize = 12
-    colorbar_pos = [0.4, 0.13, 0.2, 0.025]
+    colorbar_pos = [0.4, 0.16, 0.2, 0.025]
     colorbar_label_pos = 'top'
-    colorbar_label = r'Size-growth slope $\beta$'
+    colorbar_label = r'$\mathbf{Size\!-\!growth \ slope \ \beta}$'
     
     gdf_proj = gdf.to_crs(epsg=projection_epsg)
     vmin, vmax = np.nanmin(gdf_proj[col]), np.nanmax(gdf_proj[col])
@@ -130,7 +130,7 @@ def _plot_growth_rates_group_barchart_by_region(fig: plt.Figure, ax: plt.Axes, d
     y_axis = 'normalized_growth'
     weights = 'population'
 
-    y_axis_label = r'$\mathbf{Growth \ advantage \ over \ national \ avg.}$' + '\n' + r'($g_{\text{group}} \ / \ g_{\text{national}} - 1$)'
+    y_axis_label = r'$\mathbf{Growth \ advantage \ over \ national \ average}$' + '\n' + r'($g_{\text{group}} \ / \ g_{\text{national}} - 1$)'
 
     group_to_order = {
         'above_1m': 1,
@@ -183,7 +183,7 @@ def _plot_growth_size_curve_by_region(fig: plt.Figure, ax: plt.Axes, df_size_vs_
 def figure_1_map(context: dg.AssetExecutionContext, postgres: PostgresResource, tables: TableNamesResource) -> dg.MaterializeResult:
     apply_figure_theme()
     context.log.info(f"Creating figure 1: map")
-    fig, ax = plt.subplots(figsize=(10, 4))
+    fig, ax = plt.subplots(figsize=(10, 5))
     figure_file_name = 'figure_1_map.png'
 
     rank_size_slopes_and_country_borders = read_postgis(engine=postgres.get_engine(), table=tables.names.world.figures.world_average_size_growth_slope_with_borders(), analysis_id=MAIN_ANALYSIS_ID)
@@ -204,7 +204,7 @@ def figure_1_plots(context: dg.AssetExecutionContext, postgres: PostgresResource
     context.log.info(f"Creating figure 1: plots")
     figure_file_name = 'figure_1_plots.png'
 
-    fig = plt.figure(figsize=(10, 4))
+    fig = plt.figure(figsize=(10, 5))
     gs = gridspec.GridSpec(1, 2, wspace=0.25)
     ax1 = fig.add_subplot(gs[0, 0])
     ax2 = fig.add_subplot(gs[0, 1])  
@@ -217,7 +217,7 @@ def figure_1_plots(context: dg.AssetExecutionContext, postgres: PostgresResource
     world_average_growth = read_pandas(engine=engine, table=tables.names.world.figures.world_average_growth(), analysis_id=MAIN_ANALYSIS_ID)
     _plot_growth_size_curve_by_region(fig=fig, ax=ax2, df_size_vs_growth_normalized=world_size_vs_growth_normalized, df_average_growth=world_average_growth)
     
-    dummy_fig, dummy_ax = plt.subplots(figsize=(10, 4))
+    dummy_fig, dummy_ax = plt.subplots(figsize=(10, 5))
     annotate_letter_label(axes=[dummy_ax, ax1, ax2], left_side=[True, False, True])
     save_figure(fig=fig, figure_file_name=figure_file_name)
     return materialize_image(figure_file_name=figure_file_name)

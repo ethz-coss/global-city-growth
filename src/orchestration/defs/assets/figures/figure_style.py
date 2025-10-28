@@ -12,7 +12,7 @@ import plotly.express as px
 
 style_config = {
     'font_name': 'Helvetica',
-    'font_family': 'Helvetica',
+    'font_family': 'sans-serif',
     'title_font_size': 14,
     'label_font_size': 12,
     'tick_font_size': 10,

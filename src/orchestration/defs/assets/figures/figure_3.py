@@ -132,7 +132,7 @@ def _plot_rank_size_slope_by_urbanization_group(fig: plt.Figure, ax: plt.Axes, d
     y_axis = 'year'
     group_col = 'urban_population_share_group'
 
-    x_axis_label = r'$\mathbf{Rank-size \ slope \ \alpha}$'
+    x_axis_label = r'$\mathbf{Rank\!-\!size \ slope \ \alpha}$'
     y_axis_label = r'$\mathbf{Year}$'
 
     x_bins = [1975, 2025, 2100]
@@ -166,10 +166,10 @@ def _plot_world_population_share_cities_above_1m_scenarios(fig: plt.Figure, ax: 
     
     _plot_bar_share_cities_above_1m(fig=fig, ax=ax, df=data, year=1975, label='1975 (DT)', hatch=None)
     _plot_bar_share_cities_above_1m(fig=fig, ax=ax, df=extr, year=2025, label='2025 (DT)', hatch=None)
-    _plot_bar_share_cities_above_1m(fig=fig, ax=ax, df=prop_growth, year=2100, label='2100 (PG)',  hatch='|')
-    _plot_bar_share_cities_above_1m(fig=fig, ax=ax, df=model, year=2100, label='2100 (OM)', hatch='O')
-    _plot_bar_share_cities_above_1m(fig=fig, ax=ax, df=extr, year=2100, label='2100 (EX)', hatch='x')
-    _plot_bar_share_cities_above_1m(fig=fig, ax=ax, df=inc_returns, year=2100, label='2100 (IR)', hatch='/')
+    _plot_bar_share_cities_above_1m(fig=fig, ax=ax, df=prop_growth, year=2100, label='2100 (PG)',  hatch=None)
+    _plot_bar_share_cities_above_1m(fig=fig, ax=ax, df=model, year=2100, label='2100 (OM)', hatch=None)
+    _plot_bar_share_cities_above_1m(fig=fig, ax=ax, df=extr, year=2100, label='2100 (EX)', hatch=None)
+    _plot_bar_share_cities_above_1m(fig=fig, ax=ax, df=inc_returns, year=2100, label='2100 (IR)', hatch=None)
 
     style_axes(ax=ax, ylabel=y_label, xlabel=x_label)
     ax.xaxis.set_major_formatter(mtick.PercentFormatter(1.0, decimals=0))
@@ -209,7 +209,7 @@ def figure_3(context: dg.AssetExecutionContext, postgres: PostgresResource, tabl
     kor_rank_size_slopes_change = read_pandas(engine=engine, table=tables.names.world.figures.world_rank_size_slopes_change(), analysis_id=MAIN_ANALYSIS_ID, where="country = 'KOR'")
     _plot_rank_size_slope_change_usa_kor(fig=fig, ax=ax2, df_usa=usa_rank_size_slopes_change, df_kor=kor_rank_size_slopes_change)
 
-    y_fig = 0.47
+    y_fig = 0.475
     line = Line2D([0.1, 0.9], [y_fig, y_fig],transform=fig.transFigure, color='0.6', lw=1, ls='--', zorder=1000, clip_on=False)
     fig.add_artist(line)
 

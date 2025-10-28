@@ -133,7 +133,7 @@ def _plot_size_growth_curve_kor_by_epoch(fig: plt.Figure, ax: plt.Axes, df_size_
     x_axis_inset_label = 'Year'
     y_axis_inset_label = r'$\beta$'
 
-    ax_inset = fig.add_axes([0.2, 0.34, 0.1, 0.1])
+    ax_inset = fig.add_axes([0.19, 0.34, 0.1, 0.1])
 
     _plot_size_growth_slope_by_year_inset(fig=fig, ax=ax_inset, df_size_vs_growth=df_size_vs_growth, x_axis=x_axis_inset, y_axis=y_axis_inset, lam=lam, n_boots=n_boots)
     style_inset_axes(ax=ax_inset, xlabel=x_axis_inset_label, ylabel=y_axis_inset_label)
@@ -169,7 +169,7 @@ def _plot_size_growth_curve_usa_by_epoch(fig: plt.Figure, ax: plt.Axes, df_size_
 
     x_axis_inset_label = 'Year'
     y_axis_inset_label = r'$\beta$'
-    ax_inset = fig.add_axes([0.63, 0.34, 0.1, 0.1])
+    ax_inset = fig.add_axes([0.62, 0.34, 0.1, 0.1])
     _plot_size_growth_slope_by_year_inset(fig=fig, ax=ax_inset, df_size_vs_growth=df_size_vs_growth, x_axis=x_axis_inset, y_axis=y_axis_inset, lam=lam, n_boots=n_boots)
     style_inset_axes(ax=ax_inset, xlabel=x_axis_inset_label, ylabel=y_axis_inset_label)
     return fig, ax
