@@ -11,11 +11,69 @@ from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 
 from ...resources.resources import PostgresResource, TableNamesResource
-from .figure_style import style_axes, annotate_letter_label, style_config, apply_figure_theme
+from .figure_style import style_axes, annotate_letter_label, style_config, apply_figure_theme, style_inset_axes
 from .figure_io import read_pandas, save_figure, materialize_image
 from ..constants import constants
 
 MAIN_ANALYSIS_ID = constants['MAIN_ANALYSIS_ID']
+
+
+def _plot_rank_size_slope_change_curves(fig: plt.Figure, ax: plt.Axes, year_base: int, year_middle: int, year_end: int, df: pd.DataFrame, x_axis: str, y_axis: str, linewidth: int, markersize: int) -> None:
+    colors = [px.colors.qualitative.Plotly[4], px.colors.qualitative.Plotly[6]]
+    df_early = df[(df['year_base'] == year_base) & (df['year'] <= year_middle) & (df['year'] >= year_base)].copy()
+    df_late = df[(df['year_base'] == year_middle) & (df['year'] >= year_middle) & (df['year'] <= year_end)].copy()
+    ax.plot(df_early[x_axis] - year_base, df_early[y_axis], label=f'{year_base}-{year_middle}', color=colors[0], marker='o', linewidth=linewidth, markersize=markersize)
+    ax.plot(df_late[x_axis] - year_middle, df_late[y_axis], label=f'{year_middle}-{year_end}', color=colors[1], marker='o', linewidth=linewidth, markersize=markersize)
+    return fig, ax
+
+def _plot_rank_size_slope_change_usa_kor(fig: plt.Figure, ax: plt.Axes, df_usa: pd.DataFrame, df_kor: pd.DataFrame) -> Tuple[plt.Figure, plt.Axes]:
+    # Main plot (USA)
+    x_axis = 'year'
+    y_axis = 'rank_size_slope_change'
+
+    title = 'USA'
+    x_axis_label = r'Time since $t_0$'
+    y_axis_label = r'Change in top-heaviness since $t_0$' + '\n' + r'($\alpha_{t} \ / \ \alpha_{t_0} - 1)$'
+    year_base, year_middle, year_end = 1850, 1930, 2020
+
+    _plot_rank_size_slope_change_curves(fig=fig, ax=ax, year_base=year_base, year_middle=year_middle, year_end=year_end, df=df_usa, x_axis=x_axis, y_axis=y_axis, linewidth=2, markersize=5)
+    ax.yaxis.set_major_formatter(mtick.PercentFormatter(1.0, decimals=0))
+    style_axes(ax=ax, xlabel=x_axis_label, ylabel=y_axis_label, title=title)
+
+    # Inset plot (Korea)
+    inset_title = 'South Korea'
+    x_axis_inset_label = r'Time since $t_0$'
+    y_axis_inset_label = r'$\alpha_{t} \ / \ \alpha_{t_0} - 1$'
+    year_base, year_middle, year_end = 1975, 2000, 2025
+
+    ax_inset = fig.add_axes([0.725, 0.34, 0.06, 0.09])
+    _plot_rank_size_slope_change_curves(fig=fig, ax=ax_inset, year_base=year_base, year_middle=year_middle, year_end=year_end, df=df_kor, x_axis=x_axis, y_axis=y_axis, linewidth=1, markersize=2)
+    ax_inset.yaxis.set_major_formatter(mtick.PercentFormatter(1.0, decimals=0))
+    style_inset_axes(ax=ax_inset, xlabel=x_axis_inset_label, ylabel=y_axis_inset_label, title=inset_title)
+    return fig, ax
+
+
+def _plot_rank_size_slope_change_by_urbanization_group(fig: plt.Figure, ax: plt.Axes, df: pd.DataFrame) -> Tuple[plt.Figure, plt.Axes]:
+    x_axis = f'year_since_1975'
+    y_axis = 'rank_size_slope_change'
+    group_col = 'urban_population_share_group'
+
+    x_axis_label = f'Time since 1975'
+
+    y_axis_label = f'Change in top-heaviness since 1975\n' + r'$(\alpha_t \ / \ \alpha_{1975} - 1)$'
+
+    colors = [px.colors.qualitative.Plotly[4], px.colors.qualitative.Plotly[6]]
+    x_bins = np.arange(5, 55, 10)
+
+    groups = df[group_col].unique().tolist()
+    for i, g in enumerate(groups):
+        df_g = df[df[group_col] == g]
+        sns.regplot(data=df_g, x=x_axis, y=y_axis, ax=ax, ci=95, fit_reg=False, x_bins=x_bins, color=colors[i], line_kws={'linewidth': 1.5})
+        
+    ax.yaxis.set_major_formatter(mtick.PercentFormatter(1.0, decimals=0))
+    style_axes(ax=ax, xlabel=x_axis_label, ylabel=y_axis_label)
+    return fig, ax
+
 
 def _plot_rank_size_slope_by_urbanization_group(fig: plt.Figure, ax: plt.Axes, df: pd.DataFrame) -> Tuple[plt.Figure, plt.Axes]:
     x_axis = 'year'
@@ -144,4 +202,15 @@ def figure_3(context: dg.AssetExecutionContext, postgres: PostgresResource, tabl
 
     annotate_letter_label(axes=[ax1, ax2, ax3], left_side=[False, False, False])
     save_figure(fig=fig, figure_file_name=figure_file_name)
+
+    ####
+
+    world_rank_size_slopes_change_1975_2025 = read_pandas(engine=engine, table=tables.names.world.figures.world_rank_size_slopes_change_1975_2025(), analysis_id=MAIN_ANALYSIS_ID)
+    _plot_rank_size_slope_change_by_urbanization_group(fig=fig, ax=ax3, df=world_rank_size_slopes_change_1975_2025)
+
+
+    usa_rank_size_slopes_change = read_pandas(engine=engine, table=tables.names.usa.figures.usa_rank_size_slopes_change(), analysis_id=MAIN_ANALYSIS_ID)
+    kor_rank_size_slopes_change = read_pandas(engine=engine, table=tables.names.world.figures.world_rank_size_slopes_change(), analysis_id=MAIN_ANALYSIS_ID, where="country = 'KOR'")
+    _plot_rank_size_slope_change_usa_kor(fig=fig, ax=ax6, df_usa=usa_rank_size_slopes_change, df_kor=kor_rank_size_slopes_change)
+    
     return materialize_image(figure_file_name=figure_file_name)
