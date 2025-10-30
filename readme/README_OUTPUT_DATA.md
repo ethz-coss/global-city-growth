@@ -9,19 +9,18 @@ This repository provides:
 See the [paper](https://arxiv.org/abs/2510.12417).
 
 ## Contents
-
 ```
 .
 ├── usa/
-│ ├── usa_census_place_stable_geom.gpkg
-│ ├── usa_census_place_stable_population.csv
-│ ├── usa_cluster_growth_geom.gpkg
-│ └── usa_cluster_growth_population.csv
+│   ├── usa_census_place_stable_geom.gpkg
+│   ├── usa_census_place_stable_population.csv
+│   ├── usa_cluster_growth_geom.gpkg
+│   └── usa_cluster_growth_population.csv
 └── world/
-  ├── world_cluster_growth_geom.gpkg
-  └── world_cluster_growth_population_country.csv 
-
-```
+    ├── world_cluster_growth_geom.gpkg
+    ├── world_cluster_growth_population_country.csv
+    └── world_tot_pop_share_cities_above_1m_with_projections.csv
+  ```
 
 
 
