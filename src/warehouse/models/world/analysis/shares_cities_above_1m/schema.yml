@@ -11,7 +11,7 @@ models:
         description: "The urban population share of cities above 1 million"
 
   - name: world_urb_pop_share_cities_above_1m_projections
-    description: "The urban population share of cities above 1 million projected into the future. The projections are based on a simple equation relating the shares to the rank-size slopes: s = (x_max^{1-alpha} - z^{1-alpha}) / (x_max^{1-alpha} - x_min^{1-alpha}) where x_max, x_min are upper and lower bounds of the urban population, z is 1 million, and alpha is the zipf exponent (1 / rank_size_slope). To compute these projections we set x_min = 5000, z = 1 million, and alpha = 1 / rank_size_slope. We set x_max = omega * urban_population, where omega is a free parameter. We tune omega in the marcro get_optimal_omegas_population_share_cities_above_1m_projections."
+    description: "The urban population share of cities above 1 million projected into the future. The projections are based on a simple equation relating the shares to the rank-size slopes: s = (x_max^{1-zeta} - z^{1-zeta}) / (x_max^{1-zeta} - x_min^{1-zeta}) where x_max, x_min are upper and lower bounds of the urban population, z is 1 million, and zeta is the zipf exponent (1 / rank_size_slope). To compute these projections we set x_min = 5000, z = 1 million, and zeta = 1 / rank_size_slope. We set x_max = omega * urban_population, where omega is a free parameter. We tune omega in the marcro get_optimal_omegas_population_share_cities_above_1m_projections."
     columns:
       - name: country
         description: "see world_cluster_growth_geocoding"

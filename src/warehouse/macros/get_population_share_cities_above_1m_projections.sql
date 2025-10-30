@@ -19,7 +19,7 @@ prep_data AS (
     SELECT  country, 
             year, 
             analysis_id, 
-            1/rank_size_slope AS alpha, 
+            1/rank_size_slope AS zeta, 
             omega * urban_population AS x_max, 
             LEAST(omega * urban_population, POWER(10, 6)) AS z, 
             5 * POWER(10, 3) AS x_min
@@ -29,7 +29,7 @@ pop_share_cities_above_one_million AS (
     SELECT  country, 
             year, 
             analysis_id,
-            (POWER(x_max, 1-alpha) - POWER(z, 1-alpha)) / (POWER(x_max, 1-alpha) - POWER(x_min, 1-alpha)) AS urban_population_share_cities_above_one_million
+            (POWER(x_max, 1-zeta) - POWER(z, 1-zeta)) / (POWER(x_max, 1-zeta) - POWER(x_min, 1-zeta)) AS urban_population_share_cities_above_one_million
     FROM prep_data
 )
 SELECT *

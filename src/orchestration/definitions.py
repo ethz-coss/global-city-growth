@@ -41,7 +41,7 @@ analysis_job = define_asset_job("5_analysis_job",
                                 selection=AssetSelection.groups("analysis", "usa_analysis", "world_analysis", 
                                 "world_analysis_size_vs_growth", "world_analysis_rank_vs_size","world_analysis_share_cities_above_1m", "si_analysis"),
                                 description="Analyze the data for the figures and supplementary information. Should run fifth.")
-
+                                
 figures_job = define_asset_job("6_figures_job", 
                                selection=AssetSelection.groups("paper_stats", "figures", "si_figures"),
                                description="Create the figures, tables, paper stats, and supplementary information. Should run sixth.")
@@ -137,6 +137,6 @@ defs = Definitions(
         "postgres_io_manager": postgres_pandas_io_manager,
         "ipums_api_client": ipums_api_client
     },
-    jobs=[all_job, download_job, ipums_full_count_job, usa_job, world_job, figures_job],
+    jobs=[all_job, download_job, ipums_full_count_job, usa_job, world_job, analysis_job, figures_job],
     executor=in_process_executor
 )

@@ -218,7 +218,7 @@ def figure_1_plots(context: dg.AssetExecutionContext, postgres: PostgresResource
     _plot_growth_size_curve_by_region(fig=fig, ax=ax2, df_size_vs_growth_normalized=world_size_vs_growth_normalized, df_average_growth=world_average_growth)
     
     dummy_fig, dummy_ax = plt.subplots(figsize=(10, 5))
-    annotate_letter_label(axes=[dummy_ax, ax1, ax2], left_side=[True, False, True])
+    annotate_letter_label(axes=[dummy_ax, ax1, ax2], left_side=[True, True, True])
     save_figure(fig=fig, figure_file_name=figure_file_name)
     return materialize_image(figure_file_name=figure_file_name)
     

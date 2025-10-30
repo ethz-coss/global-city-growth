@@ -35,22 +35,22 @@ def _plot_rank_vs_size_curves(fig: plt.Figure, ax: plt.Axes, y1: int, y2: int, d
 
 def _plot_rank_vs_size_usa_kor(fig: plt.Figure, ax: plt.Axes, df_usa: pd.DataFrame, df_kor: pd.DataFrame) -> Tuple[plt.Figure, plt.Axes]:
     # Main plot (USA)
-    x_axis = 'log_population'
-    y_axis = 'log_rank'
+    x_axis = 'log_rank'
+    y_axis = 'log_population'
 
     title = 'USA'
-    x_axis_label = r'$\mathbf{Size} \ (\log_{10}S_t)$'
-    y_axis_label = r'$\mathbf{Rank} \ (\log_{10}R_t)$'
+    x_axis_label = r'$\mathbf{Rank} \ (\log_{10}R_t)$'
+    y_axis_label = r'$\mathbf{Size} \ (\log_{10}S_t)$'
     y1, y2 = 1850, 2020
 
     _plot_rank_vs_size_curves(fig=fig, ax=ax, y1=y1, y2=y2, df=df_usa, x_axis=x_axis, y_axis=y_axis, linewidth=2, markersize=30)
     style_axes(ax=ax, xlabel=x_axis_label, ylabel=y_axis_label, title=title, legend_loc="lower left")
-    ax.set_ylim(-0.2, 3.5)
+    ax.set_ylim(3.6, 7.9)
 
     # Inset plot (Korea)
     inset_title = 'South Korea'
-    x_axis_inset_label = r'Size $(\log_{10}S_t)$'
-    y_axis_inset_label = r'Rank $(\log_{10}R_t)$'
+    x_axis_inset_label = r'Rank $(\log_{10}R_t)$'
+    y_axis_inset_label = r'Size $(\log_{10}S_t)$'
     y1, y2 = 1975, 2025
 
     ax_inset = fig.add_axes([0.35, 0.76, 0.1, 0.1])
