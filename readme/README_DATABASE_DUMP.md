@@ -1,6 +1,7 @@
-# Large cities lose their growth edge as urban systems mature -- Database dump
+# Large cities lose their growth advantage as urban systems mature -- Database dump
 
-This repository contains a single SQL dump for the Global City Growth Project. This project studies city growth with a harmonized definition of city across space and time across:
+This repository contains a single SQL dump for the paper "Large cities lose their growth advantage as urban systems mature". 
+This paper studies city growth with a harmonized definition of city across space and time in:
 - **World:** 1975–2025
 - **United States:** 1850–2020  
 

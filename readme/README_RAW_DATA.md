@@ -1,6 +1,6 @@
-# Large cities lose their growth edge as urban systems mature -- Raw data
+# Large cities lose their growth advantage as urban systems mature -- Raw data
 
-This repository contains the raw datasets used in [Large cities lose their growth edge as urban systems mature](https://arxiv.org/abs/2510.12417). We include **only datasets whose licenses allow redistribution**. For datasets that do not allow redistribution, we provide scripts to download the data from the original sources using APIs (see the [GitHub](https://github.com/andreamusso96/global-city-growth) or [Zenodo](https://doi.org/10.5281/zenodo.17339403)).
+This repository contains the raw datasets used in [Large cities lose their growth advantage as urban systems mature](https://arxiv.org/abs/2510.12417). We include **only datasets whose licenses allow redistribution**. For datasets that do not allow redistribution, we provide scripts to download the data from the original sources using APIs (see the [GitHub](https://github.com/andreamusso96/global-city-growth) or [Zenodo](https://doi.org/10.5281/zenodo.17339403)).
 
 ## Overview
 
