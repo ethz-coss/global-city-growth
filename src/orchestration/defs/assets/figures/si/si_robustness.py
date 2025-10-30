@@ -20,8 +20,8 @@ MAIN_ANALYSIS_ID = constants['MAIN_ANALYSIS_ID']
 def _plot_size_growth_curve_usa_by_analysis_id(fig: plt.Figure, ax: plt.Axes, show_legend: bool, title: str, df_size_vs_growth_normalized: pd.DataFrame, df_average_growth: pd.DataFrame, map_analysis_id_to_urban_threshold: Dict[int, int])-> Tuple[plt.Figure, plt.Axes]:
     x_axis = 'log_population'
     y_axis = 'normalized_log_growth'
-    x_axis_label = r'Size ($\log_{10}S_t$)'
-    y_axis_label = r'Growth rate ($\log_{10}S_{t+10} \ / \ S_t$)'
+    x_axis_label = r'$\mathbf{Size} \ (\log_{10}S_t)$'
+    y_axis_label = r'$\mathbf{Growth \ rate} \ (\log_{10}S_{t+10} \ / \ S_t)$'
 
     lam = constants['PENALTY_SIZE_GROWTH_CURVE']
 
@@ -46,8 +46,8 @@ def _plot_size_growth_slope_usa_by_year_and_analysis_id(fig: plt.Figure, ax: plt
     x_axis = 'year'
     y_axis = 'size_growth_slope'
     
-    x_axis_label = 'Year'
-    y_axis_label = r'Size-growth slope ($\beta_t$)'
+    x_axis_label = r'$\mathbf{Year}$'
+    y_axis_label = r'$\mathbf{Size\!-\!growth \ slope \ \beta}$'
 
     lam = constants['PENALTY_SIZE_GROWTH_CURVE']
 
@@ -69,8 +69,8 @@ def _plot_city_counts_usa_by_analysis_id(fig: plt.Figure, ax: plt.Axes, df_size_
     x_axis = 'urban_threshold'
     y_axis = 'ratio'
 
-    x_axis_label = 'Urban threshold'
-    y_axis_label = 'Share of cities remaining in the sample'
+    x_axis_label = r'$\mathbf{Urban \ threshold}$'
+    y_axis_label = r'$\mathbf{Share \ of \ cities \ remaining \ in \ the \ sample}$'
 
     city_counts_main_analysis = df_size_vs_growth[df_size_vs_growth['analysis_id'] == 1].groupby('epoch')['cluster_id'].count().reset_index().rename(columns={'cluster_id': 'num_cities'})
     city_counts_all_analyses = df_size_vs_growth.groupby(['epoch', 'analysis_id'])['cluster_id'].count().reset_index().rename(columns={'cluster_id': 'num_cities'})
@@ -91,8 +91,8 @@ def _plot_size_growth_slopes_usa_for_mixed_analysis(fig: plt.Figure, ax: plt.Axe
     x_axis = 'year'
     y_axis = 'size_growth_slope'
     
-    x_axis_label = 'Year'
-    y_axis_label = r'$\beta_t$'
+    x_axis_label = r'Year'
+    y_axis_label = r'$\beta$'
 
     lam_size_growth_slope = constants['PENALTY_SIZE_GROWTH_CURVE']
     color = 'black'

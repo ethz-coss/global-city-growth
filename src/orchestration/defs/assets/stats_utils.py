@@ -20,11 +20,12 @@ def fit_penalized_b_spline(df: pd.DataFrame, xaxis: str, yaxis: str, lam: float)
 def get_mean_derivative_penalized_b_spline(df: pd.DataFrame, xaxis: str, yaxis: str, lam: float) -> float:
     x, y, ci_low, ci_high = fit_penalized_b_spline(df=df, xaxis=xaxis, yaxis=yaxis, lam=lam)
     xmin, xmax = np.min(x), np.max(x)
-    y_xmin, y_xmax = y[x == xmin], y[x == xmax]
+    y_xmin, y_xmax = y[x == xmin][0], y[x == xmax][0]
     mean_derivative = float((y_xmax - y_xmin) / (xmax - xmin))
     # derivative = np.gradient(y, x)
     # mean_derivative = np.mean(derivative)
     return mean_derivative
+
 
 def get_ols_slope(df: pd.DataFrame, xaxis: str, yaxis: str) -> float:
     ols = smf.ols(f'{yaxis} ~ {xaxis}', data=df).fit()

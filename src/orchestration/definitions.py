@@ -16,9 +16,10 @@ from .defs.assets.figures.figure_1 import figure_1_map, figure_1_plots
 from .defs.assets.figures.figure_2 import figure_2
 from .defs.assets.figures.figure_3 import figure_3
 from .defs.assets.figures.tables import table_1, table_2
-from .defs.assets.figures.si.si_projections import si_figure_equation_correlation, si_figure_projection_vs_historical_urb_pop_share_cities_above_1m
+from .defs.assets.figures.si.si_projections import si_figure_projection_vs_historical_urb_pop_share_cities_above_1m
 from .defs.assets.figures.si.si_linear_rigidity import si_figure_linear_rigidity
 from .defs.assets.figures.si.si_robustness import si_figure_usa_robustness, si_tables_world_robustness
+from .defs.assets.figures.si.si_linear_vs_spline import si_figure_linear_vs_spline
 
 all_job = define_asset_job("0_all_job", selection=AssetSelection.all(), description="Run the full pipeline.")
 
@@ -41,7 +42,7 @@ analysis_job = define_asset_job("5_analysis_job",
                                 selection=AssetSelection.groups("analysis", "usa_analysis", "world_analysis", 
                                 "world_analysis_size_vs_growth", "world_analysis_rank_vs_size","world_analysis_share_cities_above_1m", "si_analysis"),
                                 description="Analyze the data for the figures and supplementary information. Should run fifth.")
-                                
+
 figures_job = define_asset_job("6_figures_job", 
                                selection=AssetSelection.groups("paper_stats", "figures", "si_figures"),
                                description="Create the figures, tables, paper stats, and supplementary information. Should run sixth.")
@@ -121,7 +122,7 @@ defs = Definitions(
         world_linearity_test_size_vs_growth,
 
         ## Supplementary Information
-        si_figure_equation_correlation,
+        si_figure_linear_vs_spline,
         si_figure_projection_vs_historical_urb_pop_share_cities_above_1m,
         si_figure_linear_rigidity,
         si_figure_usa_robustness,

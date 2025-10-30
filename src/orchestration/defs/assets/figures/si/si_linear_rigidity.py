@@ -25,8 +25,8 @@ def _plot_non_linearity_figure_size_growth(fig: plt.Figure, ax: plt.Axes, colors
     x_axis = 'log_population'
     y_axis = 'log_growth'
 
-    x_axis_label = r'Size ($\log_{10}S_t$)'
-    y_axis_label = r'Growth rate ($\log_{10}S_{t+10} \ / \ S_t$)'
+    x_axis_label = r'$\mathbf{Size} \ (\log_{10}S_t)$'
+    y_axis_label = r'$\mathbf{Growth \ rate} \ (\log_{10}S_{t+10} \ / \ S_t)$'
 
     x_axis_inset = 'D_bootstrap'
 
@@ -58,8 +58,8 @@ def _plot_non_linearity_figure_rank_size(fig: plt.Figure, ax: plt.Axes, colors: 
     x_axis = 'log_rank'
     y_axis = 'log_population'
 
-    x_axis_label = r'Rank ($\log_{10}R_t$)'
-    y_axis_label = r'Size ($\log_{10}S_t$)'
+    x_axis_label = r'$\mathbf{Rank} \ (\log_{10}R_t)$'
+    y_axis_label = r'$\mathbf{Size} \ (\log_{10}S_t)$'
 
     lam = constants['PENALTY_RANK_SIZE_CURVE']
 
@@ -80,14 +80,14 @@ def _plot_non_linearity_figure_rank_size(fig: plt.Figure, ax: plt.Axes, colors: 
 def _plot_barchart_slope_ols_vs_spline(fig: plt.Figure, ax: plt.Axes, colors: List[str], x_axis_label: str, df: pd.DataFrame):
     df = df.sort_values(by='country', ascending=False)
     sns.barplot(x='slope', y='country', hue='model', data=df, ax=ax, palette=colors, orient='h')
-    style_axes(ax=ax, xlabel=x_axis_label, ylabel='', legend_loc='center')
+    style_axes(ax=ax, xlabel=x_axis_label, ylabel=' ', legend_loc='center')
     ax.legend(loc='center', frameon=False, fontsize=style_config['label_font_size'], ncol=1, bbox_to_anchor=(0.5, 1.2), ncols=2)
     return fig, ax
 
 
 def _plot_size_growth_linearity_test_results(fig: plt.Figure, ax: plt.Axes, df: pd.DataFrame):
-    x_axis_label = 'p-value threshold'
-    y_axis_label = 'Share of samples with\np-value < threshold'
+    x_axis_label = r'$\mathbf{p\!-\!value \ threshold}$'
+    y_axis_label = r'$\mathbf{Share \ of \ samples \ with}$' + '\n' + r'$\mathbf{p\!-\!value < \ threshold}$'
 
     pvalues = df.groupby(['country', 'year']).agg({'reject_linear': 'mean'}).reset_index().rename(columns={'reject_linear': 'pvalue'})
     pval = np.linspace(0.001, 0.1, 10)
@@ -102,8 +102,8 @@ def _plot_size_growth_linearity_test_results(fig: plt.Figure, ax: plt.Axes, df: 
 
 
 def _plot_rank_size_linearity_test_results(fig: plt.Figure, ax: plt.Axes, df: pd.DataFrame):
-    x_axis_label = 'Max residual threshold'
-    y_axis_label = 'Share of samples with\nmax residual > threshold'
+    x_axis_label = r'$\mathbf{Max \ residual \ threshold}$'
+    y_axis_label = r'$\mathbf{Share \ of \ samples \ with}$' + '\n' + r'$\mathbf{max \ residual > \ threshold}$'
 
     max_resid_thresholds = np.linspace(0.5, df['max_resid'].max(), 10)
     ys = []
@@ -215,7 +215,7 @@ def si_figure_linear_rigidity(context: dg.AssetExecutionContext, postgres: Postg
                                                                                     column_name='size_growth_slope', 
                                                                                     country_year_list=[size_growth_country_year_1, size_growth_country_year_2])
 
-    _plot_barchart_slope_ols_vs_spline(fig=fig, ax=ax3, colors=colors, x_axis_label=r'Size-growth slope $\beta$', df=size_growth_slopes)
+    _plot_barchart_slope_ols_vs_spline(fig=fig, ax=ax3, colors=colors, x_axis_label=r'$\mathbf{Size\!-\!growth \ slope \ \beta}$', df=size_growth_slopes)
 
     linearity_test_results = read_pandas(engine=postgres.get_engine(), 
                                         table=tables.names.world.si.world_linearity_test_size_vs_growth(), 
@@ -244,7 +244,8 @@ def si_figure_linear_rigidity(context: dg.AssetExecutionContext, postgres: Postg
                                                                                     table_name=tables.names.world.figures.world_rank_size_slopes_historical(), 
                                                                                     column_name='rank_size_slope', 
                                                                                     country_year_list=[rank_size_country_year_1, rank_size_country_year_2])
-    _plot_barchart_slope_ols_vs_spline(fig=fig, ax=ax7, colors=colors, x_axis_label=r'Rank-size slope $\alpha$', df=rank_size_slopes)
+
+    _plot_barchart_slope_ols_vs_spline(fig=fig, ax=ax7, colors=colors, x_axis_label=r'$\mathbf{Rank\!-\!size \ slope \ \alpha}$', df=rank_size_slopes)
 
 
     linearity_test_results = read_pandas(engine=postgres.get_engine(), 

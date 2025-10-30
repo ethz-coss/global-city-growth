@@ -6,10 +6,10 @@ from pathlib import Path
 @dataclass(frozen=True)
 class IpumsFullCount:
     def ipums_full_count_raw(self, year: int) -> str:
-        return f"ipums_full_count_{year}_raw" # TODO: change name to ipums_full_count_table_{year}_raw
+        return f"ipums_full_count_{year}_raw" 
     
     def ipums_full_count_clean(self, year: int) -> str:
-        return f"ipums_full_count_{year}_clean" # TODO: change name to ipums_full_count_table_clean_{year}
+        return f"ipums_full_count_{year}_clean"
     
     def crosswalk_hist_id_to_hist_census_place_raw(self, year: int) -> str:
         return f"crosswalk_hist_id_to_hist_census_place_{year}_raw"
