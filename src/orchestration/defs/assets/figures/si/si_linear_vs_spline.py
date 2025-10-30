@@ -209,6 +209,6 @@ def si_figure_linear_vs_spline(context: dg.AssetExecutionContext, postgres: Post
     line = Line2D([0.65, 0.9], [y_fig, y_fig],transform=fig.transFigure, color='0.6', lw=1, ls='--', zorder=1000, clip_on=False)
     fig.add_artist(line)
 
-    annotate_letter_label(axes=[ax1, ax2, ax3, ax4, ax5, ax6], left_side=[False, True, True, False, True, True])
+    annotate_letter_label(axes=[ax1, ax4, ax2, ax5, ax3, ax6], left_side=[False, False, True, True, True, True])
     save_figure(fig=fig, figure_file_name=figure_file_name, si=True)
     return materialize_image(figure_file_name=figure_file_name, si=True)

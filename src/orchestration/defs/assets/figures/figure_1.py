@@ -188,8 +188,10 @@ def figure_1_map(context: dg.AssetExecutionContext, postgres: PostgresResource, 
 
     rank_size_slopes_and_country_borders = read_postgis(engine=postgres.get_engine(), table=tables.names.world.figures.world_average_size_growth_slope_with_borders(), analysis_id=MAIN_ANALYSIS_ID)
     _plot_world_map_with_colorbar(fig=fig, ax=ax, gdf=rank_size_slopes_and_country_borders)
-    annotate_letter_label(axes=[ax], left_side=[True])
-
+    
+    _, dummy_axes = plt.subplots(2, 1, figsize=(10, 5))
+    dummy_ax1, dummy_ax2 = dummy_axes.flatten()
+    annotate_letter_label(axes=[dummy_ax1, dummy_ax2, ax], left_side=[True, True, True])
     save_figure(fig=fig, figure_file_name=figure_file_name)
     return materialize_image(figure_file_name=figure_file_name)
 
@@ -217,8 +219,7 @@ def figure_1_plots(context: dg.AssetExecutionContext, postgres: PostgresResource
     world_average_growth = read_pandas(engine=engine, table=tables.names.world.figures.world_average_growth(), analysis_id=MAIN_ANALYSIS_ID)
     _plot_growth_size_curve_by_region(fig=fig, ax=ax2, df_size_vs_growth_normalized=world_size_vs_growth_normalized, df_average_growth=world_average_growth)
     
-    dummy_fig, dummy_ax = plt.subplots(figsize=(10, 5))
-    annotate_letter_label(axes=[dummy_ax, ax1, ax2], left_side=[True, True, True])
+    annotate_letter_label(axes=[ax1, ax2], left_side=[True, True, True])
     save_figure(fig=fig, figure_file_name=figure_file_name)
     return materialize_image(figure_file_name=figure_file_name)
     
